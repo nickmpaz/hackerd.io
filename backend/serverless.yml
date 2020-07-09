@@ -1,0 +1,13 @@
+service: dolphin-backend
+frameworkVersion: "=1.74.1"
+provider:
+  name: aws
+  runtime: python3.8
+
+functions:
+  ping:
+    handler: handler.ping
+    events:
+     - http:
+         path: ping
+         method: get
