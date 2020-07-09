@@ -1,0 +1,22 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-dolphinamplify-dev-144544-authRole",
+            "UnauthRoleArn": "arn:aws:iam::706879839199:role/amplify-dolphinamplify-dev-144544-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::706879839199:role/amplify-dolphinamplify-dev-144544-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-dolphinamplify-dev-144544-deployment",
+            "UnauthRoleName": "amplify-dolphinamplify-dev-144544-unauthRole",
+            "StackName": "amplify-dolphinamplify-dev-144544",
+            "StackId": "arn:aws:cloudformation:us-east-1:706879839199:stack/amplify-dolphinamplify-dev-144544/907958d0-c22d-11ea-8e29-0e0494eb61ff",
+            "AmplifyAppId": "d1tnvzko5ff84w"
+        },
+        "categories": {
+            "auth": {
+                "dolphinamplify9f294499": {
+                    "hostedUIProviderCreds": "[{\"ProviderName\":\"Google\",\"client_id\":\"487588758767-0ikh42k1sk91fjv3a96199c2e6prtbsv.apps.googleusercontent.com\",\"client_secret\":\"8MEYgBdR4nLYpsudEaQV8PcW\"}]"
+                }
+            }
+        }
+    }
+}
