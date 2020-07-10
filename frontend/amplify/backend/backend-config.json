@@ -1,6 +1,6 @@
 {
 	"auth": {
-		"dolphinamplify9f294499": {
+		"dolphinamplify69febdeb": {
 			"service": "Cognito",
 			"providerPlugin": "awscloudformation",
 			"dependsOn": [],

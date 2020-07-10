@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "dolphinamplify9f294499_identitypool_9f294499",
+    "identityPoolName": "dolphinamplify69febdeb_identitypool_69febdeb",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "dolphi9f294499",
-    "userPoolName": "dolphinamplify9f294499_userpool_9f294499",
+    "resourceNameTruncated": "dolphi69febdeb",
+    "userPoolName": "dolphinamplify69febdeb_userpool_69febdeb",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "dolphi9f294499_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "dolphi69febdeb_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "9f294499",
-    "resourceName": "dolphinamplify9f294499",
+    "sharedId": "69febdeb",
+    "resourceName": "dolphinamplify69febdeb",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -47,12 +47,12 @@
     },
     "useDefault": "defaultSocial",
     "hostedUI": true,
-    "hostedUIDomainName": "dolphinamplify9f294499-9f294499",
+    "hostedUIDomainName": "dolphinamplify69febdeb-69febdeb",
     "authProvidersUserPool": [
         "Google"
     ],
     "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:8000/\"],\"LogoutURLs\":[\"http://localhost:8000/\"]}",
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:8080/\"],\"LogoutURLs\":[\"http://localhost:8080/\"]}",
     "userPoolGroupList": [],
     "dependsOn": []
 }
