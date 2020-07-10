@@ -11,6 +11,7 @@
     "@aws-amplify/ui-vue": "^0.2.10",
     "aws-amplify": "^3.0.20",
     "core-js": "^3.6.5",
+    "highlight.js": "^10.1.1",
     "markdown-it": "^11.0.0",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
