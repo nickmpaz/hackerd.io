@@ -11,3 +11,21 @@ functions:
      - http:
          path: ping
          method: get
+  create_note:
+    handler: handler.create_note
+    events:
+     - http:
+         path: ping
+         method: get
+  update_note:
+    handler: handler.update_note
+    events:
+     - http:
+         path: ping
+         method: post
+  destroy_note:
+    handler: handler.destroy_note
+    events:
+     - http:
+         path: ping
+         method: post
