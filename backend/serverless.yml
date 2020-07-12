@@ -11,21 +11,44 @@ functions:
      - http:
          path: ping
          method: get
+  ping_auth:
+    handler: handler.ping_auth
+    events:
+     - http:
+         path: ping_auth
+         method: get
+  get_notes:
+    handler: handler.get_notes
+    events:
+     - http:
+         path: notes
+         method: get
   create_note:
     handler: handler.create_note
     events:
      - http:
-         path: ping
+         path: notes
+         method: post
+  get_note:
+    handler: handler.update_note
+    events:
+     - http:
+         path: notes/{note_id}
          method: get
   update_note:
     handler: handler.update_note
     events:
      - http:
-         path: ping
+         path: notes/{note_id}
          method: post
   destroy_note:
     handler: handler.destroy_note
     events:
      - http:
-         path: ping
+         path: notes/{note_id}/destroy
          method: post
+  
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    pythonBin: /usr/bin/python3
