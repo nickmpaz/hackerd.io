@@ -48,7 +48,5 @@ functions:
          path: notes/{note_id}/destroy
          method: post
   
-custom:
-  pythonRequirements:
-    dockerizePip: non-linux
-    pythonBin: /usr/bin/python3
+plugins:
+  - serverless-python-requirements
