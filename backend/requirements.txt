@@ -1,0 +1,6 @@
+ecdsa==0.15
+pyasn1==0.4.8
+python-dotenv==0.14.0
+python-jose==3.1.0
+rsa==4.6
+six==1.15.0
