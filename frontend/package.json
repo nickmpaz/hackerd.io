@@ -12,6 +12,7 @@
     "aws-amplify": "^3.0.20",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
+    "fuse.js": "^6.4.0",
     "highlight.js": "^10.1.1",
     "markdown-it": "^11.0.0",
     "vue": "^2.6.11",
