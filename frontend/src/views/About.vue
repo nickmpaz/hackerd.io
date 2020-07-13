@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-btn fab dark fixed bottom right large color="primary" @click.stop="toggleMode">
+    <v-btn fab dark fixed bottom right large color="primary" @click.stop="toggleMode" class="ma-6">
       <v-icon v-if="mode === 'show'" large>mdi-pencil</v-icon>
       <v-icon v-if="mode === 'edit'" large>mdi-check</v-icon>
     </v-btn>
@@ -78,20 +78,18 @@ export default {
       return result;
     }
   },
-  beforeCreate: () => {
+  beforeCreate() {
+    var vm = this
     Auth.currentAuthenticatedUser()
       .then(data => {
         console.log(data);
         axios({
           method: "post",
-          url:
-            "https://ivwbrs4jr6.execute-api.us-east-1.amazonaws.com/dev/ping_auth",
+          url: vm.$api.pingAuth,
           headers: {
             Authorization: data.signInUserSession.idToken.jwtToken
           },
-          data: {
-            idToken: data.signInUserSession.idToken.jwtToken
-          }
+          data: {}
         })
           .then(response => {
             console.log(response);

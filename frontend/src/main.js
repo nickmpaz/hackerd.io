@@ -9,6 +9,16 @@ import aws_exports from './aws-exports';
 Vue.config.productionTip = false
 Amplify.configure(aws_exports);
 
+var settings = require('./settings')
+Vue.prototype.$settings = settings
+Vue.prototype.$api = {
+  ping: settings.baseUrl + 'ping',
+  pingAuth: settings.baseUrl + 'ping_auth',
+  createNote: settings.baseUrl + 'notes',
+  getNotes: settings.baseUrl + 'notes',
+  getNote: settings.baseUrl + 'notes/',
+  updateNote: settings.baseUrl + 'notes/'
+}
 
 
 new Vue({

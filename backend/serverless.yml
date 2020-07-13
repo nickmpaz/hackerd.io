@@ -4,7 +4,20 @@ custom: ${file(./variables.yml)}
 provider:
   name: aws
   runtime: python3.8
-
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+          - "dynamodb:PutItem"
+          - "dynamodb:GetItem"
+          - "dynamodb:UpdateItem"
+          - "dynamodb:DeleteItem"
+          - "dynamodb:BatchGetItem"
+          - "dynamodb:BatchWriteItem"
+          - "dynamodb:Scan"
+          - "dynamodb:Query"
+      Resource:
+          - "arn:aws:dynamodb:us-east-1:*:*"
+          
 functions:
   ping:
     handler: handler.ping
@@ -41,7 +54,7 @@ functions:
             arn: ${self:custom.cognitoUserPoolArn}
           cors: true
   get_note:
-    handler: handler.update_note
+    handler: handler.get_note
     events:
       - http:
           path: notes/{note_id}
