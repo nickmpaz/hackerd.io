@@ -32,7 +32,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-card class="pa-12 markdown-body-dark">
+        <v-card class="pa-12 markdown-body-light">
           <div v-html="rawHTML" v-if="mode === 'show'"></div>
           <div v-if="mode === 'edit'">
             <v-textarea v-model="markdown" solo flat auto-grow></v-textarea>
@@ -46,6 +46,8 @@
 <script>
 import hljs from "highlight.js";
 import MarkdownIt from "markdown-it";
+import axios from "axios";
+import { Auth } from "aws-amplify";
 
 export default {
   data: () => ({
@@ -75,6 +77,32 @@ export default {
       var result = md.render(this.markdown);
       return result;
     }
+  },
+  beforeCreate: () => {
+    Auth.currentAuthenticatedUser()
+      .then(data => {
+        console.log(data);
+        axios({
+          method: "post",
+          url:
+            "https://ivwbrs4jr6.execute-api.us-east-1.amazonaws.com/dev/ping_auth",
+          headers: {
+            Authorization: data.signInUserSession.idToken.jwtToken
+          },
+          data: {
+            idToken: data.signInUserSession.idToken.jwtToken
+          }
+        })
+          .then(response => {
+            console.log(response);
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   },
   methods: {
     addTag: function() {

@@ -10,6 +10,7 @@
   "dependencies": {
     "@aws-amplify/ui-vue": "^0.2.10",
     "aws-amplify": "^3.0.20",
+    "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "highlight.js": "^10.1.1",
     "markdown-it": "^11.0.0",

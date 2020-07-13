@@ -1,5 +1,6 @@
 service: dolphin-backend
 frameworkVersion: "=1.74.1"
+custom: ${file(./variables.yml)} 
 provider:
   name: aws
   runtime: python3.8
@@ -8,45 +9,64 @@ functions:
   ping:
     handler: handler.ping
     events:
-     - http:
-         path: ping
-         method: get
+      - http:
+          path: ping
+          method: get
+          cors: true
   ping_auth:
     handler: handler.ping_auth
     events:
-     - http:
-         path: ping_auth
-         method: get
+      - http:
+          path: ping_auth
+          method: post
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn}
+          cors: true
   get_notes:
     handler: handler.get_notes
     events:
-     - http:
-         path: notes
-         method: get
+      - http:
+          path: notes
+          method: get
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn}
+          cors: true
   create_note:
     handler: handler.create_note
     events:
-     - http:
-         path: notes
-         method: post
+      - http:
+          path: notes
+          method: post
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn}
+          cors: true
   get_note:
     handler: handler.update_note
     events:
-     - http:
-         path: notes/{note_id}
-         method: get
+      - http:
+          path: notes/{note_id}
+          method: get
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn}
+          cors: true
   update_note:
     handler: handler.update_note
     events:
-     - http:
-         path: notes/{note_id}
-         method: post
+      - http:
+          path: notes/{note_id}
+          method: post
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn}
+          cors: true
   destroy_note:
     handler: handler.destroy_note
     events:
-     - http:
-         path: notes/{note_id}/destroy
-         method: post
-  
+      - http:
+          path: notes/{note_id}/destroy
+          method: post
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn}
+          cors: true
+
 plugins:
   - serverless-python-requirements
