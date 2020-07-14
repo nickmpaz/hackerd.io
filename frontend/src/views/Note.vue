@@ -124,6 +124,7 @@ export default {
       return d;
     },
     rawHTML: function() {
+      // var vm = this
       var md = MarkdownIt({
         html: true,
         linkify: true,
@@ -138,6 +139,7 @@ export default {
           }
           return ""; // use external default escaping
         }
+        
       });
       var result = md.render(this.note.document);
       return result;
@@ -221,8 +223,8 @@ export default {
     },
     deleteNote: function() {
       var vm = this;
-      vm.confirmDeleteDialog = false
-      vm.deleting = true
+      vm.confirmDeleteDialog = false;
+      vm.deleting = true;
       Auth.currentAuthenticatedUser()
         .then(data => {
           axios({
@@ -233,8 +235,8 @@ export default {
             }
           })
             .then(response => {
-              console.log(response)
-              vm.$router.push({name: 'Index'})
+              console.log(response);
+              vm.$router.push({ name: "Index" });
             })
             .catch(err => {
               console.error(err);

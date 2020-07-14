@@ -67,7 +67,7 @@ export default {
       const options = {
         // includeScore: true,
         // Search in `author` and in `tags` array
-        threshold: 0.5,
+        threshold: 0.25,
         keys: ["title", "tags"]
       };
       const fuse = new Fuse(this.notes, options);
