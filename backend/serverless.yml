@@ -31,7 +31,7 @@ functions:
     events:
       - http:
           path: ping_auth
-          method: post
+          method: get
           authorizer:
             arn: ${self:custom.cognitoUserPoolArn}
           cors: true
@@ -71,12 +71,12 @@ functions:
           authorizer:
             arn: ${self:custom.cognitoUserPoolArn}
           cors: true
-  destroy_note:
-    handler: handler.destroy_note
+  delete_note:
+    handler: handler.delete_note
     events:
       - http:
-          path: notes/{note_id}/destroy
-          method: post
+          path: notes/{note_id}
+          method: delete
           authorizer:
             arn: ${self:custom.cognitoUserPoolArn}
           cors: true

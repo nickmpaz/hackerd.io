@@ -68,9 +68,9 @@ def create_note(event, context):
         Item={
             'user_id': user_id,
             'note_id': note_id,
-            'title': "Test Title",
-            'tags': ['alpha', 'bravo', 'charlie'],
-            'document': "---\n# Something\n- one\n- two\n- three",
+            'title': "Untitled",
+            'tags': [],
+            'document': "There's nothing here yet.",
             'created_at': str(int(time.time())),
             'updated_at': str(int(time.time()))
         }
@@ -110,5 +110,13 @@ def update_note(event, context):
     notes_table.put_item(Item=note)
     return _make_response(body={'updated_at': updated_at})
 
-def destroy_note(event, context):
-    pass
+def delete_note(event, context):
+    user_id = event['requestContext']['authorizer']['claims']['sub']
+    note_id = event['pathParameters']['note_id']
+    notes_table.delete_item(
+        Key={
+            'user_id': user_id,
+            'note_id': note_id
+        }
+    )
+    return _make_response()

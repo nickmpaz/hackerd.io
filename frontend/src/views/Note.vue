@@ -1,7 +1,43 @@
 <template>
   <v-container fluid>
     <loading-dialog :active="!doneLoading" message="Loading" />
+    <loading-dialog :active="deleting" message="Deleting" />
+    <confirm-dialog
+      :active="confirmDeleteDialog"
+      prompt="Delete Note?"
+      confirmMessage="delete"
+      declineMessage="cancel"
+      @confirm="deleteNote"
+      @decline="confirmDeleteDialog = false"
+    />
     <div v-if="doneLoading">
+      <!-- floating action buttons -->
+      <v-speed-dial
+        v-model="fab"
+        fixed
+        bottom
+        right
+        direction="top"
+        transition="slide-y-reverse-transition"
+        class="ma-6"
+        v-if="mode === 'show'"
+      >
+        <template v-slot:activator>
+          <v-btn v-model="fab" color="blue darken-2" dark fab large>
+            <v-icon v-if="fab">mdi-close</v-icon>
+            <v-icon v-else>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+        <v-btn fab dark large color="success" @click.stop="editDocument">
+          <v-icon>mdi-pencil</v-icon>
+        </v-btn>
+        <v-btn fab dark large color="warning">
+          <v-icon>mdi-export</v-icon>
+        </v-btn>
+        <v-btn fab dark large color="error" @click.stop="confirmDeleteDialog = true">
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+      </v-speed-dial>
       <v-btn
         fab
         dark
@@ -9,13 +45,14 @@
         bottom
         right
         large
-        color="primary"
-        @click.stop="toggleMode"
+        color="success"
+        @click.stop="saveDocument"
         class="ma-6"
+        v-if="mode === 'edit'"
       >
-        <v-icon v-if="mode === 'show'" large>mdi-pencil</v-icon>
-        <v-icon v-if="mode === 'edit'" large>mdi-check</v-icon>
+        <v-icon large>mdi-check</v-icon>
       </v-btn>
+      <!-- main content -->
       <v-row justify="center">
         <v-col cols="12" md="10" xl="8">
           <h1 v-if="mode === 'show'">{{ note.title }}</h1>
@@ -32,13 +69,13 @@
           </div>
           <v-row class="mb-2">
             <v-col cols="auto" v-if="note.tags.length == 0">
-              <v-card class="px-1 py-1">
+              <v-card color="primary" class="px-1 py-1">
+                <v-icon small class="ml-1">mdi-tag</v-icon>
                 <span class="px-1">No tags</span>
               </v-card>
             </v-col>
-
             <v-col cols="auto" v-for="(tag, index) in note.tags" :key="index">
-              <v-card class="px-1 py-1">
+              <v-card color="primary" class="px-1 py-1">
                 <v-icon v-if="mode === 'edit'" @click.stop="removeTag(tag)">mdi-close</v-icon>
                 <v-icon v-if="mode === 'show'" small class="ml-1">mdi-tag</v-icon>
                 <span class="px-1">{{ tag }}</span>
@@ -64,12 +101,17 @@ import MarkdownIt from "markdown-it";
 import axios from "axios";
 import { Auth } from "aws-amplify";
 import LoadingDialog from "../components/LoadingDialog";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 export default {
   components: {
-    LoadingDialog
+    LoadingDialog,
+    ConfirmDialog
   },
   data: () => ({
+    confirmDeleteDialog: false,
+    deleting: false,
+    fab: false,
     doneLoading: false,
     tagInput: "",
     mode: "show",
@@ -77,9 +119,9 @@ export default {
   }),
   computed: {
     localUpdatedAt: function() {
-      var vm = this
-      var d = new Date(parseInt(vm.note.updated_at) * 1000)
-      return d
+      var vm = this;
+      var d = new Date(parseInt(vm.note.updated_at) * 1000);
+      return d;
     },
     rawHTML: function() {
       var md = MarkdownIt({
@@ -140,14 +182,15 @@ export default {
       vm.note.tags = vm.note.tags.filter(e => e !== tag);
       document.activeElement.blur(); // stop next tag from getting button focus after you remove a tag
     },
-    toggleMode: function() {
+    editDocument: async function() {
       var vm = this;
-      if (vm.mode === "show") {
-        vm.mode = "edit";
-      } else if (vm.mode === "edit") {
-        vm.mode = "show";
-        vm.updateNote();
-      }
+      vm.mode = "edit";
+      vm.fab = false;
+    },
+    saveDocument: function() {
+      var vm = this;
+      vm.mode = "show";
+      vm.updateNote();
     },
     updateNote: function() {
       var vm = this;
@@ -166,7 +209,32 @@ export default {
             .then(response => {
               console.log(response);
               // correct the updated_at time with new time from server
-              vm.note.updated_at = response.data.updated_at
+              vm.note.updated_at = response.data.updated_at;
+            })
+            .catch(err => {
+              console.error(err);
+            });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    deleteNote: function() {
+      var vm = this;
+      vm.confirmDeleteDialog = false
+      vm.deleting = true
+      Auth.currentAuthenticatedUser()
+        .then(data => {
+          axios({
+            method: "delete",
+            url: vm.$api.updateNote + vm.$route.params.note_id,
+            headers: {
+              Authorization: data.signInUserSession.idToken.jwtToken
+            }
+          })
+            .then(response => {
+              console.log(response)
+              vm.$router.push({name: 'Index'})
             })
             .catch(err => {
               console.error(err);

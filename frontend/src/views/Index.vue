@@ -18,12 +18,18 @@
       </v-btn>
       <v-row justify="center" class="my-12">
         <v-col cols="12" md="10" xl="8">
-          <v-text-field label="Search" outlined></v-text-field>
-          <v-card v-for="(note, index) in notes" :key="index" class="px-4 pt-1 mb-4" @click.stop="viewNote(note.note_id)">
+          <v-text-field label="Search" outlined v-model="query"></v-text-field>
+          <v-card
+            v-for="(note, index) in searchResults"
+            :key="index"
+            class="px-4 pt-1 mb-4"
+            @click.stop="viewNote(note.note_id)"
+          >
             <h1>{{ note.title }}</h1>
             <v-row>
               <v-col cols="auto" v-if="note.tags.length == 0">
-                <v-card class="px-1 py-1">
+                <v-card color="primary" class="px-1 py-1">
+                  <v-icon small class="ml-1">mdi-tag</v-icon>
                   <span class="px-1">No tags</span>
                 </v-card>
               </v-col>
@@ -46,14 +52,34 @@
 import LoadingDialog from "../components/LoadingDialog";
 import axios from "axios";
 import { Auth } from "aws-amplify";
+import Fuse from "fuse.js";
 
 export default {
   components: {
     LoadingDialog
   },
+  computed: {
+    searchResults: function() {
+      var vm = this
+      if (vm.query === "") {
+        return vm.notes
+      }
+      const options = {
+        // includeScore: true,
+        // Search in `author` and in `tags` array
+        threshold: 0.5,
+        keys: ["title", "tags"]
+      };
+      const fuse = new Fuse(this.notes, options);
+      const result = fuse.search(vm.query);
+      return result.map(a => a.item)
+    }
+  },
   data: () => ({
+    query: "",
     creating: false,
-    doneLoading: false
+    doneLoading: false,
+    notes: []
   }),
   beforeCreate() {
     var vm = this;
@@ -80,8 +106,10 @@ export default {
       });
   },
   methods: {
-    viewNote: function(noteId) {
+    viewNote: async function(noteId) {
       var vm = this;
+      // FIXME this makes things feel better? 
+      await new Promise(r => setTimeout(r, 200));
       vm.$router.push({
         name: "Note",
         params: { note_id: noteId }
