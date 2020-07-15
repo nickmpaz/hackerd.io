@@ -86,7 +86,13 @@
             <div class="d-flex justify-end mb-3">Last Updated: {{ localUpdatedAt }}</div>
             <div v-html="renderedMarkdown" v-if="mode === 'show'" class="line-numbers"></div>
             <div v-if="mode === 'edit'">
-              <v-textarea v-model="note.document" solo flat auto-grow></v-textarea>
+              <!-- <v-textarea :value="note.document" rows="5" outlined auto-grow></v-textarea> -->
+              <textarea
+                id="note-editor"
+                :rows="note.document.split(/\r\n|\r|\n/).length"
+                v-model="note.document"
+                spellcheck="false"
+              ></textarea>
             </div>
           </v-card>
         </v-col>
@@ -102,11 +108,16 @@
 import prism from "prismjs";
 import "prismjs/plugins/autoloader/prism-autoloader.js";
 import "prismjs/plugins/line-numbers/prism-line-numbers.js";
+import "prismjs/plugins/toolbar/prism-toolbar.js";
+import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.js";
+
 import MarkdownIt from "markdown-it";
 import axios from "axios";
 import { Auth } from "aws-amplify";
 import LoadingDialog from "../components/LoadingDialog";
 import ConfirmDialog from "../components/ConfirmDialog";
+prism.plugins.autoloader.languages_path = 'prismjs/components'
+console.log(prism.plugins.autoloader.languages_path)
 
 export default {
   components: {
@@ -132,7 +143,7 @@ export default {
       var vm = this;
       var d = new Date(parseInt(vm.note.updated_at) * 1000);
       return d;
-    },
+    }
   },
   beforeCreate() {
     var vm = this;
@@ -202,6 +213,7 @@ export default {
     saveDocument: function() {
       var vm = this;
       vm.mode = "show";
+      vm.renderMarkdown();
       vm.updateNote();
     },
     updateNote: function() {
@@ -261,17 +273,38 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../styles/markdown-light.scss";
+@import "../styles/markdown-dark.scss";
+@import "prismjs/plugins/line-numbers/prism-line-numbers";
+
 .markdown-body-light {
   @import "../styles/prism-themes/prism-material-light";
+  @import "../styles/prism-toolbar-light.scss";
+
+  #note-editor {
+    resize: none;
+    color: white;
+    outline: none;
+    width: 100%;
+    border: solid 1px grey;
+    padding: 1em;
+  }
 }
 
 .markdown-body-dark {
-  @import "highlight.js/scss/a11y-dark.scss";
   @import "../styles/prism-themes/prism-material-dark";
-  @import "../../node_modules/prismjs/plugins/line-numbers/prism-line-numbers";
+  @import "../styles/prism-toolbar-dark.scss";
+
+  #note-editor {
+    resize: none;
+    color: white;
+    outline: none;
+    width: 100%;
+    border: solid 1px grey;
+    padding: 1em;
+  }
 }
-@import "../styles/markdown-light.scss";
-@import "../styles/markdown-dark.scss";
+
 .tag-input {
   height: 55px;
 }
