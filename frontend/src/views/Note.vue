@@ -10,7 +10,7 @@
       @confirm="deleteNote"
       @decline="confirmDeleteDialog = false"
     />
-    <div v-if="retrievedData">
+    <div v-show="doneLoading">
       <!-- floating action buttons -->
       <v-speed-dial
         v-model="fab"
@@ -119,9 +119,13 @@ export default {
     deleting: false,
     fab: false,
     doneLoading: false,
-    retrievedData: false,
     tagInput: "",
     mode: "show",
+    note: {
+      title: "",
+      tags: [],
+      document: ""
+    }
   }),
   computed: {
     localUpdatedAt: function() {
@@ -129,35 +133,6 @@ export default {
       var d = new Date(parseInt(vm.note.updated_at) * 1000);
       return d;
     },
-    rawHTML: function() {
-      // var vm = this
-      var md = MarkdownIt({
-        html: true,
-        linkify: true,
-        typographer: true,
-        // highlight: function(str, lang) {
-        //   if (lang && hljs.getLanguage(lang)) {
-        //     try {
-        //       return hljs.highlight(lang, str).value;
-        //     } catch (__) {
-        //       console.log("highlight error");
-        //     }
-        //   }
-        //   return ""; // use external default escaping
-        // }
-        highlight: function(str, lang) {
-          try {
-            require("prismjs/components/prism-python");
-            return prism.highlight(str, prism.languages[lang], lang);
-          } catch (err) {
-            console.log(err);
-          }
-          return ""; // use external default escaping
-        }
-      });
-      var result = md.render(this.note.document);
-      return result;
-    }
   },
   beforeCreate() {
     var vm = this;
@@ -171,12 +146,10 @@ export default {
           },
           data: {}
         })
-          .then(async function (response) {
+          .then(async function(response) {
             vm.note = response.data.note;
-            vm.retrievedData = true
-            await vm.renderMarkdown()
+            await vm.renderMarkdown();
             vm.doneLoading = true;
-
           })
           .catch(err => {
             console.error(err);
@@ -188,7 +161,7 @@ export default {
   },
   methods: {
     renderMarkdown: async function() {
-      var vm = this
+      var vm = this;
       var md = MarkdownIt({
         html: true,
         linkify: true,
