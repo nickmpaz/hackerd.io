@@ -10,7 +10,7 @@
       @confirm="deleteNote"
       @decline="confirmDeleteDialog = false"
     />
-    <div v-if="doneLoading">
+    <div v-if="retrievedData">
       <!-- floating action buttons -->
       <v-speed-dial
         v-model="fab"
@@ -31,7 +31,7 @@
         <v-btn fab dark large color="success" @click.stop="editDocument">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn fab dark large color="warning">
+        <v-btn fab dark large color="warning" @click="renderMarkdown">
           <v-icon>mdi-export</v-icon>
         </v-btn>
         <v-btn fab dark large color="error" @click.stop="confirmDeleteDialog = true">
@@ -69,13 +69,13 @@
           </div>
           <v-row class="mb-2">
             <v-col cols="auto" v-if="note.tags.length == 0">
-              <v-card color="primary" class="px-1 py-1">
+              <v-card color="primary" class="px-1 py-1" dark>
                 <v-icon small class="ml-1">mdi-tag</v-icon>
                 <span class="px-1">No tags</span>
               </v-card>
             </v-col>
             <v-col cols="auto" v-for="(tag, index) in note.tags" :key="index">
-              <v-card color="primary" class="px-1 py-1">
+              <v-card color="primary" class="px-1 py-1" dark>
                 <v-icon v-if="mode === 'edit'" @click.stop="removeTag(tag)">mdi-close</v-icon>
                 <v-icon v-if="mode === 'show'" small class="ml-1">mdi-tag</v-icon>
                 <span class="px-1">{{ tag }}</span>
@@ -84,7 +84,7 @@
           </v-row>
           <v-card class="px-8 pb-8 pt-4 markdown-body-dark">
             <div class="d-flex justify-end mb-3">Last Updated: {{ localUpdatedAt }}</div>
-            <div v-html="rawHTML" v-if="mode === 'show'"></div>
+            <div v-html="renderedMarkdown" v-if="mode === 'show'" class="line-numbers"></div>
             <div v-if="mode === 'edit'">
               <v-textarea v-model="note.document" solo flat auto-grow></v-textarea>
             </div>
@@ -96,7 +96,12 @@
 </template>
 
 <script>
-import hljs from "highlight.js";
+// import hljs from "highlight.js";
+
+// import hljs from "highlight.js";
+import prism from "prismjs";
+import "prismjs/plugins/autoloader/prism-autoloader.js";
+import "prismjs/plugins/line-numbers/prism-line-numbers.js";
 import MarkdownIt from "markdown-it";
 import axios from "axios";
 import { Auth } from "aws-amplify";
@@ -109,13 +114,14 @@ export default {
     ConfirmDialog
   },
   data: () => ({
+    renderedMarkdown: "",
     confirmDeleteDialog: false,
     deleting: false,
     fab: false,
     doneLoading: false,
+    retrievedData: false,
     tagInput: "",
     mode: "show",
-    note: null
   }),
   computed: {
     localUpdatedAt: function() {
@@ -129,17 +135,25 @@ export default {
         html: true,
         linkify: true,
         typographer: true,
+        // highlight: function(str, lang) {
+        //   if (lang && hljs.getLanguage(lang)) {
+        //     try {
+        //       return hljs.highlight(lang, str).value;
+        //     } catch (__) {
+        //       console.log("highlight error");
+        //     }
+        //   }
+        //   return ""; // use external default escaping
+        // }
         highlight: function(str, lang) {
-          if (lang && hljs.getLanguage(lang)) {
-            try {
-              return hljs.highlight(lang, str).value;
-            } catch (__) {
-              console.log("highlight error");
-            }
+          try {
+            require("prismjs/components/prism-python");
+            return prism.highlight(str, prism.languages[lang], lang);
+          } catch (err) {
+            console.log(err);
           }
           return ""; // use external default escaping
         }
-        
       });
       var result = md.render(this.note.document);
       return result;
@@ -157,9 +171,12 @@ export default {
           },
           data: {}
         })
-          .then(response => {
+          .then(async function (response) {
             vm.note = response.data.note;
+            vm.retrievedData = true
+            await vm.renderMarkdown()
             vm.doneLoading = true;
+
           })
           .catch(err => {
             console.error(err);
@@ -170,6 +187,26 @@ export default {
       });
   },
   methods: {
+    renderMarkdown: async function() {
+      var vm = this
+      var md = MarkdownIt({
+        html: true,
+        linkify: true,
+        typographer: true,
+        highlight: function(str, lang) {
+          try {
+            require("prismjs/components/prism-python");
+            return prism.highlight(str, prism.languages[lang], lang);
+          } catch (err) {
+            console.log(err);
+          }
+          return ""; // use external default escaping
+        }
+      });
+      vm.renderedMarkdown = md.render(vm.note.document);
+      await new Promise(r => setTimeout(r, 0)); // wait for renderedMarkdown to be put on DOM
+      prism.highlightAll();
+    },
     addTag: function() {
       var vm = this;
       if (!vm.note.tags.includes(vm.tagInput)) {
@@ -251,17 +288,17 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../styles/markdown-light.scss";
-@import "../styles/markdown-dark.scss";
-
 .markdown-body-light {
-  @import "../../node_modules/highlight.js/scss/arduino-light.scss";
+  @import "../styles/prism-themes/prism-material-light";
 }
 
 .markdown-body-dark {
-  @import "../../node_modules/highlight.js/scss/vs2015.scss";
+  @import "highlight.js/scss/a11y-dark.scss";
+  @import "../styles/prism-themes/prism-material-dark";
+  @import "../../node_modules/prismjs/plugins/line-numbers/prism-line-numbers";
 }
-
+@import "../styles/markdown-light.scss";
+@import "../styles/markdown-dark.scss";
 .tag-input {
   height: 55px;
 }
