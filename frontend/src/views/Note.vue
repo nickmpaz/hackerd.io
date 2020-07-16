@@ -81,8 +81,10 @@
                 <span class="px-1">{{ tag }}</span>
               </v-card>
             </v-col>
-          </v-row> 
-          <v-card :class="'px-8 pb-8 pt-4 ' +  getMarkdownTheme">
+          </v-row>
+          <v-card
+            :class="'px-8 pb-8 pt-4 ' + (this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')"
+          >
             <div class="d-flex justify-end mb-3">Last Updated: {{ localUpdatedAt }}</div>
             <div v-html="renderedMarkdown" v-if="mode === 'show'" class="line-numbers"></div>
             <div v-if="mode === 'edit'">
@@ -133,11 +135,9 @@ export default {
       var d = new Date(parseInt(vm.note.updated_at) * 1000);
       return d;
     },
-    getMarkdownTheme: function() {
-      return this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light'
-    }
   },
   beforeCreate() {
+    console.log('before create start')
     var vm = this;
     Auth.currentAuthenticatedUser()
       .then(data => {
@@ -150,9 +150,14 @@ export default {
           data: {}
         })
           .then(async function(response) {
+            console.log('data came in')
             vm.note = response.data.note;
             await vm.renderMarkdown();
+            console.log('done rendering')
             vm.doneLoading = true;
+            sessionStorage.setItem(vm.$route.fullPath + ".renderedMarkdown", JSON.stringify(vm.renderedMarkdown))
+            sessionStorage.setItem(vm.$route.fullPath + ".note", JSON.stringify(response.data.note))
+
           })
           .catch(err => {
             console.error(err);
@@ -161,6 +166,18 @@ export default {
       .catch(err => {
         console.log(err);
       });
+  },
+  async created() {
+    var vm = this
+    console.log(vm.$route)
+    // check for page content in session storage
+    if (sessionStorage.getItem(vm.$route.fullPath + ".renderedMarkdown")) {
+      vm.renderedMarkdown = JSON.parse(sessionStorage.getItem(vm.$route.fullPath + ".renderedMarkdown"));
+      vm.note = JSON.parse(sessionStorage.getItem(vm.$route.fullPath + ".note"));
+      await new Promise(r => setTimeout(r, 0)); // wait for renderedMarkdown to be put on DOM
+      prism.highlightAll()
+      vm.doneLoading = true;
+    } 
   },
   methods: {
     renderMarkdown: async function() {

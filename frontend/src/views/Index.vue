@@ -3,17 +3,7 @@
     <loading-dialog :active="!doneLoading" message="Loading" />
     <loading-dialog :active="creating" message="Creating" />
     <div v-if="doneLoading">
-      <v-btn
-        fab
-        dark
-        fixed
-        bottom
-        right
-        large
-        color="primary"
-        @click="createNote"
-        class="ma-6"
-      >
+      <v-btn fab dark fixed bottom right large color="primary" @click="createNote" class="ma-6">
         <v-icon large>mdi-plus</v-icon>
       </v-btn>
       <v-row justify="center" class="my-12">
@@ -60,9 +50,9 @@ export default {
   },
   computed: {
     searchResults: function() {
-      var vm = this
+      var vm = this;
       if (vm.query === "") {
-        return vm.notes
+        return vm.notes;
       }
       const options = {
         // includeScore: true,
@@ -72,7 +62,7 @@ export default {
       };
       const fuse = new Fuse(this.notes, options);
       const result = fuse.search(vm.query);
-      return result.map(a => a.item)
+      return result.map(a => a.item);
     }
   },
   data: () => ({
@@ -83,6 +73,7 @@ export default {
   }),
   beforeCreate() {
     var vm = this;
+    
     Auth.currentAuthenticatedUser()
       .then(data => {
         axios({
@@ -96,6 +87,7 @@ export default {
             console.log(response);
             vm.notes = response.data.notes;
             vm.doneLoading = true;
+            sessionStorage.setItem(vm.$route.fullPath + ".notes", JSON.stringify(response.data.notes))
           })
           .catch(err => {
             console.error(err);
@@ -105,10 +97,19 @@ export default {
         console.log(err);
       });
   },
+  created() {
+    var vm = this
+    // check for page content in session storage
+    if (sessionStorage.getItem(vm.$route.fullPath + ".notes")) {
+      console.log('found it ')
+      vm.doneLoading = true;
+      vm.notes = JSON.parse(sessionStorage.getItem(vm.$route.fullPath + ".notes"));
+    } 
+  },
   methods: {
     viewNote: async function(noteId) {
       var vm = this;
-      // FIXME this makes things feel better? 
+      // FIXME this makes things feel better?
       await new Promise(r => setTimeout(r, 150));
       vm.$router.push({
         name: "Note",
