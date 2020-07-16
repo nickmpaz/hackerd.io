@@ -25,7 +25,7 @@
             <v-list-item-title>Settings</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link @click.stop="signOut">
+        <v-list-item link @click="signOut">
           <v-list-item-action>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-action>
@@ -37,10 +37,10 @@
     </v-navigation-drawer>
 
     <v-app-bar app clipped-left>
-      <v-app-bar-nav-icon v-if="authenticated" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon v-if="authenticated" @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title
         class="cursor-pointer"
-        @click.stop="$router.push({name: 'Index'})"
+        @click="$router.push({name: 'Index'})"
       >Application</v-toolbar-title>
     </v-app-bar>
 

@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-btn fab dark fixed bottom right large color="primary" @click.stop="toggleMode" class="ma-6">
+    <v-btn fab dark fixed bottom right large color="primary" @click="toggleMode" class="ma-6">
       <v-icon v-if="mode === 'show'" large>mdi-pencil</v-icon>
       <v-icon v-if="mode === 'edit'" large>mdi-check</v-icon>
     </v-btn>
@@ -27,7 +27,7 @@
 
           <v-col cols="auto" v-for="(tag, index) in tags" :key="index">
             <v-card class="px-1 py-1">
-              <v-icon v-if="mode === 'edit'" @click.stop="removeTag(tag)">mdi-close</v-icon>
+              <v-icon v-if="mode === 'edit'" @click="removeTag(tag)">mdi-close</v-icon>
               <span class="px-1">{{ tag }}</span>
             </v-card>
           </v-col>

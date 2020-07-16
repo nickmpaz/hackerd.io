@@ -11,7 +11,7 @@
         right
         large
         color="primary"
-        @click.stop="createNote"
+        @click="createNote"
         class="ma-6"
       >
         <v-icon large>mdi-plus</v-icon>
@@ -23,7 +23,7 @@
             v-for="(note, index) in searchResults"
             :key="index"
             class="px-4 pt-1 mb-4"
-            @click.stop="viewNote(note.note_id)"
+            @click="viewNote(note.note_id)"
           >
             <h1>{{ note.title }}</h1>
             <v-row>

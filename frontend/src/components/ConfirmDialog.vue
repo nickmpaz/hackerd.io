@@ -4,8 +4,8 @@
       <v-card color="secondary" class="px-8" :dark="$vuetify.theme.dark">
         <div class="title py-4">{{ prompt }}</div>
         <div class="d-flex justify-space-between pb-6 pt-2">
-          <v-btn width="150" color="success" @click.stop="confirm">{{ confirmMessage }}</v-btn>
-          <v-btn width="150" color="error" @click.stop="decline">{{ declineMessage }}</v-btn>
+          <v-btn width="150" color="success" @click="confirm">{{ confirmMessage }}</v-btn>
+          <v-btn width="150" color="error" @click="decline">{{ declineMessage }}</v-btn>
         </div>
       </v-card>
     </v-dialog>

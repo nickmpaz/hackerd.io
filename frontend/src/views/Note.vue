@@ -28,13 +28,13 @@
             <v-icon v-else>mdi-dots-vertical</v-icon>
           </v-btn>
         </template>
-        <v-btn fab dark large color="success" @click.stop="editDocument">
+        <v-btn fab dark large color="success" @click="editDocument">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
         <v-btn fab dark large color="warning" @click="renderMarkdown">
           <v-icon>mdi-export</v-icon>
         </v-btn>
-        <v-btn fab dark large color="error" @click.stop="confirmDeleteDialog = true">
+        <v-btn fab dark large color="error" @click="confirmDeleteDialog = true">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
       </v-speed-dial>
@@ -46,7 +46,7 @@
         right
         large
         color="success"
-        @click.stop="saveDocument"
+        @click="saveDocument"
         class="ma-6"
         v-if="mode === 'edit'"
       >
@@ -76,7 +76,7 @@
             </v-col>
             <v-col cols="auto" v-for="(tag, index) in note.tags" :key="index">
               <v-card color="primary" class="px-1 py-1" dark>
-                <v-icon v-if="mode === 'edit'" @click.stop="removeTag(tag)">mdi-close</v-icon>
+                <v-icon v-if="mode === 'edit'" @click="removeTag(tag)">mdi-close</v-icon>
                 <v-icon v-if="mode === 'show'" small class="ml-1">mdi-tag</v-icon>
                 <span class="px-1">{{ tag }}</span>
               </v-card>

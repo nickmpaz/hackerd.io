@@ -1,7 +1,7 @@
 <template>
 <v-container class="fill-height">
     <v-row justify="center">
-    <v-btn @click.stop="federatedSignIn" :loading="loading">Sign in with Google</v-btn>
+    <v-btn @click="federatedSignIn" :loading="loading">Sign in with Google</v-btn>
     </v-row>
 </v-container>
 </template>
