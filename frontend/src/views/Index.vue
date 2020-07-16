@@ -109,7 +109,7 @@ export default {
     viewNote: async function(noteId) {
       var vm = this;
       // FIXME this makes things feel better? 
-      await new Promise(r => setTimeout(r, 200));
+      await new Promise(r => setTimeout(r, 150));
       vm.$router.push({
         name: "Note",
         params: { note_id: noteId }

@@ -163,7 +163,6 @@ var lang_aliases = /*aliases_placeholder[*/ {
 } /*]*/
 
 function loadPrismDependencies (lang) {
-  console.log('loading dep: ' + lang)
   if (lang in lang_dependencies) {
     if (Array.isArray(lang_dependencies[lang])) {
       var dependency

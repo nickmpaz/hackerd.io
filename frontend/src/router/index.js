@@ -20,17 +20,18 @@ const routes = [
     meta: { requiresAuth: false }
   },
   {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import('../views/Settings.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/:note_id',
     name: 'Note',
     component: () => import('../views/Note.vue'),
     meta: { requiresAuth: true }
   },
-  {
-    path: '/about',
-    name: 'About',
-    component: () => import('../views/About.vue'),
-    meta: { requiresAuth: true }
-  }
+  
 ]
 
 const router = new VueRouter({

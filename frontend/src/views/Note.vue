@@ -23,7 +23,7 @@
         v-if="mode === 'show'"
       >
         <template v-slot:activator>
-          <v-btn v-model="fab" color="blue darken-2" dark fab large>
+          <v-btn v-model="fab" color="primary" dark fab large>
             <v-icon v-if="fab">mdi-close</v-icon>
             <v-icon v-else>mdi-dots-vertical</v-icon>
           </v-btn>
@@ -81,8 +81,8 @@
                 <span class="px-1">{{ tag }}</span>
               </v-card>
             </v-col>
-          </v-row>
-          <v-card class="px-8 pb-8 pt-4 markdown-body-dark">
+          </v-row> 
+          <v-card :class="'px-8 pb-8 pt-4 ' +  getMarkdownTheme">
             <div class="d-flex justify-end mb-3">Last Updated: {{ localUpdatedAt }}</div>
             <div v-html="renderedMarkdown" v-if="mode === 'show'" class="line-numbers"></div>
             <div v-if="mode === 'edit'">
@@ -107,8 +107,6 @@ import axios from "axios";
 import { Auth } from "aws-amplify";
 import LoadingDialog from "../components/LoadingDialog";
 import ConfirmDialog from "../components/ConfirmDialog";
-// prism.plugins.autoloader.languages_path = 'prismjs/components/'
-// console.log(prism.plugins.autoloader.languages_path)
 
 export default {
   components: {
@@ -134,6 +132,9 @@ export default {
       var vm = this;
       var d = new Date(parseInt(vm.note.updated_at) * 1000);
       return d;
+    },
+    getMarkdownTheme: function() {
+      return this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light'
     }
   },
   beforeCreate() {
@@ -164,7 +165,7 @@ export default {
   methods: {
     renderMarkdown: async function() {
       var vm = this;
-      
+
       vm.renderedMarkdown = vm.$md.render(vm.note.document);
       await new Promise(r => setTimeout(r, 0)); // wait for renderedMarkdown to be put on DOM
       prism.highlightAll();
