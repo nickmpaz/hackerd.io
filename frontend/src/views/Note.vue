@@ -143,7 +143,7 @@ export default {
       .then(data => {
         axios({
           method: "get",
-          url: vm.$api.getNote + vm.$route.params.note_id,
+          url: vm.$variables.api.getNote + vm.$route.params.note_id,
           headers: {
             Authorization: data.signInUserSession.idToken.jwtToken
           },
@@ -201,7 +201,7 @@ export default {
         .then(data => {
           axios({
             method: "post",
-            url: vm.$api.updateNote + vm.$route.params.note_id,
+            url: vm.$variables.api.updateNote + vm.$route.params.note_id,
             headers: {
               Authorization: data.signInUserSession.idToken.jwtToken
             },
@@ -230,7 +230,7 @@ export default {
         .then(data => {
           axios({
             method: "delete",
-            url: vm.$api.updateNote + vm.$route.params.note_id,
+            url: vm.$variables.api.updateNote + vm.$route.params.note_id,
             headers: {
               Authorization: data.signInUserSession.idToken.jwtToken
             }

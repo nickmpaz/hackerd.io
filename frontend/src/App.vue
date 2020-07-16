@@ -93,7 +93,7 @@ export default {
       );
     } else {
       console.log("Did not find dark mode preference. Setting to default.");
-      this.$vuetify.theme.dark = this.$settings.darkModeDefault;
+      this.$vuetify.theme.dark = this.$variables.darkModeDefault;
     }
   },
   methods: {

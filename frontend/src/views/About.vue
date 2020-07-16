@@ -85,7 +85,7 @@ export default {
         console.log(data);
         axios({
           method: "post",
-          url: vm.$api.pingAuth,
+          url: vm.$variables.api.pingAuth,
           headers: {
             Authorization: data.signInUserSession.idToken.jwtToken
           },

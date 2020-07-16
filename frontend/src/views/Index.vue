@@ -87,7 +87,7 @@ export default {
       .then(data => {
         axios({
           method: "get",
-          url: vm.$api.getNotes,
+          url: vm.$variables.api.getNotes,
           headers: {
             Authorization: data.signInUserSession.idToken.jwtToken
           }
@@ -123,7 +123,7 @@ export default {
           console.log(data);
           axios({
             method: "post",
-            url: vm.$api.createNote,
+            url: vm.$variables.api.createNote,
             headers: {
               Authorization: data.signInUserSession.idToken.jwtToken
             }

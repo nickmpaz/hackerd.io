@@ -6,24 +6,12 @@ import Amplify from 'aws-amplify'
 import '@aws-amplify/ui-vue'
 import aws_exports from './aws-exports'
 import md from './markdown.js'
+import variables from './variables.js'
 
 Vue.prototype.$md = md
+Vue.prototype.$variables = variables
 Vue.config.productionTip = false
 Amplify.configure(aws_exports)
-
-var settings = require('./settings')
-Vue.prototype.$settings = settings
-Vue.prototype.$api = {
-  ping: settings.baseUrl + 'ping',
-  pingAuth: settings.baseUrl + 'ping_auth',
-  createNote: settings.baseUrl + 'notes',
-  getNotes: settings.baseUrl + 'notes',
-  getNote: settings.baseUrl + 'notes/',
-  updateNote: settings.baseUrl + 'notes/'
-}
-
-
-
 
 new Vue({
   router,
