@@ -102,22 +102,13 @@
 </template>
 
 <script>
-// import hljs from "highlight.js";
-
-// import hljs from "highlight.js";
 import prism from "prismjs";
-import "prismjs/plugins/autoloader/prism-autoloader.js";
-import "prismjs/plugins/line-numbers/prism-line-numbers.js";
-import "prismjs/plugins/toolbar/prism-toolbar.js";
-import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.js";
-
-import MarkdownIt from "markdown-it";
 import axios from "axios";
 import { Auth } from "aws-amplify";
 import LoadingDialog from "../components/LoadingDialog";
 import ConfirmDialog from "../components/ConfirmDialog";
-prism.plugins.autoloader.languages_path = 'prismjs/components'
-console.log(prism.plugins.autoloader.languages_path)
+// prism.plugins.autoloader.languages_path = 'prismjs/components/'
+// console.log(prism.plugins.autoloader.languages_path)
 
 export default {
   components: {
@@ -173,21 +164,8 @@ export default {
   methods: {
     renderMarkdown: async function() {
       var vm = this;
-      var md = MarkdownIt({
-        html: true,
-        linkify: true,
-        typographer: true,
-        highlight: function(str, lang) {
-          try {
-            require("prismjs/components/prism-python");
-            return prism.highlight(str, prism.languages[lang], lang);
-          } catch (err) {
-            console.log(err);
-          }
-          return ""; // use external default escaping
-        }
-      });
-      vm.renderedMarkdown = md.render(vm.note.document);
+      
+      vm.renderedMarkdown = vm.$md.render(vm.note.document);
       await new Promise(r => setTimeout(r, 0)); // wait for renderedMarkdown to be put on DOM
       prism.highlightAll();
     },
