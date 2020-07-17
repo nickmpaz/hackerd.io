@@ -8,15 +8,15 @@
       </v-btn>
       <v-row justify="center" class="my-12">
         <v-col cols="12" md="10" xl="8">
-          <v-text-field label="Search" outlined v-model="query"></v-text-field>
+          <v-text-field label="Search" solo single-line v-model="query"></v-text-field>
           <v-card
             v-for="(note, index) in searchResults"
             :key="index"
-            class="px-4 pt-1 mb-4"
+            class="px-4 pt-1 pb-2 mb-4"
             @click="viewNote(note.note_id)"
           >
             <h1>{{ note.title }}</h1>
-            <v-row>
+            <v-row dense>
               <v-col cols="auto" v-if="note.tags.length == 0">
                 <v-card color="primary" class="px-1 py-1" dark>
                   <v-icon small class="ml-1">mdi-tag</v-icon>

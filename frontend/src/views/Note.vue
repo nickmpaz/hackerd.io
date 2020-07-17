@@ -67,7 +67,7 @@
               solo
             ></v-text-field>
           </div>
-          <v-row class="mb-2">
+          <v-row dense class="mb-3 mt-1">
             <v-col cols="auto" v-if="note.tags.length == 0">
               <v-card color="primary" class="px-1 py-1" dark>
                 <v-icon small class="ml-1">mdi-tag</v-icon>
@@ -85,10 +85,9 @@
           <v-card
             :class="'px-8 pb-8 pt-4 ' + (this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')"
           >
-            <div class="d-flex justify-end mb-3">Last Updated: {{ localUpdatedAt }}</div>
-            <div v-html="renderedMarkdown" v-if="mode === 'show'" class="line-numbers"></div>
+            <div class="d-flex justify-end mb-3">Updated at: {{ localUpdatedAt }}</div>
+            <div v-html="renderedMarkdown" v-show="mode === 'show'" class="line-numbers"></div>
             <div v-if="mode === 'edit'">
-              <!-- <v-textarea :value="note.document" rows="5" outlined auto-grow></v-textarea> -->
               <textarea
                 id="note-editor"
                 :rows="note.document.split(/\r\n|\r|\n/).length"
@@ -134,10 +133,10 @@ export default {
       var vm = this;
       var d = new Date(parseInt(vm.note.updated_at) * 1000);
       return d;
-    },
+    }
   },
   beforeCreate() {
-    console.log('before create start')
+    console.log("before create start");
     var vm = this;
     Auth.currentAuthenticatedUser()
       .then(data => {
@@ -150,14 +149,19 @@ export default {
           data: {}
         })
           .then(async function(response) {
-            console.log('data came in')
+            console.log("data came in");
             vm.note = response.data.note;
             await vm.renderMarkdown();
-            console.log('done rendering')
+            console.log("done rendering");
             vm.doneLoading = true;
-            sessionStorage.setItem(vm.$route.fullPath + ".renderedMarkdown", JSON.stringify(vm.renderedMarkdown))
-            sessionStorage.setItem(vm.$route.fullPath + ".note", JSON.stringify(response.data.note))
-
+            sessionStorage.setItem(
+              vm.$route.fullPath + ".renderedMarkdown",
+              JSON.stringify(vm.renderedMarkdown)
+            );
+            sessionStorage.setItem(
+              vm.$route.fullPath + ".note",
+              JSON.stringify(vm.note)
+            );
           })
           .catch(err => {
             console.error(err);
@@ -168,22 +172,29 @@ export default {
       });
   },
   async created() {
-    var vm = this
-    console.log(vm.$route)
+    var vm = this;
+    console.log(vm.$route);
     // check for page content in session storage
     if (sessionStorage.getItem(vm.$route.fullPath + ".renderedMarkdown")) {
-      vm.renderedMarkdown = JSON.parse(sessionStorage.getItem(vm.$route.fullPath + ".renderedMarkdown"));
-      vm.note = JSON.parse(sessionStorage.getItem(vm.$route.fullPath + ".note"));
+      vm.renderedMarkdown = JSON.parse(
+        sessionStorage.getItem(vm.$route.fullPath + ".renderedMarkdown")
+      );
+      vm.note = JSON.parse(
+        sessionStorage.getItem(vm.$route.fullPath + ".note")
+      );
       await new Promise(r => setTimeout(r, 0)); // wait for renderedMarkdown to be put on DOM
-      prism.highlightAll()
+      prism.highlightAll();
       vm.doneLoading = true;
-    } 
+    }
   },
   methods: {
     renderMarkdown: async function() {
       var vm = this;
 
       vm.renderedMarkdown = vm.$md.render(vm.note.document);
+      console.log(vm.renderedMarkdown);
+
+      // prism.highlightAll() renders the prism plugins (they don't get put in during standard highlighting that happens when markdown is rendered)
       await new Promise(r => setTimeout(r, 0)); // wait for renderedMarkdown to be put on DOM
       prism.highlightAll();
     },
@@ -201,15 +212,29 @@ export default {
       vm.note.tags = vm.note.tags.filter(e => e !== tag);
       document.activeElement.blur(); // stop next tag from getting button focus after you remove a tag
     },
-    editDocument: async function() {
+    editDocument: function() {
       var vm = this;
       vm.mode = "edit";
       vm.fab = false;
     },
-    saveDocument: function() {
+    saveDocument: async function() {
+      console.log("save start");
+
       var vm = this;
+      await vm.renderMarkdown();
+      console.log("rendered");
+
       vm.mode = "show";
-      vm.renderMarkdown();
+
+      sessionStorage.setItem(
+        vm.$route.fullPath + ".renderedMarkdown",
+        JSON.stringify(vm.renderedMarkdown)
+      );
+      sessionStorage.setItem(
+        vm.$route.fullPath + ".note",
+        JSON.stringify(vm.note)
+      );
+
       vm.updateNote();
     },
     updateNote: function() {
@@ -279,7 +304,7 @@ export default {
 
   #note-editor {
     resize: none;
-    color: white;
+    color: black;
     outline: none;
     width: 100%;
     border: solid 1px grey;

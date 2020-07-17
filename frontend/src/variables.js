@@ -1,7 +1,7 @@
-var baseUrl = 'https://ivwbrs4jr6.execute-api.us-east-1.amazonaws.com/dev/'
-var variables = {
-  brand: 'Application',
-  navBarTitle: process.env.VUE_APP_NAV_BAR_TITLE,
+var baseUrl = 'https://ivwbrs4jr6.execute-api.us-east-1.amazonaws.com/dev/';
+module.exports = {
+  brand: 'ApplicationName',
+  stageIndicator: process.env.VUE_APP_STAGE_INDICATOR,
   api: {
     baseUrl: baseUrl,
     ping: baseUrl + 'ping',
@@ -12,6 +12,4 @@ var variables = {
     updateNote: baseUrl + 'notes/'
   },
   darkModeDefault: true
-}
-
-export default variables
+};

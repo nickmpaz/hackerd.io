@@ -1,7 +1,40 @@
 <template>
-  <v-container class="fill-height bg">
-    <v-row justify="center">
-      <v-btn @click="federatedSignIn" :loading="loading">Sign in with Google</v-btn>
+  <v-container fluid class="fill-height">
+    <!-- <img src="../../public/homepage-top.svg" alt="triangle with all three sides equal" height="50%" width="100%" /> -->
+    <v-row justify="center" align="center">
+      <v-col cols="8">
+        <div class="d-flex justify-center">
+          <span>
+            <div>
+              <span class="display-4">{{ $variables.brand }}</span>
+            </div>
+
+            <div class="mt-4">
+              <span class="display-1">Build a beautiful, integrated knowledge base for programming</span>
+            </div>
+          </span>
+        </div>
+      </v-col>
+      <v-col cols="4">
+        <div class="d-flex justify-center">
+          <v-btn
+            @click="federatedSignIn"
+            :loading="loading"
+            height="75"
+            width="300"
+            color="white"
+            light
+          >
+            <v-img
+              :src="getImgUrl('btn_google_light_normal_ios.svg')"
+              contain
+              height="60"
+              width="60"
+            ></v-img>
+            <span class="mr-6 ml-4">Sign in with Google</span>
+          </v-btn>
+        </div>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -10,23 +43,31 @@
 import { Auth } from "aws-amplify";
 
 export default {
-  data: () => ({
-    loading: false
-  }),
+  data() {
+    return {
+      loading: false
+    };
+  },
   methods: {
     federatedSignIn: function() {
       this.loading = true;
       Auth.federatedSignIn({
         provider: "Google"
       });
+    },
+    getImgUrl: function(img) {
+      var images = require.context("../assets/");
+      return images("./" + img);
     }
   }
 };
 </script>
 
-<style>
-.bg {
-  background-color: #dfdbe5;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='199' viewBox='0 0 100 199'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M0 199V0h1v1.99L100 199h-1.12L1 4.22V199H0zM100 2h-.12l-1-2H100v2z'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+<style lang="scss">
+#jumbotron {
+  // background: url("../../public/Large-Triangles-dark.svg");
+
+  padding: 0;
+  background-repeat: no-repeat;
 }
 </style>

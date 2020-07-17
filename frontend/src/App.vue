@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <v-app id="inspire" :class="$vuetify.theme.dark ? 'bg-dark' : 'bg-light'">
     <v-navigation-drawer
       v-if="authenticated"
       v-model="drawer"
@@ -46,7 +46,10 @@
 
     <v-app-bar app clipped-left v-if="authenticated">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title class="cursor-pointer" @click="$router.push({name: 'Index'})">Application</v-toolbar-title>
+      <v-toolbar-title
+        class="cursor-pointer"
+        @click="$router.push({name: 'Index'})"
+      >{{ navBarTitle }}</v-toolbar-title>
     </v-app-bar>
 
     <v-main>
@@ -63,6 +66,15 @@ export default {
     drawer: false,
     authenticated: false
   }),
+  computed: {
+    navBarTitle() {
+      var vm = this;
+      var stageIndicator = vm.$variables.stageIndicator
+        ? " " + vm.$variables.stageIndicator
+        : "";
+      return vm.$variables.brand + stageIndicator;
+    }
+  },
   beforeCreate() {
     // change authenticated variable when auth state changes
     Hub.listen("auth", data => {
@@ -109,5 +121,15 @@ export default {
 <style>
 .cursor-pointer {
   cursor: pointer;
+}
+#inspire.bg-light {
+  background-repeat: repeat;
+  background: url("../public/Tortoise-Shell-light-bg-inverted.svg");
+  /* background by SVGBackgrounds.com */
+}
+#inspire.bg-dark {
+  background-repeat: repeat;
+  background: url("../public/Tortoise-Shell-dark-bg.svg");
+  /* background by SVGBackgrounds.com */
 }
 </style>
