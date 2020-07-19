@@ -44,7 +44,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app clipped-left v-if="authenticated">
+    <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title
         class="cursor-pointer"
@@ -122,6 +122,7 @@ export default {
 .cursor-pointer {
   cursor: pointer;
 }
+
 #inspire.bg-light {
   background-repeat: repeat;
   background: url("../public/Tortoise-Shell-light-bg-inverted.svg");
