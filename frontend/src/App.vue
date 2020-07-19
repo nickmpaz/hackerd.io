@@ -118,7 +118,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .cursor-pointer {
   cursor: pointer;
 }
@@ -132,5 +132,37 @@ export default {
   background-repeat: repeat;
   background: url("../public/Tortoise-Shell-dark-bg.svg");
   /* background by SVGBackgrounds.com */
+}
+
+@import "./styles/markdown-light.scss";
+@import "./styles/markdown-dark.scss";
+@import "prismjs/plugins/line-numbers/prism-line-numbers";
+
+.markdown-body-light {
+  @import "./styles/prism-themes/prism-material-light";
+  @import "./styles/prism-toolbar-light.scss";
+
+  #note-editor {
+    resize: none;
+    color: black;
+    outline: none;
+    width: 100%;
+    border: solid 1px grey;
+    padding: 1em;
+  }
+}
+
+.markdown-body-dark {
+  @import "./styles/prism-themes/prism-material-dark";
+  @import "./styles/prism-toolbar-dark.scss";
+
+  #note-editor {
+    resize: none;
+    color: white;
+    outline: none;
+    width: 100%;
+    border: solid 1px grey;
+    padding: 1em;
+  }
 }
 </style>

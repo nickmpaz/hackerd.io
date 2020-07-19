@@ -28,13 +28,13 @@
             <v-icon v-else>mdi-dots-vertical</v-icon>
           </v-btn>
         </template>
-        <v-btn fab dark large color="success" @click="editDocument">
+        <v-btn fab dark large color="green" @click="editDocument">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn fab dark large color="warning" @click="renderMarkdown">
+        <v-btn fab dark large color="blue" @click="renderMarkdown">
           <v-icon>mdi-export</v-icon>
         </v-btn>
-        <v-btn fab dark large color="error" @click="confirmDeleteDialog = true">
+        <v-btn fab dark large color="red" @click="confirmDeleteDialog = true">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
       </v-speed-dial>
@@ -112,9 +112,10 @@ import ConfirmDialog from "../components/ConfirmDialog";
 export default {
   components: {
     LoadingDialog,
-    ConfirmDialog
+    ConfirmDialog,
   },
   data: () => ({
+    EditLinkDialog: false,
     renderedMarkdown: "",
     confirmDeleteDialog: false,
     deleting: false,
@@ -136,7 +137,6 @@ export default {
     }
   },
   beforeCreate() {
-    console.log("before create start");
     var vm = this;
     Auth.currentAuthenticatedUser()
       .then(data => {
@@ -149,15 +149,9 @@ export default {
           data: {}
         })
           .then(async function(response) {
-            console.log("data came in");
             vm.note = response.data.note;
             await vm.renderMarkdown();
-            console.log("done rendering");
             vm.doneLoading = true;
-            sessionStorage.setItem(
-              vm.$route.fullPath + ".renderedMarkdown",
-              JSON.stringify(vm.renderedMarkdown)
-            );
             sessionStorage.setItem(
               vm.$route.fullPath + ".note",
               JSON.stringify(vm.note)
@@ -175,33 +169,26 @@ export default {
     var vm = this;
     console.log(vm.$route);
     // check for page content in session storage
-    if (sessionStorage.getItem(vm.$route.fullPath + ".renderedMarkdown")) {
-      vm.renderedMarkdown = JSON.parse(
-        sessionStorage.getItem(vm.$route.fullPath + ".renderedMarkdown")
-      );
+    if (sessionStorage.getItem(vm.$route.fullPath + ".note")) {
       vm.note = JSON.parse(
         sessionStorage.getItem(vm.$route.fullPath + ".note")
       );
-      await new Promise(r => setTimeout(r, 0)); // wait for renderedMarkdown to be put on DOM
-      prism.highlightAll();
+      await vm.renderMarkdown();
       vm.doneLoading = true;
     }
   },
   methods: {
     renderMarkdown: async function() {
       var vm = this;
-
       vm.renderedMarkdown = vm.$md.render(vm.note.document);
-      console.log(vm.renderedMarkdown);
-
-      // prism.highlightAll() renders the prism plugins (they don't get put in during standard highlighting that happens when markdown is rendered)
+      // prism.highlightAll() renders the prism plugins 
+      // (they don't get put in during standard highlighting that happens when markdown is rendered)
       await new Promise(r => setTimeout(r, 0)); // wait for renderedMarkdown to be put on DOM
       prism.highlightAll();
     },
     addTag: function() {
       var vm = this;
       if (!vm.note.tags.includes(vm.tagInput)) {
-        // FIXME bad runtime, insert sorted instead
         vm.note.tags.push(vm.tagInput.toLowerCase());
         vm.note.tags.sort();
       }
@@ -218,23 +205,13 @@ export default {
       vm.fab = false;
     },
     saveDocument: async function() {
-      console.log("save start");
-
       var vm = this;
       await vm.renderMarkdown();
-      console.log("rendered");
-
       vm.mode = "show";
-
-      sessionStorage.setItem(
-        vm.$route.fullPath + ".renderedMarkdown",
-        JSON.stringify(vm.renderedMarkdown)
-      );
       sessionStorage.setItem(
         vm.$route.fullPath + ".note",
         JSON.stringify(vm.note)
       );
-
       vm.updateNote();
     },
     updateNote: function() {
@@ -294,38 +271,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../styles/markdown-light.scss";
-@import "../styles/markdown-dark.scss";
-@import "prismjs/plugins/line-numbers/prism-line-numbers";
-
-.markdown-body-light {
-  @import "../styles/prism-themes/prism-material-light";
-  @import "../styles/prism-toolbar-light.scss";
-
-  #note-editor {
-    resize: none;
-    color: black;
-    outline: none;
-    width: 100%;
-    border: solid 1px grey;
-    padding: 1em;
-  }
-}
-
-.markdown-body-dark {
-  @import "../styles/prism-themes/prism-material-dark";
-  @import "../styles/prism-toolbar-dark.scss";
-
-  #note-editor {
-    resize: none;
-    color: white;
-    outline: none;
-    width: 100%;
-    border: solid 1px grey;
-    padding: 1em;
-  }
-}
-
 .tag-input {
   height: 55px;
 }
