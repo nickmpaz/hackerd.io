@@ -18,38 +18,40 @@
             <v-icon v-else>mdi-plus</v-icon>
           </v-btn>
         </template>
-        <v-btn fab dark large color="success" @click="createNote">
+        <v-btn fab dark large color="success" @click="createNote('markdown')">
           <v-icon>mdi-note-text</v-icon>
         </v-btn>
-        <v-btn fab dark large color="success" @click="createNote">
+        <v-btn fab dark large color="success" @click="createNote('link')">
           <v-icon>mdi-link-variant</v-icon>
         </v-btn>
       </v-speed-dial>
 
       <v-row justify="center" class="my-12">
         <v-col cols="12" md="10" xl="8">
-          <v-text-field label="Search" solo single-line v-model="query"></v-text-field>
+          <v-text-field label="Search" solo single-line v-model="query" class="mb-6"></v-text-field>
           <v-card
             v-for="(note, index) in searchResults"
             :key="index"
             class="px-4 pt-1 pb-2 mb-4"
-            @click="viewNote(note.note_id)"
+            @click="note.type === 'markdown' ? viewNote(note.note_id) : openInNewTab(note.document)"
             :ripple="false"
+            role="button"
           >
             <div class="d-flex">
               <h1 class="flex-grow-1">
-                <v-icon class="mr-2">mdi-note-text</v-icon>
+                <v-icon v-if="note.type === 'markdown'" class="mr-2">mdi-note-text</v-icon>
+                <v-icon v-if="note.type === 'link'" class="mr-2">mdi-link-variant</v-icon>
                 {{ note.title }}
               </h1>
               <!-- <v-icon class="align-self-start mt-2">mdi-dots-horizontal</v-icon> -->
               <v-menu bottom offset-y>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon dark v-bind="attrs" v-on="on">
+                  <v-btn icon v-bind="attrs" v-on="on" class="mt-1">
                     <v-icon>mdi-dots-horizontal</v-icon>
                   </v-btn>
                 </template>
                 <v-list dense>
-                  <v-list-item>
+                  <v-list-item link @click="editNote(note.note_id)">
                     <v-list-item-action>
                       <v-icon color="green">mdi-pencil</v-icon>
                     </v-list-item-action>
@@ -57,7 +59,7 @@
                       <v-list-item-title>Edit</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
-                  <v-list-item>
+                  <v-list-item link>
                     <v-list-item-action>
                       <v-icon color="blue">mdi-export</v-icon>
                     </v-list-item-action>
@@ -65,7 +67,7 @@
                       <v-list-item-title>Export</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
-                  <v-list-item>
+                  <v-list-item link>
                     <v-list-item-action>
                       <v-icon color="red">mdi-delete</v-icon>
                     </v-list-item-action>
@@ -115,8 +117,6 @@ export default {
         return vm.notes;
       }
       const options = {
-        // includeScore: true,
-        // Search in `author` and in `tags` array
         threshold: 0.25,
         keys: ["title", "tags"]
       };
@@ -134,7 +134,6 @@ export default {
   }),
   beforeCreate() {
     var vm = this;
-
     Auth.currentAuthenticatedUser()
       .then(data => {
         axios({
@@ -145,7 +144,6 @@ export default {
           }
         })
           .then(response => {
-            console.log(response);
             vm.notes = response.data.notes;
             vm.doneLoading = true;
             sessionStorage.setItem(
@@ -165,40 +163,50 @@ export default {
     var vm = this;
     // check for page content in session storage
     if (sessionStorage.getItem(vm.$route.fullPath + ".notes")) {
-      console.log("found it ");
-      vm.doneLoading = true;
       vm.notes = JSON.parse(
         sessionStorage.getItem(vm.$route.fullPath + ".notes")
       );
+      vm.doneLoading = true;
     }
   },
   methods: {
-    viewNote: async function(noteId) {
+    openInNewTab: function(url) {
+      var win = window.open(url, "_blank");
+      win.focus();
+    },
+    viewNote: function(noteId) {
       var vm = this;
-      // FIXME this makes things feel better?
-      // await new Promise(r => setTimeout(r, 150));
       vm.$router.push({
         name: "Note",
         params: { note_id: noteId }
       });
     },
-    createNote: function() {
+    editNote: function(noteId) {
+      var vm = this;
+      vm.$router.push({
+        name: "Note",
+        params: { note_id: noteId , mode: 'edit'}
+      });
+    },
+    createNote: function(note_type) {
       var vm = this;
       vm.creating = true;
       Auth.currentAuthenticatedUser()
         .then(data => {
-          console.log(data);
           axios({
             method: "post",
             url: vm.$variables.api.createNote,
             headers: {
               Authorization: data.signInUserSession.idToken.jwtToken
+            },
+            data: {
+              note_type: note_type
             }
           })
             .then(response => {
               vm.$router.push({
                 name: "Note",
-                params: { note_id: response.data.note_id }
+                params: { note_id: response.data.note_id, mode: "edit" }
               });
             })
             .catch(err => {

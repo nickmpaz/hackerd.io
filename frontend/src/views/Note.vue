@@ -167,7 +167,10 @@ export default {
   },
   async created() {
     var vm = this;
-    console.log(vm.$route);
+    if (vm.$route.params.mode) {
+      vm.mode = vm.$route.params.mode
+    }
+
     // check for page content in session storage
     if (sessionStorage.getItem(vm.$route.fullPath + ".note")) {
       vm.note = JSON.parse(

@@ -96,15 +96,10 @@ export default {
   created() {
     // handle dark mode preference
     if (localStorage.getItem("darkModePreference")) {
-      console.log(
-        "Found dark mode preference: " +
-          localStorage.getItem("darkModePreference")
-      );
       this.$vuetify.theme.dark = JSON.parse(
         localStorage.getItem("darkModePreference")
       );
     } else {
-      console.log("Did not find dark mode preference. Setting to default.");
       this.$vuetify.theme.dark = this.$variables.darkModeDefault;
     }
   },
@@ -119,21 +114,6 @@ export default {
 </script>
 
 <style lang="scss">
-.cursor-pointer {
-  cursor: pointer;
-}
-
-#inspire.bg-light {
-  background-repeat: repeat;
-  background: url("../public/Tortoise-Shell-light-bg-inverted.svg");
-  /* background by SVGBackgrounds.com */
-}
-#inspire.bg-dark {
-  background-repeat: repeat;
-  background: url("../public/Tortoise-Shell-dark-bg.svg");
-  /* background by SVGBackgrounds.com */
-}
-
 @import "./styles/markdown-light.scss";
 @import "./styles/markdown-dark.scss";
 @import "prismjs/plugins/line-numbers/prism-line-numbers";
@@ -164,5 +144,20 @@ export default {
     border: solid 1px grey;
     padding: 1em;
   }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+#inspire.bg-light {
+  background-repeat: repeat;
+  background: url("../public/Tortoise-Shell-light-bg-inverted.svg");
+  /* background by SVGBackgrounds.com */
+}
+#inspire.bg-dark {
+  background-repeat: repeat;
+  background: url("../public/Tortoise-Shell-dark-bg.svg");
+  /* background by SVGBackgrounds.com */
 }
 </style>

@@ -39,6 +39,7 @@ def _generate_note_id():
     raise Exception
 
 
+
 def ping(event, context):
     return _make_response(body="ping")
 
@@ -63,11 +64,14 @@ def get_notes(event, context):
 def create_note(event, context):
     user_id = event['requestContext']['authorizer']['claims']['sub']
     note_id = _generate_note_id()
+    note_type = json.loads(event['body']).get('note_type', 'markdown')
+
     # create the note
     notes_table.put_item(
         Item={
             'user_id': user_id,
             'note_id': note_id,
+            'type': note_type,
             'title': "Untitled",
             'tags': [],
             'document': "There's nothing here yet.",
