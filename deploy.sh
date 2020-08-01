@@ -70,7 +70,9 @@ amplify init \
 --categories $CATEGORIES \
 --yes
 
-amplify pull
+# amplify pull
+
+ls -la src
 
 cd ..
 
