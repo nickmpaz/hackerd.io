@@ -70,6 +70,8 @@ amplify init \
 --categories $CATEGORIES \
 --yes
 
+amplify env checkout dev
+
 cd ..
 
 # initialize terraform 
