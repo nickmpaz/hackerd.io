@@ -70,16 +70,6 @@ terraform init
 
 cd ..
 
-# install serverless and plugins 
-
-cd backend
-
-npm ci
-
-./node_modules/.bin/serverless plugin install --name serverless-python-requirements
-
-cd ..
-
 # deploy frontend
 
 cd frontend
@@ -95,6 +85,8 @@ cd ..
 # deploy backend
 
 cd backend
+
+npm ci
 
 ./node_modules/.bin/serverless deploy --stage $environment
 
