@@ -70,7 +70,7 @@ amplify init \
 --categories $CATEGORIES \
 --yes
 
-amplify env checkout dev
+amplify pull
 
 cd ..
 
