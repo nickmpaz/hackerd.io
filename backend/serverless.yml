@@ -81,5 +81,14 @@ functions:
             arn: ${self:custom.cognitoUserPoolArn}
           cors: true
 
+package:
+  exclude:
+    - node_modules/**
+    - venv/**
+
+
 plugins:
   - serverless-python-requirements
+  - serverless-domain-manager
+
+  

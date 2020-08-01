@@ -20,7 +20,7 @@
           </div>
 
           <div class="mt-4">
-            <span class="display-1">The beautiful, integrated knowledge base tool for programmers</span>
+            <span class="display-1">{{ $variables.tagLine }}</span>
           </div>
           <div class="mt-4">
             <v-btn outlined @click="mainCarousel = 1">Learn more</v-btn>

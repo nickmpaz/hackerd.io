@@ -2,7 +2,10 @@
   "name": "dolphin-backend",
   "description": "",
   "version": "0.1.0",
-  "dependencies": {},
+  "dependencies": {
+    "serverless": "^1.77.1",
+    "serverless-domain-manager": "^4.2.0"
+  },
   "devDependencies": {
     "serverless-python-requirements": "^5.1.0"
   }
