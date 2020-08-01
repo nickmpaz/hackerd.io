@@ -54,10 +54,20 @@ export PROVIDERS="{\
 \"awscloudformation\":$AWSCLOUDFORMATIONCONFIG\
 }"
 
+export AUTHCONFIG="{\
+\"googleAppIdUserPool\":\"$GOOGLE_POOL_ID\",\
+\"googleAppSecretUserPool\":\"$GOOGLE_POOL_SECRET\"\
+}"
+
+export CATEGORIES="{\
+\"auth\":$AUTHCONFIG\
+}"
+
 amplify init \
 --amplify $AMPLIFY \
 --frontend $FRONTEND \
 --providers $PROVIDERS \
+--categories $CATEGORIES \
 --yes
 
 cd ..
