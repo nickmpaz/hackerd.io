@@ -45,8 +45,8 @@ export FRONTEND="{\
 }"
 
 export AMPLIFY="{\
-\"projectName\":\"myproject\",\
-\"envName\":\"prod\",\
+\"projectName\":\"DolphinAmplify\",\
+\"envName\":\"dev\",\
 \"defaultEditor\":\"vscode\"\
 }"
 
