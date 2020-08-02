@@ -44,7 +44,8 @@ export FRONTEND="{\
 
 export AMPLIFY="{\
 \"projectName\":\"DolphinAmplify\",\
-\"envName\":\"local\",\
+\"appId\":\"d1tnvzko5ff84w\",\
+\"envName\":\"$environment\",\
 \"defaultEditor\":\"vscode\"\
 }"
 
@@ -61,12 +62,13 @@ export CATEGORIES="{\
 \"auth\":$AUTHCONFIG\
 }"
 
-amplify init \
+amplify pull \
 --amplify $AMPLIFY \
 --frontend $FRONTEND \
 --providers $PROVIDERS \
-# --categories $CATEGORIES \
---yes
+--categories $CATEGORIES \
+--yes \
+
 
 cd ..
 
