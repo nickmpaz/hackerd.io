@@ -13,7 +13,50 @@
         },
         "categories": {
             "auth": {
-                "dolphinamplify69febdeb": {
+                "dolphinamplify2d090eaf": {
+                    "hostedUIProviderCreds": "[{\"ProviderName\":\"Google\",\"client_id\":\"290759418818-e34318j8c20tg1puo35gjhsdemm3r4lk.apps.googleusercontent.com\",\"client_secret\":\"DmeonkikZeAMC_b5NoiQMtdM\"}]"
+                }
+            }
+        }
+    },
+    "prod": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-dolphinamplify-prod-180116-authRole",
+            "UnauthRoleArn": "arn:aws:iam::706879839199:role/amplify-dolphinamplify-prod-180116-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::706879839199:role/amplify-dolphinamplify-prod-180116-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-dolphinamplify-prod-180116-deployment",
+            "UnauthRoleName": "amplify-dolphinamplify-prod-180116-unauthRole",
+            "StackName": "amplify-dolphinamplify-prod-180116",
+            "StackId": "arn:aws:cloudformation:us-east-1:706879839199:stack/amplify-dolphinamplify-prod-180116/10317d31-d437-11ea-bd3c-0a43cdcd5209",
+            "AmplifyAppId": "d1tnvzko5ff84w"
+        },
+        "categories": {
+            "auth": {
+                "dolphinamplify68c4e6a9": {
+                    "hostedUIProviderCreds": "[{\"ProviderName\":\"Google\",\"client_id\":\"290759418818-38kboqjihjqs2krurt8kt8kh7t8sj7oi.apps.googleusercontent.com\",\"client_secret\":\"TsLlx0pUIjAafL1rfxmvgoiv\"}]"
+                },
+                "dolphinamplifyd1f86702": {
+                    "hostedUIProviderCreds": "[{\"ProviderName\":\"Google\",\"client_id\":\"290759418818-lvenqg2pek1tod8hhelpl9ik68nb403u.apps.googleusercontent.com\",\"client_secret\":\"UBi_0DmI5pyXpHcfEwpH4qr0\"}]"
+                }
+            }
+        }
+    },
+    "local": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-dolphinamplify-local-135015-authRole",
+            "UnauthRoleArn": "arn:aws:iam::706879839199:role/amplify-dolphinamplify-local-135015-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::706879839199:role/amplify-dolphinamplify-local-135015-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-dolphinamplify-local-135015-deployment",
+            "UnauthRoleName": "amplify-dolphinamplify-local-135015-unauthRole",
+            "StackName": "amplify-dolphinamplify-local-135015",
+            "StackId": "arn:aws:cloudformation:us-east-1:706879839199:stack/amplify-dolphinamplify-local-135015/9bc8b2e0-d438-11ea-9e74-0a6865628217",
+            "AmplifyAppId": "d1tnvzko5ff84w"
+        },
+        "categories": {
+            "auth": {
+                "dolphinamplifyf42d8f55": {
                     "hostedUIProviderCreds": "[{\"ProviderName\":\"Google\",\"client_id\":\"290759418818-38kboqjihjqs2krurt8kt8kh7t8sj7oi.apps.googleusercontent.com\",\"client_secret\":\"TsLlx0pUIjAafL1rfxmvgoiv\"}]"
                 }
             }

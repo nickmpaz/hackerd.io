@@ -17,9 +17,7 @@ echo "Deploying to $environment.";
 # install and initialize amplify
 
 sudo npm install -g @aws-amplify/cli
-
 mkdir ~/.aws && touch ~/.aws/credentials && touch ~/.aws/config
-
 cd frontend
 
 export VUECONFIG="{\
@@ -46,7 +44,7 @@ export FRONTEND="{\
 
 export AMPLIFY="{\
 \"projectName\":\"DolphinAmplify\",\
-\"envName\":\"dev\",\
+\"envName\":\"$environment\",\
 \"defaultEditor\":\"vscode\"\
 }"
 
@@ -70,38 +68,25 @@ amplify init \
 --categories $CATEGORIES \
 --yes
 
-# amplify pull
-
-ls -la src
-
 cd ..
 
 # initialize terraform 
 
 cd terraform 
-
 terraform init
-
 cd ..
 
 # deploy frontend
 
 cd frontend
-
 npm ci
-
 npm run build:$environment
-
 aws s3 sync --delete ./dist s3://$(cd ../terraform && terraform output bucket_$environment)
-
 cd ..
 
 # deploy backend
 
 cd backend
-
 npm ci
-
 ./node_modules/.bin/serverless deploy --stage $environment
-
 cd ..

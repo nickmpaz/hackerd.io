@@ -3,6 +3,7 @@ service: dolphin-backend
 custom: ${file(./variables.yml)} 
 provider:
   name: aws
+  stage: ${opt:stage, 'dev'}
   runtime: python3.8
   iamRoleStatements:
     - Effect: Allow
@@ -33,7 +34,7 @@ functions:
           path: ping_auth
           method: get
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'dev'}}
           cors: true
   get_notes:
     handler: handler.get_notes
@@ -42,7 +43,7 @@ functions:
           path: notes
           method: get
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'dev'}}
           cors: true
   create_note:
     handler: handler.create_note
@@ -51,7 +52,7 @@ functions:
           path: notes
           method: post
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'dev'}}
           cors: true
   get_note:
     handler: handler.get_note
@@ -60,7 +61,7 @@ functions:
           path: notes/{note_id}
           method: get
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'dev'}}
           cors: true
   update_note:
     handler: handler.update_note
@@ -69,7 +70,7 @@ functions:
           path: notes/{note_id}
           method: post
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'dev'}}
           cors: true
   delete_note:
     handler: handler.delete_note
@@ -78,7 +79,7 @@ functions:
           path: notes/{note_id}
           method: delete
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'dev'}}
           cors: true
 
 package:

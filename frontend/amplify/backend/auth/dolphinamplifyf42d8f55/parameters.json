@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "dolphinamplify69febdeb_identitypool_69febdeb",
+    "identityPoolName": "dolphinamplifyf42d8f55_identitypool_f42d8f55",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "dolphi69febdeb",
-    "userPoolName": "dolphinamplify69febdeb_userpool_69febdeb",
+    "resourceNameTruncated": "dolphif42d8f55",
+    "userPoolName": "dolphinamplifyf42d8f55_userpool_f42d8f55",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "dolphi69febdeb_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "dolphif42d8f55_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "69febdeb",
-    "resourceName": "dolphinamplify69febdeb",
+    "sharedId": "f42d8f55",
+    "resourceName": "dolphinamplifyf42d8f55",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -47,12 +47,12 @@
     },
     "useDefault": "defaultSocial",
     "hostedUI": true,
-    "hostedUIDomainName": "dolphinamplify69febdeb-69febdeb",
+    "hostedUIDomainName": "dolphinamplifyf42d8f55-f42d8f55",
     "authProvidersUserPool": [
         "Google"
     ],
     "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:8080/\"],\"LogoutURLs\":[\"http://localhost:8080/\"]}",
     "userPoolGroupList": [],
-    "dependsOn": []
+    "dependsOn": [],
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:8080/\"],\"LogoutURLs\":[\"http://localhost:8080/auth/\"]}"
 }

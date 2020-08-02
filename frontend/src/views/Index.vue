@@ -152,6 +152,7 @@ export default {
             );
           })
           .catch(err => {
+            console.log('catch')
             console.error(err);
           });
       })
