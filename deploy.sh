@@ -61,7 +61,7 @@ export CATEGORIES="{\
 \"auth\":$AUTHCONFIG\
 }"
 
-amplify pull \
+amplify init \
 --amplify $AMPLIFY \
 --frontend $FRONTEND \
 --providers $PROVIDERS \
