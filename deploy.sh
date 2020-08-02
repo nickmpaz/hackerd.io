@@ -65,7 +65,6 @@ amplify init \
 --amplify $AMPLIFY \
 --frontend $FRONTEND \
 --providers $PROVIDERS \
---categories $CATEGORIES \
 --yes
 
 amplify env checkout $environment --restore
