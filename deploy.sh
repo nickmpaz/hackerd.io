@@ -65,7 +65,7 @@ amplify init \
 --amplify $AMPLIFY \
 --frontend $FRONTEND \
 --providers $PROVIDERS \
---categories $CATEGORIES \
+# --categories $CATEGORIES \
 --yes
 
 cd ..
