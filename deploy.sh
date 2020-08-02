@@ -44,6 +44,7 @@ export FRONTEND="{\
 
 export AMPLIFY="{\
 \"projectName\":\"DolphinAmplify\",\
+\"appId\":\"d1tnvzko5ff84w\",\
 \"envName\":\"$environment\",\
 \"defaultEditor\":\"vscode\"\
 }"
