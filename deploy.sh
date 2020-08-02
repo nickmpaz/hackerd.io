@@ -44,7 +44,7 @@ export FRONTEND="{\
 
 export AMPLIFY="{\
 \"projectName\":\"DolphinAmplify\",\
-\"envName\":\"dev\",\
+\"envName\":\"$environment\",\
 \"defaultEditor\":\"vscode\"\
 }"
 
@@ -61,13 +61,13 @@ export CATEGORIES="{\
 \"auth\":$AUTHCONFIG\
 }"
 
-amplify init \
+amplify pull \
 --amplify $AMPLIFY \
 --frontend $FRONTEND \
 --providers $PROVIDERS \
 --yes
 
-amplify env checkout $environment --restore
+# amplify env checkout $environment --restore
 
 cd ..
 
