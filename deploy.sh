@@ -68,8 +68,6 @@ amplify init \
 --categories $CATEGORIES \
 --yes
 
-amplify env checkout $environment --restore
-
 cd ..
 
 # initialize terraform 
