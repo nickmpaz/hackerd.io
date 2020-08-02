@@ -66,7 +66,7 @@ amplify pull \
 --frontend $FRONTEND \
 --providers $PROVIDERS \
 --categories $CATEGORIES \
---yes \
+--yes
 
 amplify env checkout $environment --restore
 
