@@ -12,7 +12,7 @@ case $branch in
   develop) environment="dev";;
 esac
 
-echo "Deploying to $environment.";
+echo "Deploying to $environment";
 
 # install and initialize amplify
 
@@ -45,7 +45,7 @@ export FRONTEND="{\
 export AMPLIFY="{\
 \"projectName\":\"DolphinAmplify\",\
 \"appId\":\"d1tnvzko5ff84w\",\
-\"envName\":\"local\",\
+\"envName\":\"$environment\",\
 \"defaultEditor\":\"vscode\"\
 }"
 
@@ -54,8 +54,8 @@ export PROVIDERS="{\
 }"
 
 export AUTHCONFIG="{\
-\"googleAppIdUserPool\":\"$GOOGLE_POOL_ID\",\
-\"googleAppSecretUserPool\":\"$GOOGLE_POOL_SECRET\"\
+\"googleAppIdUserPool\":\"$GOOGLE_POOL_ID_PROD\",\
+\"googleAppSecretUserPool\":\"$GOOGLE_POOL_SECRET_PROD\"\
 }"
 
 export CATEGORIES="{\
@@ -68,8 +68,6 @@ amplify pull \
 --providers $PROVIDERS \
 --categories $CATEGORIES \
 --yes
-
-amplify env checkout $environment --restore
 
 # amplify env checkout $environment --restore
 
