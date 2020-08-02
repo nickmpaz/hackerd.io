@@ -44,7 +44,7 @@ export FRONTEND="{\
 
 export AMPLIFY="{\
 \"projectName\":\"DolphinAmplify\",\
-\"envName\":\"$environment\",\
+\"envName\":\"local\",\
 \"defaultEditor\":\"vscode\"\
 }"
 
@@ -67,6 +67,8 @@ amplify init \
 --providers $PROVIDERS \
 --categories $CATEGORIES \
 --yes
+
+amplify env checkout $environment --restore
 
 cd ..
 
