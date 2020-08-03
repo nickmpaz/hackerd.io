@@ -9,14 +9,14 @@ done
 
 case $branch in
   master) 
-    environment="prod"
-    GOOGLE_POOL_ID=$GOOGLE_POOL_ID_PROD
-    GOOGLE_POOL_SECRET=$GOOGLE_POOL_SECRET_PROD
+    environment="prod";
+    GOOGLE_POOL_ID=$GOOGLE_POOL_ID_PROD;
+    GOOGLE_POOL_SECRET=$GOOGLE_POOL_SECRET_PROD;
     ;;
   develop) 
-    environment="dev"
-    GOOGLE_POOL_ID=$GOOGLE_POOL_ID_DEV
-    GOOGLE_POOL_SECRET=$GOOGLE_POOL_SECRET_DEV
+    environment="dev";
+    GOOGLE_POOL_ID=$GOOGLE_POOL_ID_DEV;
+    GOOGLE_POOL_SECRET=$GOOGLE_POOL_SECRET_DEV;
     ;;
 esac
 
