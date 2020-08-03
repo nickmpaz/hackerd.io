@@ -24,6 +24,8 @@ echo "Deploying to $environment";
 
 # install and initialize amplify
 
+which python3
+
 sudo npm install -g @aws-amplify/cli
 mkdir ~/.aws && touch ~/.aws/credentials && touch ~/.aws/config
 cd frontend
