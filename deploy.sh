@@ -53,7 +53,7 @@ export FRONTEND="{\
 }"
 
 export AMPLIFY="{\
-\"projectName\":\"DolphinAmplify\",\
+\"projectName\":\"DolphinFrontend\",\
 \"appId\":\"$AMPLIFY_APP_ID\",\
 \"envName\":\"$environment\",\
 \"defaultEditor\":\"vscode\"\
