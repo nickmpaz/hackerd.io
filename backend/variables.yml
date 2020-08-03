@@ -1,6 +1,6 @@
 cognitoUserPoolArn: 
     local: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_8qHSe4cd9"
-    dev: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_L4aVvd9Gm"
+    dev: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_bMaVlthsw"
     prod: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_HvVdcJkhJ"
 customDomain:
     domainName: api.hackerd.io

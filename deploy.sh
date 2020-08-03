@@ -8,9 +8,19 @@ do
 done
 
 case $branch in
-  master) environment="prod";;
-  develop) environment="dev";;
+  master) 
+    environment="prod"
+    GOOGLE_POOL_ID=$GOOGLE_POOL_ID_PROD
+    GOOGLE_POOL_SECRET=$GOOGLE_POOL_SECRET_PROD
+    ;;
+  develop) 
+    environment="dev"
+    GOOGLE_POOL_ID=$GOOGLE_POOL_ID_DEV
+    GOOGLE_POOL_SECRET=$GOOGLE_POOL_SECRET_DEV
+    ;;
 esac
+
+case 
 
 echo "Deploying to $environment";
 
@@ -56,8 +66,8 @@ export PROVIDERS="{\
 }"
 
 export AUTHCONFIG="{\
-\"googleAppIdUserPool\":\"$GOOGLE_POOL_ID_PROD\",\
-\"googleAppSecretUserPool\":\"$GOOGLE_POOL_SECRET_PROD\"\
+\"googleAppIdUserPool\":\"$GOOGLE_POOL_ID\",\
+\"googleAppSecretUserPool\":\"$GOOGLE_POOL_SECRET\"\
 }"
 
 export CATEGORIES="{\
@@ -70,8 +80,6 @@ amplify pull \
 --providers $PROVIDERS \
 --categories $CATEGORIES \
 --yes
-
-# amplify env checkout $environment --restore
 
 cd ..
 
