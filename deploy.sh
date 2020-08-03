@@ -20,8 +20,6 @@ case $branch in
     ;;
 esac
 
-case 
-
 echo "Deploying to $environment";
 
 # install and initialize amplify
