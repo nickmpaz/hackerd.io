@@ -24,7 +24,7 @@ echo "Deploying to $environment";
 
 # install and initialize amplify
 
-# sudo npm install -g @aws-amplify/cli
+sudo npm install -g @aws-amplify/cli
 mkdir ~/.aws && touch ~/.aws/credentials && touch ~/.aws/config
 cd frontend
 
@@ -54,6 +54,7 @@ export FRONTEND="{\
 
 export AMPLIFY="{\
 \"projectName\":\"DolphinFrontend\",\
+\"appId\":\"$AMPLIFY_APP_ID\",\
 \"envName\":\"$environment\",\
 \"defaultEditor\":\"vscode\"\
 }"
