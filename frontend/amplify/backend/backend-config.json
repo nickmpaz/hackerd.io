@@ -1,6 +1,18 @@
 {
 	"auth": {
-		"dolphinfrontend84556360": {
+		"dolphinamplify5c836ad1": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [],
+			"customAuth": false
+		},
+		"dolphinamplify39f54e7a": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [],
+			"customAuth": false
+		},
+		"dolphinamplifyf7380aca": {
 			"service": "Cognito",
 			"providerPlugin": "awscloudformation",
 			"dependsOn": [],

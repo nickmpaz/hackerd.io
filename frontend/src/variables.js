@@ -1,5 +1,5 @@
 var brand = 'hackerd.io'
-var tagLine = 'The integrated bookmark and notes manager for programmers'
+var tagLine = 'Bookmark and notes manager for programmers'
 var baseUrl = 'https://api.hackerd.io/' + process.env.VUE_APP_ENVIRONMENT + '/'
 var stageIndicator =
   process.env.VUE_APP_ENVIRONMENT === 'prod'

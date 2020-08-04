@@ -23,18 +23,34 @@ resource "aws_acm_certificate" "default" {
 }
 
 resource "aws_route53_record" "validation" {
-  name    = aws_acm_certificate.default.domain_validation_options.0.resource_record_name
-  type    = aws_acm_certificate.default.domain_validation_options.0.resource_record_type
-  zone_id = data.aws_route53_zone.hosted_zone.zone_id
-  records = ["${aws_acm_certificate.default.domain_validation_options.0.resource_record_value}"]
-  ttl     = "60"
+  # name    = aws_acm_certificate.default.domain_validation_options.0.resource_record_name
+  # type    = aws_acm_certificate.default.domain_validation_options.0.resource_record_type
+  # zone_id = data.aws_route53_zone.hosted_zone.zone_id
+  # records = ["${aws_acm_certificate.default.domain_validation_options.0.resource_record_value}"]
+  # ttl     = "60"
+  for_each = {
+    for dvo in aws_acm_certificate.default.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.hosted_zone.zone_id
 }
 
 resource "aws_acm_certificate_validation" "default" {
-  certificate_arn = aws_acm_certificate.default.arn
-  validation_record_fqdns = [
-    "${aws_route53_record.validation.fqdn}",
-  ]
+  # certificate_arn = aws_acm_certificate.default.arn
+  # validation_record_fqdns = [
+  #   "${aws_route53_record.validation.fqdn}",
+  # ]
+  certificate_arn         = aws_acm_certificate.default.arn
+  validation_record_fqdns = [for record in aws_route53_record.validation : record.fqdn]
 }
 
 # DATABASE
@@ -78,6 +94,7 @@ resource "aws_s3_bucket" "prod" {
 POLICY
   website {
     index_document = "index.html"
+    error_document = "index.html"
   }
 }
 
@@ -100,6 +117,7 @@ resource "aws_s3_bucket" "dev" {
 POLICY
   website {
     index_document = "index.html"
+    error_document = "index.html"
   }
 }
 
@@ -121,9 +139,12 @@ resource "aws_cloudfront_distribution" "prod" {
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
     target_origin_id       = "www.${var.root_domain_name}"
+    # min_ttl                = 0
+    # default_ttl            = 86400
+    # max_ttl                = 31536000
     min_ttl                = 0
-    default_ttl            = 86400
-    max_ttl                = 31536000
+    default_ttl            = 0
+    max_ttl                = 0
 
     forwarded_values {
       query_string = false

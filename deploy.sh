@@ -30,7 +30,8 @@ sudo npm install -g @aws-amplify/cli
 mkdir ~/.aws && touch ~/.aws/credentials && touch ~/.aws/config
 cd frontend
 
-export AMPLIFY_APP_ID=d2931v3gadp74j
+export AMPLIFY_APP_ID=d37ibrfgmid9iy
+export AMPLIFY_APP_NAME=DolphinAmplify
 
 export VUECONFIG="{\
 \"SourceDir\":\"src\",\
@@ -55,7 +56,7 @@ export FRONTEND="{\
 }"
 
 export AMPLIFY="{\
-\"projectName\":\"DolphinFrontend\",\
+\"projectName\":\"$AMPLIFY_APP_NAME\",\
 \"appId\":\"$AMPLIFY_APP_ID\",\
 \"envName\":\"$environment\",\
 \"defaultEditor\":\"vscode\"\
