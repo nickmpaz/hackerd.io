@@ -11,6 +11,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Deploy
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
       shell: bash
       env:
         CICD: "*"
