@@ -101,8 +101,7 @@ cd ..
 # deploy backend
 
 cd backend
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt install -y python3.8 python3.8-pip
+python3 --version
 npm ci
 ./node_modules/.bin/serverless deploy --stage $environment
 cd ..
