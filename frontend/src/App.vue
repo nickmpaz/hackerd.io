@@ -116,9 +116,9 @@ export default {
 <style lang="scss">
 @import "./styles/markdown-light.scss";
 @import "./styles/markdown-dark.scss";
-@import "prismjs/plugins/line-numbers/prism-line-numbers";
 
 .markdown-body-light {
+  @import "prismjs/plugins/line-numbers/prism-line-numbers"; // this is in mbl and mbd to make it specific enough for the css to work
   @import "./styles/prism-themes/prism-material-light";
   @import "./styles/prism-toolbar-light.scss";
 
@@ -133,6 +133,7 @@ export default {
 }
 
 .markdown-body-dark {
+  @import "prismjs/plugins/line-numbers/prism-line-numbers"; // this is in mbl and mbd to make it specific enough for the css to work
   @import "./styles/prism-themes/prism-material-dark";
   @import "./styles/prism-toolbar-dark.scss";
 
