@@ -3,7 +3,7 @@ service: dolphin-backend
 custom: ${file(./variables.yml)} 
 provider:
   name: aws
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, 'local'}
   runtime: python3.8
   iamRoleStatements:
     - Effect: Allow
