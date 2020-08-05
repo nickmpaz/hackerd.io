@@ -117,36 +117,6 @@ export default {
 @import "./styles/markdown-light.scss";
 @import "./styles/markdown-dark.scss";
 
-.markdown-body-light {
-  @import "prismjs/plugins/line-numbers/prism-line-numbers"; // this is in mbl and mbd to make it specific enough for the css to work
-  @import "./styles/prism-themes/prism-material-light";
-  @import "./styles/prism-toolbar-light.scss";
-
-  #note-editor {
-    resize: none;
-    color: black;
-    outline: none;
-    width: 100%;
-    border: solid 1px grey;
-    padding: 1em;
-  }
-}
-
-.markdown-body-dark {
-  @import "prismjs/plugins/line-numbers/prism-line-numbers"; // this is in mbl and mbd to make it specific enough for the css to work
-  @import "./styles/prism-themes/prism-material-dark";
-  @import "./styles/prism-toolbar-dark.scss";
-
-  #note-editor {
-    resize: none;
-    color: white;
-    outline: none;
-    width: 100%;
-    border: solid 1px grey;
-    padding: 1em;
-  }
-}
-
 .cursor-pointer {
   cursor: pointer;
 }

@@ -64,22 +64,23 @@ def get_resources(event, context):
 def create_resource(event, context):
     user_id = event['requestContext']['authorizer']['claims']['sub']
     resource_id = _generate_resource_id()
-    resource_type = json.loads(event['body']).get('resource_type', 'markdown')
+    resource_type = json.loads(event['body']).get('type', 'note')
+    resource = {
+        'user_id': user_id,
+        'resource_id': resource_id,
+        'type': resource_type,
+        'title': "",
+        'tags': [],
+        'content': "",
+        'created_at': str(int(time.time())),
+        'updated_at': str(int(time.time()))
+    }
 
     # create the resource
     resources_table.put_item(
-        Item={
-            'user_id': user_id,
-            'resource_id': resource_id,
-            'type': resource_type,
-            'title': "Untitled",
-            'tags': [],
-            'content': "There's nothing here yet.",
-            'created_at': str(int(time.time())),
-            'updated_at': str(int(time.time()))
-        }
+        Item=resource
     )
-    return _make_response(body={"resource_id": resource_id})
+    return _make_response(body={"resource": resource})
 
 
 def get_resource(event, context):
@@ -112,7 +113,7 @@ def update_resource(event, context):
         return _make_response(status_code=HTTPStatus.FORBIDDEN)
 
     resources_table.put_item(Item=resource)
-    return _make_response(body={'updated_at': updated_at})
+    return _make_response(body={'resource': resource})
 
 def delete_resource(event, context):
     user_id = event['requestContext']['authorizer']['claims']['sub']

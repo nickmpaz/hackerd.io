@@ -16,7 +16,7 @@ var api = {
     url: baseUrl + 'ping_auth',
     method: 'GET'
   },
-  createResources: {
+  createResource: {
     url: baseUrl + 'resources',
     method: 'POST'
   },
@@ -32,6 +32,10 @@ var api = {
     url: baseUrl + 'resources/',
     method: 'POST'
   },
+  deleteResource: {
+    url: baseUrl + 'resources/',
+    method: 'DELETE'
+  }
 }
 
 module.exports = {

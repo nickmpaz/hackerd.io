@@ -1,17 +1,8 @@
 <template>
   <v-container fluid>
-    <loading-dialog :active="loading" message="Loading" />
+    <loading-dialog :active="!doneLoading" message="Loading" />
     <loading-dialog :active="creating" message="Creating" />
-    <loading-dialog :active="deleting" message="Deleting" />
-    <confirm-dialog
-      :active="confirmDeleteDialog"
-      prompt="Delete Resource?"
-      confirmMessage="delete"
-      declineMessage="cancel"
-      @confirm="deleteResource"
-      @decline="confirmDeleteDialog = false"
-    />
-    <div v-if="!loading">
+    <div v-if="doneLoading">
       <v-speed-dial
         v-model="fab"
         fixed
@@ -27,10 +18,10 @@
             <v-icon v-else>mdi-plus</v-icon>
           </v-btn>
         </template>
-        <v-btn fab dark large color="success" @click="createResource('note')">
+        <v-btn fab dark large color="success" @click="createNote('markdown')">
           <v-icon>mdi-note-text</v-icon>
         </v-btn>
-        <v-btn fab dark large color="success" @click="createResource('link')">
+        <v-btn fab dark large color="success" @click="createNote('link')">
           <v-icon>mdi-link-variant</v-icon>
         </v-btn>
       </v-speed-dial>
@@ -39,18 +30,18 @@
         <v-col cols="12" md="10" xl="8">
           <v-text-field label="Search" solo single-line v-model="query" class="mb-6"></v-text-field>
           <v-card
-            v-for="(resource, index) in searchResults"
+            v-for="(note, index) in searchResults"
             :key="index"
             class="px-4 pt-1 pb-2 mb-4"
-            @click="viewResource(resource)"
+            @click="note.type === 'markdown' ? viewNote(note.note_id) : openInNewTab(note.document)"
             :ripple="false"
             role="button"
           >
             <div class="d-flex">
               <h1 class="flex-grow-1">
-                <v-icon v-if="resource.type === 'note'" class="mr-2">mdi-note-text</v-icon>
-                <v-icon v-if="resource.type === 'link'" class="mr-2">mdi-link-variant</v-icon>
-                {{ resource.title ? resource.title : "Untitled"}}
+                <v-icon v-if="note.type === 'markdown'" class="mr-2">mdi-note-text</v-icon>
+                <v-icon v-if="note.type === 'link'" class="mr-2">mdi-link-variant</v-icon>
+                {{ note.title }}
               </h1>
               <!-- <v-icon class="align-self-start mt-2">mdi-dots-horizontal</v-icon> -->
               <v-menu bottom offset-y>
@@ -60,7 +51,7 @@
                   </v-btn>
                 </template>
                 <v-list dense>
-                  <v-list-item link @click="editResource(resource)">
+                  <v-list-item link @click="editNote(note.note_id)">
                     <v-list-item-action>
                       <v-icon color="green">mdi-pencil</v-icon>
                     </v-list-item-action>
@@ -76,10 +67,7 @@
                       <v-list-item-title>Export</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
-                  <v-list-item
-                    link
-                    @click="confirmDeleteDialog = true; resourceToDelete = resource"
-                  >
+                  <v-list-item link>
                     <v-list-item-action>
                       <v-icon color="red">mdi-delete</v-icon>
                     </v-list-item-action>
@@ -91,14 +79,14 @@
               </v-menu>
             </div>
             <v-row dense>
-              <v-col cols="auto" v-if="resource.tags.length == 0">
+              <v-col cols="auto" v-if="note.tags.length == 0">
                 <v-card color="primary" class="px-1 py-1" dark>
                   <v-icon small class="ml-1">mdi-tag</v-icon>
                   <span class="px-1">No tags</span>
                 </v-card>
               </v-col>
 
-              <v-col cols="auto" v-for="(tag, index) in resource.tags" :key="index">
+              <v-col cols="auto" v-for="(tag, index) in note.tags" :key="index">
                 <v-card color="primary" class="px-1 py-1" dark>
                   <v-icon small class="ml-1">mdi-tag</v-icon>
                   <span class="px-1">{{ tag }}</span>
@@ -114,167 +102,124 @@
 
 <script>
 import LoadingDialog from "../components/LoadingDialog";
-import ConfirmDialog from "../components/ConfirmDialog";
-
 import axios from "axios";
 import { Auth } from "aws-amplify";
 import Fuse from "fuse.js";
 
 export default {
   components: {
-    LoadingDialog,
-    ConfirmDialog,
+    LoadingDialog
   },
   computed: {
-    searchResults: function () {
+    searchResults: function() {
       var vm = this;
       if (vm.query === "") {
-        return vm.resources;
+        return vm.notes;
       }
       const options = {
         threshold: 0.25,
-        keys: ["title", "tags"],
+        keys: ["title", "tags"]
       };
-      const fuse = new Fuse(vm.resources, options);
+      const fuse = new Fuse(this.notes, options);
       const result = fuse.search(vm.query);
-      return result.map((a) => a.item);
-    },
+      return result.map(a => a.item);
+    }
   },
   data: () => ({
     query: "",
     fab: false,
     creating: false,
-    deleting: false,
-    confirmDeleteDialog: false,
-    resourceToDelete: null,
-    loading: true,
-    resources: [],
+    doneLoading: false,
+    notes: []
   }),
   beforeCreate() {
     var vm = this;
     Auth.currentAuthenticatedUser()
-      .then((data) => {
+      .then(data => {
         axios({
-          method: vm.$variables.api.getResources.method,
-          url: vm.$variables.api.getResources.url,
+          method: "get",
+          url: vm.$variables.api.getNotes,
           headers: {
-            Authorization: data.signInUserSession.idToken.jwtToken,
-          },
+            Authorization: data.signInUserSession.idToken.jwtToken
+          }
         })
-          .then((response) => {
-            vm.resources = response.data.resources;
-            vm.loading = false;
+          .then(response => {
+            vm.notes = response.data.notes;
+            vm.doneLoading = true;
             sessionStorage.setItem(
-              vm.$route.fullPath + ".resources",
-              JSON.stringify(response.data.resources)
+              vm.$route.fullPath + ".notes",
+              JSON.stringify(response.data.notes)
             );
           })
-          .catch((err) => {
+          .catch(err => {
+            console.log('catch')
             console.error(err);
           });
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   },
   created() {
     var vm = this;
     // check for page content in session storage
-    if (sessionStorage.getItem(vm.$route.fullPath + ".resources")) {
-      vm.resources = JSON.parse(
-        sessionStorage.getItem(vm.$route.fullPath + ".resources")
+    if (sessionStorage.getItem(vm.$route.fullPath + ".notes")) {
+      vm.notes = JSON.parse(
+        sessionStorage.getItem(vm.$route.fullPath + ".notes")
       );
-      vm.loading = false;
+      vm.doneLoading = true;
     }
   },
   methods: {
-    openInNewTab: function (url) {
+    openInNewTab: function(url) {
       var win = window.open(url, "_blank");
       win.focus();
     },
-    viewResource: function (resource) {
-      var vm = this;
-      if (resource.type === "link") {
-        vm.openInNewTab(resource.content);
-      } else {
-        vm.$router.push({
-          name: "Resource",
-          params: { resource: resource, resource_id: resource.resource_id },
-        });
-      }
-    },
-    editResource: function (resource) {
+    viewNote: function(noteId) {
       var vm = this;
       vm.$router.push({
-        name: "Resource",
-        params: { resource: resource, resource_id: resource.resource_id },
+        name: "Note",
+        params: { note_id: noteId }
       });
     },
-    createResource: function (type) {
+    editNote: function(noteId) {
+      var vm = this;
+      vm.$router.push({
+        name: "Note",
+        params: { note_id: noteId , mode: 'edit'}
+      });
+    },
+    createNote: function(note_type) {
       var vm = this;
       vm.creating = true;
       Auth.currentAuthenticatedUser()
-        .then((data) => {
+        .then(data => {
           axios({
-            method: vm.$variables.api.createResource.method,
-            url: vm.$variables.api.createResource.url,
+            method: "post",
+            url: vm.$variables.api.createNote,
             headers: {
-              Authorization: data.signInUserSession.idToken.jwtToken,
+              Authorization: data.signInUserSession.idToken.jwtToken
             },
             data: {
-              type: type,
-            },
+              note_type: note_type
+            }
           })
-            .then((response) => {
-              var resource = response.data.resource;
-              console.log();
+            .then(response => {
               vm.$router.push({
-                name: "Resource",
-                params: {
-                  resource: resource,
-                  resource_id: resource.resource_id,
-                },
+                name: "Note",
+                params: { note_id: response.data.note_id, mode: "edit" }
               });
             })
-            .catch((err) => {
+            .catch(err => {
               vm.loading = false;
               console.error(err);
             });
         })
-        .catch((err) => {
+        .catch(err => {
           vm.loading = false;
           console.log(err);
         });
-    },
-    deleteResource: function () {
-      var vm = this;
-      vm.confirmDeleteDialog = false;
-      vm.deleting = true;
-      Auth.currentAuthenticatedUser()
-        .then((data) => {
-          axios({
-            method: vm.$variables.api.deleteResource.method,
-            url:
-              vm.$variables.api.deleteResource.url +
-              vm.resourceToDelete.resource_id,
-            headers: {
-              Authorization: data.signInUserSession.idToken.jwtToken,
-            },
-          })
-            .then((response) => {
-              console.log(response);
-              vm.deleting = false
-              vm.resources = vm.resources.filter((e) => e !== vm.resourceToDelete);
-              // vm.resourceToDelete = null
-            })
-            .catch((err) => {
-              console.error(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-  },
+    }
+  }
 };
 </script>
