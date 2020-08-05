@@ -55,10 +55,10 @@ resource "aws_acm_certificate_validation" "default" {
 
 # DATABASE
 
-resource "aws_dynamodb_table" "dolphin_notes_table" {
-  name             = "dolphin_notes_table"
+resource "aws_dynamodb_table" "dolphin_resources_table" {
+  name             = "dolphin_resources_table"
   hash_key         = "user_id"
-  range_key        = "note_id"
+  range_key        = "resource_id"
   billing_mode     = "PAY_PER_REQUEST"
 
   attribute {
@@ -67,7 +67,7 @@ resource "aws_dynamodb_table" "dolphin_notes_table" {
   }
 
   attribute {
-    name = "note_id"
+    name = "resource_id"
     type = "S"
   }
 
