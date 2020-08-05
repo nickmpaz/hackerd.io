@@ -74,7 +74,7 @@ def create_resource(event, context):
             'type': resource_type,
             'title': "Untitled",
             'tags': [],
-            'document': "There's nothing here yet.",
+            'content': "There's nothing here yet.",
             'created_at': str(int(time.time())),
             'updated_at': str(int(time.time()))
         }

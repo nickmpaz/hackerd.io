@@ -16,19 +16,19 @@ var api = {
     url: baseUrl + 'ping_auth',
     method: 'GET'
   },
-  createNote: {
+  createResources: {
     url: baseUrl + 'resources',
     method: 'POST'
   },
-  getNotes: {
+  getResources: {
     url: baseUrl + 'resources',
     method: 'GET'
   },
-  getNote: {
+  getResource: {
     url: baseUrl + 'resources/',
     method: 'GET'
   },
-  updateNote: {
+  updateResource: {
     url: baseUrl + 'resources/',
     method: 'POST'
   },

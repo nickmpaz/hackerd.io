@@ -18,10 +18,10 @@
             <v-icon v-else>mdi-plus</v-icon>
           </v-btn>
         </template>
-        <v-btn fab dark large color="success" @click="createNote('markdown')">
+        <v-btn fab dark large color="success" @click="createResource('markdown')">
           <v-icon>mdi-note-text</v-icon>
         </v-btn>
-        <v-btn fab dark large color="success" @click="createNote('link')">
+        <v-btn fab dark large color="success" @click="createResource('link')">
           <v-icon>mdi-link-variant</v-icon>
         </v-btn>
       </v-speed-dial>
@@ -30,18 +30,18 @@
         <v-col cols="12" md="10" xl="8">
           <v-text-field label="Search" solo single-line v-model="query" class="mb-6"></v-text-field>
           <v-card
-            v-for="(note, index) in searchResults"
+            v-for="(resource, index) in searchResults"
             :key="index"
             class="px-4 pt-1 pb-2 mb-4"
-            @click="note.type === 'markdown' ? viewNote(note.note_id) : openInNewTab(note.document)"
+            @click="resource.type === 'markdown' ? viewNote(resource.resource_id) : openInNewTab(resource.content)"
             :ripple="false"
             role="button"
           >
             <div class="d-flex">
               <h1 class="flex-grow-1">
-                <v-icon v-if="note.type === 'markdown'" class="mr-2">mdi-note-text</v-icon>
-                <v-icon v-if="note.type === 'link'" class="mr-2">mdi-link-variant</v-icon>
-                {{ note.title }}
+                <v-icon v-if="resource.type === 'markdown'" class="mr-2">mdi-note-text</v-icon>
+                <v-icon v-if="resource.type === 'link'" class="mr-2">mdi-link-variant</v-icon>
+                {{ resource.title }}
               </h1>
               <!-- <v-icon class="align-self-start mt-2">mdi-dots-horizontal</v-icon> -->
               <v-menu bottom offset-y>
@@ -51,7 +51,7 @@
                   </v-btn>
                 </template>
                 <v-list dense>
-                  <v-list-item link @click="editNote(note.note_id)">
+                  <v-list-item link @click="editNote(resource.resource_id)">
                     <v-list-item-action>
                       <v-icon color="green">mdi-pencil</v-icon>
                     </v-list-item-action>
@@ -79,14 +79,14 @@
               </v-menu>
             </div>
             <v-row dense>
-              <v-col cols="auto" v-if="note.tags.length == 0">
+              <v-col cols="auto" v-if="resource.tags.length == 0">
                 <v-card color="primary" class="px-1 py-1" dark>
                   <v-icon small class="ml-1">mdi-tag</v-icon>
                   <span class="px-1">No tags</span>
                 </v-card>
               </v-col>
 
-              <v-col cols="auto" v-for="(tag, index) in note.tags" :key="index">
+              <v-col cols="auto" v-for="(tag, index) in resource.tags" :key="index">
                 <v-card color="primary" class="px-1 py-1" dark>
                   <v-icon small class="ml-1">mdi-tag</v-icon>
                   <span class="px-1">{{ tag }}</span>
@@ -108,118 +108,119 @@ import Fuse from "fuse.js";
 
 export default {
   components: {
-    LoadingDialog
+    LoadingDialog,
   },
   computed: {
-    searchResults: function() {
+    searchResults: function () {
       var vm = this;
       if (vm.query === "") {
-        return vm.notes;
+        return vm.resources;
       }
       const options = {
         threshold: 0.25,
-        keys: ["title", "tags"]
+        keys: ["title", "tags"],
       };
-      const fuse = new Fuse(this.notes, options);
+      const fuse = new Fuse(this.resources, options);
       const result = fuse.search(vm.query);
-      return result.map(a => a.item);
-    }
+      return result.map((a) => a.item);
+    },
   },
   data: () => ({
     query: "",
     fab: false,
     creating: false,
     doneLoading: false,
-    notes: []
+    resources: [],
   }),
   beforeCreate() {
     var vm = this;
-    Auth.currentAuthenticatedUser()
-      .then(data => {
-        axios({
-          method: "get",
-          url: vm.$variables.api.getNotes,
-          headers: {
-            Authorization: data.signInUserSession.idToken.jwtToken
-          }
-        })
-          .then(response => {
-            vm.notes = response.data.notes;
-            vm.doneLoading = true;
-            sessionStorage.setItem(
-              vm.$route.fullPath + ".notes",
-              JSON.stringify(response.data.notes)
-            );
+      Auth.currentAuthenticatedUser()
+        .then((data) => {
+          axios({
+            method: vm.$variables.api.getResources.method,
+            url: vm.$variables.api.getResources.url,
+            headers: {
+              Authorization: data.signInUserSession.idToken.jwtToken,
+            },
           })
-          .catch(err => {
-            console.log('catch')
-            console.error(err);
-          });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+            .then((response) => {
+              vm.resources = response.data.resources;
+              vm.doneLoading = true;
+              sessionStorage.setItem(
+                vm.$route.fullPath + ".resources",
+                JSON.stringify(response.data.resources)
+              );
+            })
+            .catch((err) => {
+              console.log("catch");
+              console.error(err);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
   },
   created() {
     var vm = this;
     // check for page content in session storage
-    if (sessionStorage.getItem(vm.$route.fullPath + ".notes")) {
-      vm.notes = JSON.parse(
-        sessionStorage.getItem(vm.$route.fullPath + ".notes")
+    if (sessionStorage.getItem(vm.$route.fullPath + ".resources")) {
+      vm.resources = JSON.parse(
+        sessionStorage.getItem(vm.$route.fullPath + ".resources")
       );
       vm.doneLoading = true;
     }
   },
   methods: {
-    openInNewTab: function(url) {
+
+    openInNewTab: function (url) {
       var win = window.open(url, "_blank");
       win.focus();
     },
-    viewNote: function(noteId) {
+    viewNote: function (resourceId) {
       var vm = this;
       vm.$router.push({
         name: "Note",
-        params: { note_id: noteId }
+        params: { resource_id: resourceId },
       });
     },
-    editNote: function(noteId) {
+    editNote: function (resourceId) {
       var vm = this;
       vm.$router.push({
         name: "Note",
-        params: { note_id: noteId , mode: 'edit'}
+        params: { resource_id: resourceId, mode: "edit" },
       });
     },
-    createNote: function(note_type) {
+    createResource: function (resource_type) {
       var vm = this;
       vm.creating = true;
       Auth.currentAuthenticatedUser()
-        .then(data => {
+        .then((data) => {
           axios({
-            method: "post",
-            url: vm.$variables.api.createNote,
+            method: vm.$variables.api.createResource.method,
+            url: vm.$variables.api.createResource.url,
             headers: {
-              Authorization: data.signInUserSession.idToken.jwtToken
+              Authorization: data.signInUserSession.idToken.jwtToken,
             },
             data: {
-              note_type: note_type
-            }
+              resource_type: resource_type,
+            },
           })
-            .then(response => {
+            .then((response) => {
               vm.$router.push({
                 name: "Note",
-                params: { note_id: response.data.note_id, mode: "edit" }
+                params: { resource_id: response.data.resource_id, mode: "edit" },
               });
             })
-            .catch(err => {
+            .catch((err) => {
               vm.loading = false;
               console.error(err);
             });
         })
-        .catch(err => {
+        .catch((err) => {
           vm.loading = false;
           console.log(err);
         });
-    }
-  }
+    },
+  },
 };
 </script>
