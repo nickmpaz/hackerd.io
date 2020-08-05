@@ -5,14 +5,33 @@ var stageIndicator =
   process.env.VUE_APP_ENVIRONMENT === 'prod'
     ? ''
     : ' (' + process.env.VUE_APP_ENVIRONMENT + ')'
+
 var api = {
   baseUrl: baseUrl,
-  ping: baseUrl + 'ping',
-  pingAuth: baseUrl + 'ping_auth',
-  createNote: baseUrl + 'notes',
-  getNotes: baseUrl + 'notes',
-  getNote: baseUrl + 'notes/',
-  updateNote: baseUrl + 'notes/'
+  ping: {
+    url: baseUrl + 'ping',
+    method: 'GET'
+  },
+  pingAuth: {
+    url: baseUrl + 'ping_auth',
+    method: 'GET'
+  },
+  createNote: {
+    url: baseUrl + 'resources',
+    method: 'POST'
+  },
+  getNotes: {
+    url: baseUrl + 'resources',
+    method: 'GET'
+  },
+  getNote: {
+    url: baseUrl + 'resources/',
+    method: 'GET'
+  },
+  updateNote: {
+    url: baseUrl + 'resources/',
+    method: 'POST'
+  },
 }
 
 module.exports = {
