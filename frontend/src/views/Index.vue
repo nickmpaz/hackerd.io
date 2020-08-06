@@ -149,7 +149,23 @@ export default {
     resourceToDelete: null,
     loading: true,
     resources: [],
+    focusIndex: 0,
   }),
+  mounted() {
+    this._keyListener = function (e) {
+      if (e.key === "j" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault(); 
+        console.log('yeet')
+      } else if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault(); 
+        console.log('yeet')
+      }
+    };
+    document.addEventListener("keydown", this._keyListener.bind(this));
+  },
+  beforeDestroy() {
+    document.removeEventListener("keydown", this._keyListener);
+  },
   beforeCreate() {
     var vm = this;
     Auth.currentAuthenticatedUser()
@@ -263,8 +279,10 @@ export default {
           })
             .then((response) => {
               console.log(response);
-              vm.deleting = false
-              vm.resources = vm.resources.filter((e) => e !== vm.resourceToDelete);
+              vm.deleting = false;
+              vm.resources = vm.resources.filter(
+                (e) => e !== vm.resourceToDelete
+              );
               // vm.resourceToDelete = null
             })
             .catch((err) => {
