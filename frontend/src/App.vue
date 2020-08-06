@@ -76,6 +76,7 @@ export default {
     }
   },
   beforeCreate() {
+    document.title = this.$variables.brand
     // change authenticated variable when auth state changes
     Hub.listen("auth", data => {
       console.log("A new auth event has happened: " + data.payload.event);
@@ -94,7 +95,7 @@ export default {
       });
   },
   created() {
-    // handle dark mode preference
+        // handle dark mode preference
     if (localStorage.getItem("darkModePreference")) {
       this.$vuetify.theme.dark = JSON.parse(
         localStorage.getItem("darkModePreference")

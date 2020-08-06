@@ -15,8 +15,14 @@
     <v-col cols="12" xl="8">
       <div class="d-flex justify-center">
         <span>
-          <div>
+          <div class="d-flex">
             <span id="brand" class="display-4">{{ $variables.brand }}</span>
+            <v-img
+              :src="getImgUrl('icon.png')"
+              contain
+              height="100"
+              width="109"
+            ></v-img>
           </div>
 
           <div class="mt-4">
@@ -61,24 +67,24 @@ export default {
         "warning",
         "pink darken-2",
         "red lighten-1",
-        "deep-purple accent-4"
+        "deep-purple accent-4",
       ],
-      slides: ["First", "Second", "Third", "Fourth", "Fifth"]
+      slides: ["First", "Second", "Third", "Fourth", "Fifth"],
     };
   },
   methods: {
-    federatedSignIn: function() {
+    federatedSignIn: function () {
       this.loading = true;
       Auth.federatedSignIn({
-        provider: "Google"
+        provider: "Google",
       });
     },
-    getImgUrl: function(img) {
+    getImgUrl: function (img) {
       var images = require.context("../assets/");
-      console.log(this.$route)
+      console.log(this.$route);
       return images("./" + img);
-    }
-  }
+    },
+  },
 };
 </script>
 
