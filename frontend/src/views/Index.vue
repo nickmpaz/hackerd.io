@@ -41,7 +41,8 @@
           <v-card
             v-for="(resource, index) in searchResults"
             :key="index"
-            :class="'px-4 pt-1 pb-2 mb-4 ' + (index == focusIndex ? 'focused-resource' : '')"
+            :id="(index == focusIndex ? 'focused-resource' : '')"
+            class="px-4 pt-1 pb-2 mb-4"
             @click="viewResource(resource)"
             :ripple="false"
             role="button"
@@ -141,8 +142,8 @@ export default {
       const finalResult = result.map((a) => a.item);
       vm.searchResultsLength = finalResult.length;
       if (vm.focusIndex > vm.searchResultsLength - 1) {
-        
-        vm.focusIndex = vm.searchResultsLength == 0 ? 0 : vm.searchResultsLength - 1
+        vm.focusIndex =
+          vm.searchResultsLength == 0 ? 0 : vm.searchResultsLength - 1;
       }
       return finalResult;
     },
@@ -162,17 +163,23 @@ export default {
   mounted() {
     var vm = this;
     this._keyListener = function (e) {
-      console.log(e)
-      if (e.key === "ArrowDown" || (e.key === "j" && (e.ctrlKey || e.metaKey))) {
+      console.log(e);
+      if (
+        e.key === "ArrowDown" ||
+        (e.key === "j" && (e.ctrlKey || e.metaKey))
+      ) {
         e.preventDefault();
         vm.incrementFocus();
-      } else if (e.key === "ArrowUp" || (e.key === "k" && (e.ctrlKey || e.metaKey))) {
+      } else if (
+        e.key === "ArrowUp" ||
+        (e.key === "k" && (e.ctrlKey || e.metaKey))
+      ) {
         e.preventDefault();
         vm.decrementFocus();
       } else if (e.key === "Enter") {
-        console.log('yuh')
-        e.preventDefault()
-        vm.viewResource(vm.resources[vm.focusIndex])
+        console.log("yuh");
+        e.preventDefault();
+        vm.viewResource(vm.resources[vm.focusIndex]);
       }
     };
     document.addEventListener("keydown", this._keyListener.bind(this));
@@ -218,17 +225,27 @@ export default {
     }
   },
   methods: {
+    scrollFocusToCenter: function () {
+      const focused = document.getElementById("focused-resource");
+      focused.scrollIntoView({
+        behavior: "auto",
+        block: "center",
+        inline: "center",
+      });
+    },
     incrementFocus: function () {
       var vm = this;
       if (vm.focusIndex < vm.searchResultsLength - 1) {
         vm.focusIndex++;
       }
+      vm.scrollFocusToCenter()
     },
     decrementFocus: function () {
       var vm = this;
       if (vm.focusIndex > 0) {
         vm.focusIndex--;
       }
+      vm.scrollFocusToCenter()
     },
     openInNewTab: function (url) {
       var win = window.open(url, "_blank");
@@ -330,7 +347,7 @@ export default {
   text-overflow: ellipsis;
 }
 
-.focused-resource {
+#focused-resource {
   outline-style: solid;
   outline-color: white;
 }
