@@ -37,11 +37,11 @@
 
       <v-row justify="center" class="my-12">
         <v-col cols="12" md="10" xl="8">
-          <v-text-field label="Search" solo single-line v-model="query" class="mb-6"></v-text-field>
+          <v-text-field label="Search" solo autofocus single-line v-model="query" class="mb-6"></v-text-field>
           <v-card
             v-for="(resource, index) in searchResults"
             :key="index"
-            class="px-4 pt-1 pb-2 mb-4"
+            :class="'px-4 pt-1 pb-2 mb-4 ' + (index == focusIndex ? 'focused-resource' : '')"
             @click="viewResource(resource)"
             :ripple="false"
             role="button"
@@ -129,6 +129,7 @@ export default {
     searchResults: function () {
       var vm = this;
       if (vm.query === "") {
+        vm.searchResultsLength = vm.resources.length;
         return vm.resources;
       }
       const options = {
@@ -137,7 +138,13 @@ export default {
       };
       const fuse = new Fuse(vm.resources, options);
       const result = fuse.search(vm.query);
-      return result.map((a) => a.item);
+      const finalResult = result.map((a) => a.item);
+      vm.searchResultsLength = finalResult.length;
+      if (vm.focusIndex > vm.searchResultsLength - 1) {
+        
+        vm.focusIndex = vm.searchResultsLength == 0 ? 0 : vm.searchResultsLength - 1
+      }
+      return finalResult;
     },
   },
   data: () => ({
@@ -150,15 +157,22 @@ export default {
     loading: true,
     resources: [],
     focusIndex: 0,
+    searchResultsLength: 0,
   }),
   mounted() {
+    var vm = this;
     this._keyListener = function (e) {
-      if (e.key === "j" && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault(); 
-        console.log('yeet')
-      } else if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault(); 
-        console.log('yeet')
+      console.log(e)
+      if (e.key === "ArrowDown" || (e.key === "j" && (e.ctrlKey || e.metaKey))) {
+        e.preventDefault();
+        vm.incrementFocus();
+      } else if (e.key === "ArrowUp" || (e.key === "k" && (e.ctrlKey || e.metaKey))) {
+        e.preventDefault();
+        vm.decrementFocus();
+      } else if (e.key === "Enter") {
+        console.log('yuh')
+        e.preventDefault()
+        vm.viewResource(vm.resources[vm.focusIndex])
       }
     };
     document.addEventListener("keydown", this._keyListener.bind(this));
@@ -204,6 +218,18 @@ export default {
     }
   },
   methods: {
+    incrementFocus: function () {
+      var vm = this;
+      if (vm.focusIndex < vm.searchResultsLength - 1) {
+        vm.focusIndex++;
+      }
+    },
+    decrementFocus: function () {
+      var vm = this;
+      if (vm.focusIndex > 0) {
+        vm.focusIndex--;
+      }
+    },
     openInNewTab: function (url) {
       var win = window.open(url, "_blank");
       win.focus();
@@ -302,5 +328,10 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.focused-resource {
+  outline-style: solid;
+  outline-color: white;
 }
 </style>

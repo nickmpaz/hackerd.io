@@ -44,9 +44,23 @@ export default {
     saving: false,
     tagInput: "",
   }),
-  computed: {},
-  beforeCreate() {},
-  async created() {},
+  mounted() {
+    var vm = this;
+    this._keyListener = function (e) {
+      console.log(e);
+      if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        vm.saveResource();
+      } else if (e.key === "h" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        vm.$router.push({ name: "Index" });
+      }
+    };
+    document.addEventListener("keydown", this._keyListener.bind(this));
+  },
+  beforeDestroy() {
+    document.removeEventListener("keydown", this._keyListener);
+  },
   methods: {
     addTag: function () {
       var vm = this;
@@ -63,15 +77,16 @@ export default {
     },
     saveResource: async function () {
       var vm = this;
-      vm.saving = true
-      console.log('here')
-      console.log(vm.resource)
+      vm.saving = true;
+      console.log("here");
+      console.log(vm.resource);
       Auth.currentAuthenticatedUser()
         .then((data) => {
           axios({
             method: vm.$variables.api.updateResource.method,
             url:
-              vm.$variables.api.updateResource.url + vm.$route.params.resource_id,
+              vm.$variables.api.updateResource.url +
+              vm.$route.params.resource_id,
             headers: {
               Authorization: data.signInUserSession.idToken.jwtToken,
             },
@@ -80,7 +95,7 @@ export default {
             },
           })
             .then((response) => {
-              vm.saving = false
+              vm.saving = false;
               console.log(response);
               vm.$router.push({
                 name: "Index",

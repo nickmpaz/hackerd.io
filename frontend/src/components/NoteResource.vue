@@ -260,6 +260,24 @@ export default {
       });
     },
   },
+  mounted() {
+    var vm = this;
+    this._keyListener = function (e) {
+      console.log(e)
+      if (e.key === "i" && (e.ctrlKey || e.metaKey) && vm.mode === "read") {
+        e.preventDefault();
+        vm.edit()
+      } else if (e.key === "s" && (e.ctrlKey || e.metaKey) && vm.mode === "write") {
+        e.preventDefault();
+        vm.save()
+      } else if (e.key === "h" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        vm.$router.push({ name: "Index" });
+      } 
+    };
+    document.addEventListener("keydown", this._keyListener.bind(this));
+  },
+
   methods: {
     clearSelection: function () {
       if (window.getSelection) {
@@ -337,6 +355,7 @@ export default {
   },
   beforeDestroy() {
     this.editor.destroy();
+    document.removeEventListener("keydown", this._keyListener);
   },
 };
 </script>
