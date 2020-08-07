@@ -41,7 +41,8 @@
           <v-card
             v-for="(resource, index) in searchResults"
             :key="index"
-            :id="(index == focusIndex ? 'focused-resource' : '')"
+            :id="(index == focusIndex ? ('focused-resource-' + ($vuetify.theme.dark ? 'dark' : 'light')) : '')"
+
             class="px-4 pt-1 pb-2 mb-4"
             @click="viewResource(resource)"
             :ripple="false"
@@ -182,7 +183,7 @@ export default {
         vm.viewResource(vm.resources[vm.focusIndex]);
       }
     };
-    document.addEventListener("keydown", this._keyListener.bind(this));
+    document.addEventListener("keydown", this._keyListener);
   },
   beforeDestroy() {
     document.removeEventListener("keydown", this._keyListener);
@@ -347,8 +348,13 @@ export default {
   text-overflow: ellipsis;
 }
 
-#focused-resource {
+#focused-resource-dark {
   outline-style: solid;
   outline-color: white;
+}
+
+#focused-resource-light {
+  outline-style: solid;
+  outline-color: #212121;
 }
 </style>

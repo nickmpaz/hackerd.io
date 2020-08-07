@@ -63,108 +63,112 @@
                 <div class="menubar">
                   <v-btn
                     class="menubar__button"
-                    :depressed="isActive.bold()"
+                    :color="isActive.bold() ? 'primary' : 'secondary'"
                     @click="commands.bold"
                   >
                     <v-icon large>mdi-format-bold</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.italic() }"
+                    :color="isActive.italic() ? 'primary' : 'secondary'"
                     @click="commands.italic"
                   >
                     <v-icon large>mdi-format-italic</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.strike() }"
+                    :color="isActive.strike() ? 'primary' : 'secondary'"
                     @click="commands.strike"
                   >
                     <v-icon large>mdi-format-strikethrough</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.underline() }"
+                    :color="isActive.underline() ? 'primary' : 'secondary'"
                     @click="commands.underline"
                   >
                     <v-icon large>mdi-format-underline</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.code() }"
+                    :color="isActive.code() ? 'primary' : 'secondary'"
                     @click="commands.code"
                   >
                     <v-icon large>mdi-code-braces</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.paragraph() }"
+                    :color="isActive.paragraph() ? 'primary' : 'secondary'"
                     @click="commands.paragraph"
                   >
                     <v-icon large>mdi-format-pilcrow</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.heading({ level: 1 }) }"
+                    :color="isActive.heading({ level: 1 }) ? 'primary' : 'secondary'"
                     @click="commands.heading({ level: 1 })"
                   >
                     <v-icon large>mdi-format-header-1</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.heading({ level: 2 }) }"
+                    :color="isActive.heading({ level: 2 }) ? 'primary' : 'secondary'"
                     @click="commands.heading({ level: 2 })"
                   >
                     <v-icon large>mdi-format-header-2</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.heading({ level: 3 }) }"
+                    :color="isActive.heading({ level: 3 }) ? 'primary' : 'secondary'"
                     @click="commands.heading({ level: 3 })"
                   >
                     <v-icon large>mdi-format-header-3</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.bullet_list() }"
+                    :color="isActive.bullet_list() ? 'primary' : 'secondary'"
                     @click="commands.bullet_list"
                   >
                     <v-icon large>mdi-format-list-bulleted-square</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.ordered_list() }"
+                    :color="isActive.ordered_list() ? 'primary' : 'secondary'"
                     @click="commands.ordered_list"
                   >
                     <v-icon large>mdi-format-list-numbered</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.blockquote() }"
+                    :color="isActive.blockquote() ? 'primary' : 'secondary'"
                     @click="commands.blockquote"
                   >
                     <v-icon large>mdi-format-quote-close</v-icon>
                   </v-btn>
                   <v-btn
                     class="menubar__button"
-                    :class="{ 'is-active': isActive.code_block() }"
+                    :color="isActive.code_block() ? 'primary' : 'secondary'"
                     @click="commands.code_block"
                   >
                     <v-icon large>mdi-code-json</v-icon>
                   </v-btn>
-                  <v-btn class="menubar__button" @click="commands.horizontal_rule">
+                  <v-btn
+                    class="menubar__button"
+                    @click="commands.horizontal_rule"
+                    color="secondary"
+                  >
                     <v-icon large>mdi-minus</v-icon>
                   </v-btn>
-                  <v-btn class="menubar__button" @click="commands.undo">
+                  <v-btn class="menubar__button" @click="commands.undo" color="secondary">
                     <v-icon large>mdi-undo</v-icon>
                   </v-btn>
-                  <v-btn class="menubar__button" @click="commands.redo">
+                  <v-btn class="menubar__button" @click="commands.redo" color="secondary">
                     <v-icon large>mdi-redo</v-icon>
                   </v-btn>
                 </div>
               </editor-menu-bar>
             </v-toolbar>
-            <editor-content class="editor__content" :editor="editor" />
+            <editor-content class="editor__content mt-4" :editor="editor" />
           </v-card>
         </div>
       </v-col>
@@ -199,6 +203,8 @@ import {
 import javascript from "highlight.js/lib/languages/javascript";
 import css from "highlight.js/lib/languages/css";
 import python from "highlight.js/lib/languages/python";
+import bash from "highlight.js/lib/languages/bash";
+import sql from "highlight.js/lib/languages/sql";
 import LoadingDialog from "../components/LoadingDialog";
 import EditableResourceHeader from "../components/EditableResourceHeader";
 import ResourceHeader from "../components/ResourceHeader";
@@ -228,6 +234,8 @@ export default {
               javascript,
               css,
               python,
+              bash,
+              sql,
             },
           }),
           new Blockquote(),
@@ -263,17 +271,21 @@ export default {
   mounted() {
     var vm = this;
     this._keyListener = function (e) {
-      console.log(e)
+      console.log(e);
       if (e.key === "i" && (e.ctrlKey || e.metaKey) && vm.mode === "read") {
         e.preventDefault();
-        vm.edit()
-      } else if (e.key === "s" && (e.ctrlKey || e.metaKey) && vm.mode === "write") {
+        vm.edit();
+      } else if (
+        e.key === "s" &&
+        (e.ctrlKey || e.metaKey) &&
+        vm.mode === "write"
+      ) {
         e.preventDefault();
-        vm.save()
+        vm.save();
       } else if (e.key === "h" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
         vm.$router.push({ name: "Index" });
-      } 
+      }
     };
     document.addEventListener("keydown", this._keyListener.bind(this));
   },
@@ -361,9 +373,14 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../styles/markdown-light.scss";
+@import "../styles/markdown-dark.scss";
+
 :focus {
   outline: none;
 }
+
+// this is for the editor menu buttons
 .v-btn:not(.v-btn--round).v-size--default {
   padding: 0;
   min-width: 0;
@@ -379,59 +396,36 @@ export default {
   padding-left: 1.5em;
   padding-right: 1.5em;
 }
-pre {
-  &::before {
-    content: attr(data-language);
-    text-transform: uppercase;
-    display: block;
-    text-align: right;
-    font-weight: bold;
-    font-size: 0.6rem;
+.markdown-body-dark {
+  pre {
+    &::before {
+      content: attr(data-language);
+      text-transform: uppercase;
+      display: block;
+      text-align: right;
+      font-weight: bold;
+      font-size: 0.6rem;
+    }
+    code {
+      color: white !important;
+      @import "highlight.js/scss/atom-one-dark.scss";
+    }
   }
-  code {
-    .hljs-comment,
-    .hljs-quote {
-      color: #999999;
+}
+
+.markdown-body-light {
+  pre {
+    &::before {
+      content: attr(data-language);
+      text-transform: uppercase;
+      display: block;
+      text-align: right;
+      font-weight: bold;
+      font-size: 0.6rem;
     }
-    .hljs-variable,
-    .hljs-template-variable,
-    .hljs-attribute,
-    .hljs-tag,
-    .hljs-name,
-    .hljs-regexp,
-    .hljs-link,
-    .hljs-name,
-    .hljs-selector-id,
-    .hljs-selector-class {
-      color: #f2777a;
-    }
-    .hljs-number,
-    .hljs-meta,
-    .hljs-built_in,
-    .hljs-builtin-name,
-    .hljs-literal,
-    .hljs-type,
-    .hljs-params {
-      color: #f99157;
-    }
-    .hljs-string,
-    .hljs-symbol,
-    .hljs-bullet {
-      color: #99cc99;
-    }
-    .hljs-title,
-    .hljs-section {
-      color: #ffcc66;
-    }
-    .hljs-keyword,
-    .hljs-selector-tag {
-      color: #6699cc;
-    }
-    .hljs-emphasis {
-      font-style: italic;
-    }
-    .hljs-strong {
-      font-weight: 700;
+    code {
+      color: black !important;
+      @import "highlight.js/scss/atom-one-light.scss";
     }
   }
 }

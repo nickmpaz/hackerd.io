@@ -115,8 +115,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import "./styles/markdown-light.scss";
-@import "./styles/markdown-dark.scss";
 
 .cursor-pointer {
   cursor: pointer;
@@ -124,7 +122,7 @@ export default {
 
 #inspire.bg-light {
   background-repeat: repeat;
-  background: url("../public/Tortoise-Shell-light-bg-inverted.svg");
+  background: url("./assets/lightmode-background.svg");
   /* background by SVGBackgrounds.com */
 }
 #inspire.bg-dark {
