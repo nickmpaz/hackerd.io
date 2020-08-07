@@ -238,14 +238,14 @@ export default {
       if (vm.focusIndex < vm.searchResultsLength - 1) {
         vm.focusIndex++;
       }
-      vm.scrollFocusToCenter()
+      vm.scrollFocusToCenter();
     },
     decrementFocus: function () {
       var vm = this;
       if (vm.focusIndex > 0) {
         vm.focusIndex--;
       }
-      vm.scrollFocusToCenter()
+      vm.scrollFocusToCenter();
     },
     openInNewTab: function (url) {
       var win = window.open(url, "_blank");
