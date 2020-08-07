@@ -179,7 +179,7 @@ export default {
       } else if (e.key === "Enter") {
         console.log("yuh");
         e.preventDefault();
-        vm.viewResource(vm.resources[vm.focusIndex]);
+        vm.viewResource(vm.searchResults[vm.focusIndex]);
       }
     };
     document.addEventListener("keydown", this._keyListener);
