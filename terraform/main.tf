@@ -70,7 +70,17 @@ resource "aws_dynamodb_table" "dolphin_resources_table" {
     name = "resource_id"
     type = "S"
   }
+}
 
+resource "aws_dynamodb_table" "dolphin_namespaces_table" {
+  name             = "dolphin_namespaces_table"
+  hash_key         = "user_id"
+  billing_mode     = "PAY_PER_REQUEST"
+
+  attribute {
+    name = "user_id"
+    type = "S"
+  }
 }
 
 # WEBSITE - S3
