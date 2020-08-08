@@ -1,6 +1,6 @@
 <template>
    <div>
-        <h1>{{ resource.title ? resource.title : "Untitled"}}</h1>
+        <h1 class="title-case">{{ resource.title ? resource.title : "Untitled"}}</h1>
         <v-row dense class="mb-3 mt-1">
             <v-col cols="auto" v-if="resource.tags.length == 0">
               <v-card color="primary" class="px-1 py-1" dark>

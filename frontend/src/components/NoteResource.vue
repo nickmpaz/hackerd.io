@@ -32,7 +32,13 @@
       <v-btn fab dark :large="$vuetify.breakpoint.lgAndUp" color="blue">
         <v-icon>mdi-export</v-icon>
       </v-btn>
-      <v-btn fab dark :large="$vuetify.breakpoint.lgAndUp" color="red" @click="confirmDeleteDialog = true">
+      <v-btn
+        fab
+        dark
+        :large="$vuetify.breakpoint.lgAndUp"
+        color="red"
+        @click="confirmDeleteDialog = true"
+      >
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </v-speed-dial>
@@ -54,123 +60,115 @@
       <v-col cols="12" md="10" xl="8">
         <resource-header v-if="mode === 'read'" :resource="resource" />
         <editable-resource-header v-if="mode === 'write'" :resource="resource" />
-        <div class="editor">
-          <v-card
-            :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')"
-          >
-            <v-toolbar v-if="mode === 'write'" color="secondary darken-1">
-              <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
-                <div class="menubar">
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.bold() ? 'primary' : 'secondary'"
-                    @click="commands.bold"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-bold</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.italic() ? 'primary' : 'secondary'"
-                    @click="commands.italic"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-italic</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.strike() ? 'primary' : 'secondary'"
-                    @click="commands.strike"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-strikethrough</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.underline() ? 'primary' : 'secondary'"
-                    @click="commands.underline"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-underline</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.code() ? 'primary' : 'secondary'"
-                    @click="commands.code"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-code-braces</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.paragraph() ? 'primary' : 'secondary'"
-                    @click="commands.paragraph"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-pilcrow</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.heading({ level: 1 }) ? 'primary' : 'secondary'"
-                    @click="commands.heading({ level: 1 })"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-1</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.heading({ level: 2 }) ? 'primary' : 'secondary'"
-                    @click="commands.heading({ level: 2 })"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-2</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.heading({ level: 3 }) ? 'primary' : 'secondary'"
-                    @click="commands.heading({ level: 3 })"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-3</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.bullet_list() ? 'primary' : 'secondary'"
-                    @click="commands.bullet_list"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-list-bulleted-square</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.ordered_list() ? 'primary' : 'secondary'"
-                    @click="commands.ordered_list"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-list-numbered</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.blockquote() ? 'primary' : 'secondary'"
-                    @click="commands.blockquote"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-quote-close</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    :color="isActive.code_block() ? 'primary' : 'secondary'"
-                    @click="commands.code_block"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-code-json</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="menubar__button"
-                    @click="commands.horizontal_rule"
-                    color="secondary"
-                  >
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-minus</v-icon>
-                  </v-btn>
-                  <v-btn class="menubar__button" @click="commands.undo" color="secondary">
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-undo</v-icon>
-                  </v-btn>
-                  <v-btn class="menubar__button" @click="commands.redo" color="secondary">
-                    <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-redo</v-icon>
-                  </v-btn>
-                </div>
-              </editor-menu-bar>
-            </v-toolbar>
-            <editor-content class="editor__content mt-4" :editor="editor" />
-          </v-card>
-        </div>
+        <v-card :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')">
+          <v-toolbar v-if="mode === 'write'" color="secondary darken-1">
+            <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
+              <div class="menubar">
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.bold() ? 'primary' : 'secondary'"
+                  @click="commands.bold"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-bold</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.italic() ? 'primary' : 'secondary'"
+                  @click="commands.italic"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-italic</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.strike() ? 'primary' : 'secondary'"
+                  @click="commands.strike"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-strikethrough</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.underline() ? 'primary' : 'secondary'"
+                  @click="commands.underline"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-underline</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.code() ? 'primary' : 'secondary'"
+                  @click="commands.code"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-code-braces</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.paragraph() ? 'primary' : 'secondary'"
+                  @click="commands.paragraph"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-pilcrow</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.heading({ level: 1 }) ? 'primary' : 'secondary'"
+                  @click="commands.heading({ level: 1 })"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-1</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.heading({ level: 2 }) ? 'primary' : 'secondary'"
+                  @click="commands.heading({ level: 2 })"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-2</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.heading({ level: 3 }) ? 'primary' : 'secondary'"
+                  @click="commands.heading({ level: 3 })"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-3</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.bullet_list() ? 'primary' : 'secondary'"
+                  @click="commands.bullet_list"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-list-bulleted-square</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.ordered_list() ? 'primary' : 'secondary'"
+                  @click="commands.ordered_list"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-list-numbered</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.blockquote() ? 'primary' : 'secondary'"
+                  @click="commands.blockquote"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-quote-close</v-icon>
+                </v-btn>
+                <v-btn
+                  class="menubar__button"
+                  :color="isActive.code_block() ? 'primary' : 'secondary'"
+                  @click="commands.code_block"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-code-json</v-icon>
+                </v-btn>
+                <v-btn class="menubar__button" @click="commands.horizontal_rule" color="secondary">
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-minus</v-icon>
+                </v-btn>
+                <v-btn class="menubar__button" @click="commands.undo" color="secondary">
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-undo</v-icon>
+                </v-btn>
+                <v-btn class="menubar__button" @click="commands.redo" color="secondary">
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-redo</v-icon>
+                </v-btn>
+              </div>
+            </editor-menu-bar>
+          </v-toolbar>
+          <editor-content class="editor__content mt-4" :editor="editor" />
+        </v-card>
       </v-col>
     </v-row>
   </div>

@@ -120,6 +120,10 @@ export default {
   cursor: pointer;
 }
 
+.title-case {
+  text-transform: capitalize;
+}
+
 #inspire.bg-light {
   background-repeat: repeat;
   background: url("./assets/lightmode-background.svg");

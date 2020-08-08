@@ -48,7 +48,7 @@
             role="button"
           >
             <div class="d-flex">
-              <h1 class="flex-grow-1 truncate">
+              <h1 class="flex-grow-1 truncate title-case">
                 <v-icon v-if="resource.type === 'note'" class="mr-2">mdi-note-text</v-icon>
                 <v-icon v-if="resource.type === 'link'" class="mr-2">mdi-link-variant</v-icon>
                 {{ resource.title ? resource.title : "Untitled"}}
