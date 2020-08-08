@@ -22,15 +22,15 @@
         class="ma-6"
       >
         <template v-slot:activator>
-          <v-btn v-model="fab" color="primary" dark fab large>
+          <v-btn v-model="fab" color="primary" dark fab :large="$vuetify.breakpoint.lgAndUp">
             <v-icon v-if="fab">mdi-close</v-icon>
             <v-icon v-else>mdi-plus</v-icon>
           </v-btn>
         </template>
-        <v-btn fab dark large color="success" @click="createResource('note')">
+        <v-btn fab dark :large="$vuetify.breakpoint.lgAndUp" color="success" @click="createResource('note')">
           <v-icon>mdi-note-text</v-icon>
         </v-btn>
-        <v-btn fab dark large color="success" @click="createResource('link')">
+        <v-btn fab dark :large="$vuetify.breakpoint.lgAndUp" color="success" @click="createResource('link')">
           <v-icon>mdi-link-variant</v-icon>
         </v-btn>
       </v-speed-dial>
@@ -161,9 +161,9 @@ export default {
     searchResultsLength: 0,
   }),
   mounted() {
+    console.log(this.$vuetify.breakpoint)
     var vm = this;
     this._keyListener = function (e) {
-      console.log(e);
       if (
         e.key === "ArrowDown" ||
         (e.key === "j" && (e.ctrlKey || e.metaKey))
