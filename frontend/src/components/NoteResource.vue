@@ -379,7 +379,7 @@ export default {
 }
 
 // this is for the editor menu buttons
-.v-btn:not(.v-btn--round).v-size--default {
+.menubar__button.v-btn:not(.v-btn--round).v-size--default {
   padding: 0;
   min-width: 0;
   min-height: 0;
