@@ -40,6 +40,15 @@
       dense
       hoverable
       activatable
+      :active.sync="activeDummy"
+      :items="dummyTree"
+      return-object
+    ></v-treeview>
+    <hr class="my-2" />
+    <v-treeview
+      dense
+      hoverable
+      activatable
       :active.sync="activeNamespaces"
       :items="namespaceTree"
       item-key="namespace_id"
@@ -64,15 +73,78 @@ export default {
     LoadingDialog,
   },
   data: () => ({
+    dummyTree: [
+      { name: "All", id: 0 },
+      { name: "New", id: 1 },
+    ],
     createNamespaceDialog: false,
     openItems: [],
     activeNamespaces: [],
+    activeDummy: [],
     namespaceTree: [],
-    fullNamespaceSet: null,
+    namespaces: [],
+    namespaceSet: new Set(),
     confirmDeleteDialog: false,
     creating: false,
     deleting: false,
   }),
+  // watch: {
+  //   // whenever question changes, this function will run
+  //   activeNamespaces: function (activeNamespaces) {
+  //     this.setVuexNamespaceData();
+  //     if (this.$route.name !== "Index") {
+  //       this.$router.push({ name: "Index" });
+  //     }
+  //     if (activeNamespaces.length != 0) {
+  //       this.activeDummy = [];
+  //     }
+  //   },
+  //   activeDummy: function (activeDummy) {
+  //     console.log("set");
+  //     if (activeDummy.length == 0) {
+  //       return;
+  //     } else if (activeDummy[0] == this.dummyTree[0]) {
+  //       // this.activeNamespaces = [];
+  //       console.log('all')
+  //       if (activeDummy.length != 0) {
+  //         this.activeNamespaces = []
+  //       }
+  //     }
+  //   },
+  // },
+  watch: {
+    // whenever question changes, this function will run
+    activeNamespaces: function (activeNamespaces) {
+      if (activeNamespaces.length != 0) {
+        if (this.$route.name !== "Index") {
+          this.$router.push({ name: "Index" });
+        }
+        this.activeDummy = [];
+        this.setVuexNamespaceData();
+      }
+    },
+    activeDummy: function (activeDummy) {
+      if (activeDummy.length != 0) {
+        if (this.$route.name !== "Index") {
+          this.$router.push({ name: "Index" });
+        }
+        this.activeNamespaces = [];
+        this.setVuexNamespaceData();
+      } else if (activeDummy.length == 0 && this.activeNamespaces.length == 0) {
+        this.activeDummy = [this.dummyTree[0]];
+      }
+    },
+  },
+  computed: {
+    // activeDummy: {
+    //   get: function () {
+    //     console.log("get");
+    //     return [this.dummyTree[0]];
+    //   },
+    //   set: function (activeDummy) {
+    //   },
+    // },
+  },
   beforeCreate() {
     var vm = this;
     Auth.currentAuthenticatedUser()
@@ -85,9 +157,7 @@ export default {
           },
         })
           .then((response) => {
-            vm.namespaces = response.data.namespaces;
-            vm.namespaceTree = vm.buildNamespaceTree(vm.namespaces);
-            vm.updateNamespaceSet();
+            vm.setNavigatorData(response.data.namespaces);
           })
           .catch((err) => {
             console.error(err);
@@ -97,72 +167,74 @@ export default {
         console.log(err);
       });
   },
-  watch: {
-    activeNamespaces: function () {
-      var vm = this;
-      vm.updateNamespaceSet();
-      vm.$emit(
-        "updateActiveNamespaceId",
-        vm.activeNamespaces.length == 0
-          ? null
-          : vm.activeNamespaces[0].namespace_id
-      );
-    },
+  created() {
+    this.activeDummy = [this.dummyTree[0]];
   },
   methods: {
-    updateNamespaceSet: function () {
+    setVuexNamespaceData: function () {
       var vm = this;
-      var namespaceSet = new Set();
-      // if no namespace is active
-      if (vm.activeNamespaces.length == 0) {
-        namespaceSet = vm.fullNamespaceSet;
-      } else {
-        vm.getNamespaceChildrenIds(vm.activeNamespaces[0], namespaceSet);
-      }
-      vm.$emit("updateNamespaceSet", namespaceSet);
+      vm.$store.commit(
+        "updateActiveNamespaceSet",
+        vm.activeNamespaces.length == 0
+          ? vm.namespaceSet
+          : vm.getNamespaceChildrenIds(vm.activeNamespaces[0])
+      );
+      vm.$store.commit(
+        "updateSelectedNamespace",
+        vm.activeNamespaces.length == 0 ? null : vm.activeNamespaces[0]
+      );
     },
-    getNamespaceChildrenIds: function (namespace_obj, namespaceSet) {
+    getNamespaceChildrenIds: function (namespace_obj) {
       var vm = this;
-      namespaceSet.add(namespace_obj.namespace_id);
+      var namespaceChildrenIds = new Set();
       for (var i = 0, len = namespace_obj.children.length; i < len; i++) {
-        vm.getNamespaceChildrenIds(namespace_obj.children[i], namespaceSet);
+        namespaceChildrenIds = new Set([
+          ...namespaceChildrenIds,
+          ...vm.getNamespaceChildrenIds(namespace_obj.children[i]),
+        ]);
       }
+      console.log("adding", namespace_obj.namespace_id);
+      namespaceChildrenIds.add(namespace_obj.namespace_id);
+      return namespaceChildrenIds;
+    },
+    setNavigatorData: function (namespaceArr) {
+      console.log("namnespaearr", namespaceArr);
+      var vm = this;
+      vm.namespaces = JSON.parse(JSON.stringify(namespaceArr));
+      vm.namespaceTree = vm.buildNamespaceTree(namespaceArr);
+      vm.namespaceSet = vm.buildNamespaceSet(namespaceArr);
+      vm.setVuexNamespaceData();
+    },
+
+    buildNamespaceSet: function (arr) {
+      var namespaceSet = new Set();
+      for (var i = 0, len = arr.length; i < len; i++) {
+        namespaceSet.add(arr[i]);
+      }
+      return namespaceSet;
     },
     buildNamespaceTree: function (arr) {
-      var vm = this;
-      var tree = [],
-        mappedArr = {},
-        arrElem,
-        mappedElem;
+      var tree = [];
+      var mappedArr = {};
+      var arrElem;
+      var mappedElem;
 
-      vm.fullNamespaceSet = new Set();
-      // First map the nodes of the array to an object -> create a hash table.
       for (var i = 0, len = arr.length; i < len; i++) {
         arrElem = arr[i];
         mappedArr[arrElem.namespace_id] = arrElem;
         mappedArr[arrElem.namespace_id]["children"] = [];
-        // while we're here lets build out fullnNamespaceSet
-        vm.fullNamespaceSet.add(arrElem.namespace_id);
       }
 
       for (var namespace_id in mappedArr) {
         mappedElem = mappedArr[namespace_id];
-        // If the element is not at the root level, add it to its parent array of children.
         if (mappedElem.parent) {
           mappedArr[mappedElem["parent"]]["children"].push(mappedElem);
-        }
-        // If the element is at the root level, add it to first level elements array.
-        else {
+        } else {
           tree.push(mappedElem);
         }
       }
-      return [{
 
-        name: 'All',
-        namespace_id: null,
-        children: tree
-      }
-      ];
+      return tree;
     },
     createNamespace: function (name) {
       var vm = this;
@@ -188,11 +260,8 @@ export default {
             .then((response) => {
               console.log(response);
               vm.creating = false;
-              vm.namespaces = response.data.namespaces;
-              vm.namespaceTree = vm.buildNamespaceTree(vm.namespaces);
-              vm.activeNamespaces = []
-              vm.updateNamespaceSet();
-              vm.$emit('updateResources')
+              vm.namespaces.push(response.data.namespace);
+              vm.setNavigatorData(JSON.parse(JSON.stringify(vm.namespaces)));
             })
             .catch((err) => {
               console.error(err);
@@ -205,8 +274,7 @@ export default {
     deleteNamespace: function () {
       var vm = this;
       vm.confirmDeleteDialog = false;
-      vm.deleting = true
-      // vm.deleting = true;
+      vm.deleting = true;
       Auth.currentAuthenticatedUser()
         .then((data) => {
           axios({
@@ -221,11 +289,7 @@ export default {
             .then((response) => {
               console.log(response);
               vm.deleting = false;
-              vm.namespaces = response.data.namespaces;
-              vm.namespaceTree = vm.buildNamespaceTree(vm.namespaces);
-              vm.activeNamespaces = []
-              vm.updateNamespaceSet();
-              vm.$emit('updateResources')
+              vm.setNavigatorData(response.data.namespaces);
             })
             .catch((err) => {
               console.error(err);
@@ -241,6 +305,6 @@ export default {
 
 <style lang="scss">
 .v-treeview-node__level {
-    width: 12px;
+  width: 12px;
 }
 </style>

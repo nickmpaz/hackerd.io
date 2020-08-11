@@ -1,7 +1,5 @@
 <template>
   <v-app id="inspire" :class="$vuetify.theme.dark ? 'bg-dark' : 'bg-light'">
-    
-
     <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
       <v-app-bar-nav-icon v-show="$route.name === 'Index'" @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-container fluid class="d-flex align-center">
@@ -14,9 +12,21 @@
         </div>
       </v-container>
     </v-app-bar>
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      clipped
+      disable-route-watcher
+      disable-resize-watcher
+      width="300"
+      class="pa-2"
+      v-show="$route.name !== 'Auth'"
+    >
+      <namespace-navigator />
+    </v-navigation-drawer>
 
     <v-main>
-      <router-view :drawer="drawer"/>
+      <router-view :drawer="drawer" />
     </v-main>
   </v-app>
 </template>
@@ -24,10 +34,12 @@
 <script>
 import { Auth, Hub } from "aws-amplify";
 import UserOptions from "./components/UserOptions";
+import NamespaceNavigator from "./components/NamespaceNavigator";
 
 export default {
   components: {
     UserOptions,
+    NamespaceNavigator,
   },
   data: () => ({
     drawer: true,
@@ -71,9 +83,7 @@ export default {
       this.$vuetify.theme.dark = this.$variables.darkModeDefault;
     }
   },
-  methods: {
-
-  },
+  methods: {},
 };
 </script>
 

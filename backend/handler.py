@@ -163,7 +163,7 @@ def create_namespace(event, context):
 
     # create the resource
     namespaces_table.put_item(Item=namespace)
-    return get_namespaces(event, context)
+    return _make_response(body={'namespace': namespace})
 
 
 def delete_namespace(event, context):

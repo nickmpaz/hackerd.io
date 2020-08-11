@@ -1,21 +1,5 @@
 <template>
   <v-container fluid>
-    <v-navigation-drawer
-      v-model="drawer"
-      app
-      clipped
-      disable-route-watcher
-      disable-resize-watcher
-      width="300"
-      class="pa-2"
-      v-show="$route.name === 'Index'"
-    >
-      <namespace-navigator
-        @updateNamespaceSet="updateNamespaceSet"
-        @updateActiveNamespaceId="updateActiveNamespaceId"
-        @updateResources="getResources"
-      />
-    </v-navigation-drawer>
     <loading-dialog :active="loading" message="Loading" />
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />
@@ -65,7 +49,8 @@
 
       <v-row justify="center" class="my-12">
         <v-col cols="12" md="10" xl="8">
-          <v-text-field label="Search" solo autofocus single-line v-model="query" class="mb-6"></v-text-field>
+
+          <v-text-field :label="'Search ' + ($store.getters.selectedNamespace ? $store.getters.selectedNamespace.name : 'All')" solo autofocus single-line v-model="query" class="mb-6"></v-text-field>
           <v-card
             v-for="(resource, index) in searchResults"
             :key="index"
@@ -144,7 +129,6 @@
 <script>
 import LoadingDialog from "../components/LoadingDialog";
 import ConfirmDialog from "../components/ConfirmDialog";
-import NamespaceNavigator from "../components/NamespaceNavigator";
 
 import axios from "axios";
 import { Auth } from "aws-amplify";
@@ -154,7 +138,6 @@ export default {
   components: {
     LoadingDialog,
     ConfirmDialog,
-    NamespaceNavigator,
   },
   props: ["drawer"],
   computed: {
@@ -241,7 +224,7 @@ export default {
       );
       vm.loading = false;
     }
-    vm.getResources()
+    vm.getResources();
   },
   methods: {
     getResources: function () {
@@ -273,13 +256,13 @@ export default {
     },
     updateActiveNamespaceId: function (namespace_id) {
       console.log("UPDATE NAMESPACE ID");
-      console.log(namespace_id)
+      console.log(namespace_id);
       var vm = this;
       vm.activeNamespaceId = namespace_id;
     },
     updateNamespaceSet: function (namespaceSet) {
       console.log("UPDATE NAMESPACE SET");
-      console.log(namespaceSet)
+      console.log(namespaceSet);
       var vm = this;
       vm.namespaceSet = namespaceSet;
     },
