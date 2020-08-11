@@ -285,7 +285,7 @@ export default {
         vm.$router.push({ name: "Index" });
       }
     };
-    document.addEventListener("keydown", this._keyListener.bind(this));
+    document.addEventListener("keydown", this._keyListener);
   },
 
   methods: {

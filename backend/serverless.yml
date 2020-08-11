@@ -81,7 +81,33 @@ functions:
           authorizer:
             arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
           cors: true
-
+  get_namespaces:
+    handler: handler.get_namespaces
+    events:
+      - http:
+          path: namespaces
+          method: get
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
+          cors: true
+  create_namespace:
+    handler: handler.create_namespace
+    events:
+      - http:
+          path: namespaces
+          method: post
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
+          cors: true
+  delete_namespace:
+    handler: handler.delete_namespace
+    events:
+      - http:
+          path: namespaces/{namespace_id}
+          method: delete
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
+          cors: true
 package:
   exclude:
     - node_modules/**

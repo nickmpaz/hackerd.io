@@ -75,10 +75,16 @@ resource "aws_dynamodb_table" "dolphin_resources_table" {
 resource "aws_dynamodb_table" "dolphin_namespaces_table" {
   name             = "dolphin_namespaces_table"
   hash_key         = "user_id"
+  range_key        = "namespace_id"
   billing_mode     = "PAY_PER_REQUEST"
 
   attribute {
     name = "user_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "namespace_id"
     type = "S"
   }
 }

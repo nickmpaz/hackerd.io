@@ -1,5 +1,21 @@
 <template>
   <v-container fluid>
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      clipped
+      disable-route-watcher
+      disable-resize-watcher
+      width="300"
+      class="pa-2"
+      v-show="$route.name === 'Index'"
+    >
+      <namespace-navigator
+        @updateNamespaceSet="updateNamespaceSet"
+        @updateActiveNamespaceId="updateActiveNamespaceId"
+        @updateResources="getResources"
+      />
+    </v-navigation-drawer>
     <loading-dialog :active="loading" message="Loading" />
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />
@@ -27,10 +43,22 @@
             <v-icon v-else>mdi-plus</v-icon>
           </v-btn>
         </template>
-        <v-btn fab dark :large="$vuetify.breakpoint.lgAndUp" color="success" @click="createResource('note')">
+        <v-btn
+          fab
+          dark
+          :large="$vuetify.breakpoint.lgAndUp"
+          color="success"
+          @click="createResource('note')"
+        >
           <v-icon>mdi-note-text</v-icon>
         </v-btn>
-        <v-btn fab dark :large="$vuetify.breakpoint.lgAndUp" color="success" @click="createResource('link')">
+        <v-btn
+          fab
+          dark
+          :large="$vuetify.breakpoint.lgAndUp"
+          color="success"
+          @click="createResource('link')"
+        >
           <v-icon>mdi-link-variant</v-icon>
         </v-btn>
       </v-speed-dial>
@@ -116,6 +144,7 @@
 <script>
 import LoadingDialog from "../components/LoadingDialog";
 import ConfirmDialog from "../components/ConfirmDialog";
+import NamespaceNavigator from "../components/NamespaceNavigator";
 
 import axios from "axios";
 import { Auth } from "aws-amplify";
@@ -125,19 +154,34 @@ export default {
   components: {
     LoadingDialog,
     ConfirmDialog,
+    NamespaceNavigator,
   },
+  props: ["drawer"],
   computed: {
+    resourcesInNamespace: function () {
+      var vm = this;
+      if (vm.activeNamespaceId == null) {
+        return vm.resources;
+      }
+      var resourcesInNamespace = [];
+      for (var i = 0, len = vm.resources.length; i < len; i++) {
+        if (vm.namespaceSet.has(vm.resources[i].namespace)) {
+          resourcesInNamespace.push(vm.resources[i]);
+        }
+      }
+      return resourcesInNamespace;
+    },
     searchResults: function () {
       var vm = this;
       if (vm.query === "") {
-        vm.searchResultsLength = vm.resources.length;
-        return vm.resources;
+        vm.searchResultsLength = vm.resourcesInNamespace.length;
+        return vm.resourcesInNamespace;
       }
       const options = {
         threshold: 0.25,
         keys: ["title", "tags"],
       };
-      const fuse = new Fuse(vm.resources, options);
+      const fuse = new Fuse(vm.resourcesInNamespace, options);
       const result = fuse.search(vm.query);
       const finalResult = result.map((a) => a.item);
       vm.searchResultsLength = finalResult.length;
@@ -159,9 +203,10 @@ export default {
     resources: [],
     focusIndex: 0,
     searchResultsLength: 0,
+    namespaceSet: {},
+    activeNamespaceId: null,
   }),
   mounted() {
-    console.log(this.$vuetify.breakpoint)
     var vm = this;
     this._keyListener = function (e) {
       if (
@@ -177,7 +222,6 @@ export default {
         e.preventDefault();
         vm.decrementFocus();
       } else if (e.key === "Enter") {
-        console.log("yuh");
         e.preventDefault();
         vm.viewResource(vm.searchResults[vm.focusIndex]);
       }
@@ -187,33 +231,7 @@ export default {
   beforeDestroy() {
     document.removeEventListener("keydown", this._keyListener);
   },
-  beforeCreate() {
-    var vm = this;
-    Auth.currentAuthenticatedUser()
-      .then((data) => {
-        axios({
-          method: vm.$variables.api.getResources.method,
-          url: vm.$variables.api.getResources.url,
-          headers: {
-            Authorization: data.signInUserSession.idToken.jwtToken,
-          },
-        })
-          .then((response) => {
-            vm.resources = response.data.resources;
-            vm.loading = false;
-            sessionStorage.setItem(
-              vm.$route.fullPath + ".resources",
-              JSON.stringify(response.data.resources)
-            );
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
+  beforeCreate() {},
   created() {
     var vm = this;
     // check for page content in session storage
@@ -223,8 +241,48 @@ export default {
       );
       vm.loading = false;
     }
+    vm.getResources()
   },
   methods: {
+    getResources: function () {
+      var vm = this;
+      Auth.currentAuthenticatedUser()
+        .then((data) => {
+          axios({
+            method: vm.$variables.api.getResources.method,
+            url: vm.$variables.api.getResources.url,
+            headers: {
+              Authorization: data.signInUserSession.idToken.jwtToken,
+            },
+          })
+            .then((response) => {
+              vm.resources = response.data.resources;
+              vm.loading = false;
+              sessionStorage.setItem(
+                vm.$route.fullPath + ".resources",
+                JSON.stringify(response.data.resources)
+              );
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    updateActiveNamespaceId: function (namespace_id) {
+      console.log("UPDATE NAMESPACE ID");
+      console.log(namespace_id)
+      var vm = this;
+      vm.activeNamespaceId = namespace_id;
+    },
+    updateNamespaceSet: function (namespaceSet) {
+      console.log("UPDATE NAMESPACE SET");
+      console.log(namespaceSet)
+      var vm = this;
+      vm.namespaceSet = namespaceSet;
+    },
     scrollFocusToCenter: function () {
       const focused = document.getElementById("focused-resource");
       focused.scrollIntoView({
@@ -282,6 +340,7 @@ export default {
             },
             data: {
               type: type,
+              namespace: vm.activeNamespaceId,
             },
           })
             .then((response) => {

@@ -16,6 +16,7 @@ var api = {
     url: baseUrl + 'ping_auth',
     method: 'GET'
   },
+  // resource endpoints
   createResource: {
     url: baseUrl + 'resources',
     method: 'POST'
@@ -35,7 +36,20 @@ var api = {
   deleteResource: {
     url: baseUrl + 'resources/',
     method: 'DELETE'
-  }
+  },
+  // namespace endpoints
+  createNamespace: {
+    url: baseUrl + 'namespaces',
+    method: 'POST'
+  },
+  getNamespaces: {
+    url: baseUrl + 'namespaces',
+    method: 'GET'
+  },
+  deleteNamespace: {
+    url: baseUrl + 'namespaces/',
+    method: 'DELETE'
+  },
 }
 
 module.exports = {
