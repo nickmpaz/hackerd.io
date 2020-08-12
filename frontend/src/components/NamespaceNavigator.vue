@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{ activeNamespace ? activeNamespace.name : 'null'}}
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />
     <single-prompt-dialog
@@ -52,7 +53,7 @@
       :active.sync="activeNamespaces"
       :items="namespaceTree"
       item-key="namespace_id"
-      :open="openItems"
+      :open.sync="openItems"
       expand-icon="mdi-chevron-down"
       return-object
     ></v-treeview>
@@ -76,30 +77,76 @@ export default {
     dummyTree: [
       { name: "All", id: 0 },
       { name: "New", id: 1 },
-      { name: "Unlabeled", id: 2 },
     ],
     createNamespaceDialog: false,
     openItems: [],
     activeNamespaces: [],
     activeDummy: [],
-    namespaceTree: [],
     namespaces: [],
-    namespaceSet: new Set(),
     confirmDeleteDialog: false,
     creating: false,
     deleting: false,
   }),
+  computed: {
+    activeNamespace: function () {
+      var vm = this;
+      var activeNamespace =
+        vm.activeNamespaces.length == 0 ? null : vm.activeNamespaces[0];
+      vm.$store.commit("updateSelectedNamespace", activeNamespace);
+      return activeNamespace;
+    },
+
+    activeNamespaceSet: function () {
+      var vm = this;
+      var activeNamespaceSet =
+        vm.activeNamespaces.length == 0
+          ? vm.namespaceSet
+          : vm.getNamespaceChildrenIds(vm.activeNamespaces[0]);
+      vm.$store.commit("updateActiveNamespaceSet", activeNamespaceSet);
+      return activeNamespaceSet;
+    },
+    namespaceTree: function () {
+      var vm = this;
+      var arr = JSON.parse(JSON.stringify(vm.namespaces));
+      var tree = [];
+      var mappedArr = {};
+      var arrElem;
+      var mappedElem;
+
+      for (var i = 0; i < arr.length; i++) {
+        arrElem = arr[i];
+        mappedArr[arrElem.namespace_id] = arrElem;
+        mappedArr[arrElem.namespace_id]["children"] = [];
+      }
+
+      for (var namespace_id in mappedArr) {
+        mappedElem = mappedArr[namespace_id];
+        if (mappedElem.parent) {
+          mappedArr[mappedElem["parent"]]["children"].push(mappedElem);
+        } else {
+          tree.push(mappedElem);
+        }
+      }
+
+      return tree;
+    },
+    namespaceSet: function () {
+      var vm = this;
+      var namespaceSet = new Set();
+      for (var i = 0, len = vm.namespaces.length; i < len; i++) {
+        namespaceSet.add(vm.namespaces[i]);
+      }
+      return namespaceSet;
+    },
+  },
   watch: {
     activeNamespaces: function (activeNamespaces) {
       // a namespace was selected
       if (activeNamespaces.length != 0) {
-        console.log("a namespace was clicked");
-
         if (this.$route.name !== "Index") {
           this.$router.push({ name: "Index" });
         }
         this.activeDummy = [];
-        this.setVuexNamespaceData();
         // a namespace was deselected
       } else if (activeNamespaces.length == 0 && this.activeDummy.length == 0) {
         this.activeDummy = [this.dummyTree[0]];
@@ -108,12 +155,10 @@ export default {
     activeDummy: function (activeDummy) {
       // a dummy namespace was selected
       if (activeDummy.length != 0) {
-        console.log("a dummy namespace was clicked");
         if (this.$route.name !== "Index") {
           this.$router.push({ name: "Index" });
         }
         this.activeNamespaces = [];
-        this.setVuexNamespaceData();
         // a dummy namespace was deselected
       } else if (activeDummy.length == 0 && this.activeNamespaces.length == 0) {
         this.activeDummy = [this.dummyTree[0]];
@@ -133,7 +178,7 @@ export default {
           },
         })
           .then((response) => {
-            vm.setNavigatorData(response.data.namespaces);
+            vm.namespaces = response.data.namespaces;
           })
           .catch((err) => {
             console.error(err);
@@ -147,19 +192,6 @@ export default {
     this.activeDummy = [this.dummyTree[0]];
   },
   methods: {
-    setVuexNamespaceData: function () {
-      var vm = this;
-      vm.$store.commit(
-        "updateActiveNamespaceSet",
-        vm.activeNamespaces.length == 0
-          ? vm.namespaceSet
-          : vm.getNamespaceChildrenIds(vm.activeNamespaces[0])
-      );
-      vm.$store.commit(
-        "updateSelectedNamespace",
-        vm.activeNamespaces.length == 0 ? null : vm.activeNamespaces[0]
-      );
-    },
     getNamespaceChildrenIds: function (namespace_obj) {
       var vm = this;
       var namespaceChildrenIds = new Set();
@@ -169,48 +201,8 @@ export default {
           ...vm.getNamespaceChildrenIds(namespace_obj.children[i]),
         ]);
       }
-      // console.log("adding", namespace_obj.namespace_id);
       namespaceChildrenIds.add(namespace_obj.namespace_id);
       return namespaceChildrenIds;
-    },
-    setNavigatorData: function (namespaceArr) {
-      console.log("namnespaearr", namespaceArr);
-      var vm = this;
-      vm.namespaces = JSON.parse(JSON.stringify(namespaceArr));
-      vm.namespaceTree = vm.buildNamespaceTree(namespaceArr);
-      vm.namespaceSet = vm.buildNamespaceSet(namespaceArr);
-      vm.setVuexNamespaceData();
-    },
-
-    buildNamespaceSet: function (arr) {
-      var namespaceSet = new Set();
-      for (var i = 0, len = arr.length; i < len; i++) {
-        namespaceSet.add(arr[i]);
-      }
-      return namespaceSet;
-    },
-    buildNamespaceTree: function (arr) {
-      var tree = [];
-      var mappedArr = {};
-      var arrElem;
-      var mappedElem;
-
-      for (var i = 0, len = arr.length; i < len; i++) {
-        arrElem = arr[i];
-        mappedArr[arrElem.namespace_id] = arrElem;
-        mappedArr[arrElem.namespace_id]["children"] = [];
-      }
-
-      for (var namespace_id in mappedArr) {
-        mappedElem = mappedArr[namespace_id];
-        if (mappedElem.parent) {
-          mappedArr[mappedElem["parent"]]["children"].push(mappedElem);
-        } else {
-          tree.push(mappedElem);
-        }
-      }
-
-      return tree;
     },
     createNamespace: function (name) {
       var vm = this;
@@ -237,7 +229,10 @@ export default {
               console.log(response);
               vm.creating = false;
               vm.namespaces.push(response.data.namespace);
-              vm.setNavigatorData(JSON.parse(JSON.stringify(vm.namespaces)));
+              if (vm.openItems.indexOf(vm.activeNamespace) == -1) {
+                vm.openItems.push(vm.activeNamespace)
+              }
+              vm.activeNamespaces = [response.data.namespace]
             })
             .catch((err) => {
               console.error(err);
@@ -265,7 +260,8 @@ export default {
             .then((response) => {
               console.log(response);
               vm.deleting = false;
-              vm.setNavigatorData(response.data.namespaces);
+              vm.namespaces = response.data.namespaces;
+              vm.activeNamespaces = []
             })
             .catch((err) => {
               console.error(err);
