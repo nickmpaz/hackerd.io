@@ -76,6 +76,7 @@ export default {
     dummyTree: [
       { name: "All", id: 0 },
       { name: "New", id: 1 },
+      { name: "Unlabeled", id: 2 },
     ],
     createNamespaceDialog: false,
     openItems: [],
@@ -88,63 +89,38 @@ export default {
     creating: false,
     deleting: false,
   }),
-  // watch: {
-  //   // whenever question changes, this function will run
-  //   activeNamespaces: function (activeNamespaces) {
-  //     this.setVuexNamespaceData();
-  //     if (this.$route.name !== "Index") {
-  //       this.$router.push({ name: "Index" });
-  //     }
-  //     if (activeNamespaces.length != 0) {
-  //       this.activeDummy = [];
-  //     }
-  //   },
-  //   activeDummy: function (activeDummy) {
-  //     console.log("set");
-  //     if (activeDummy.length == 0) {
-  //       return;
-  //     } else if (activeDummy[0] == this.dummyTree[0]) {
-  //       // this.activeNamespaces = [];
-  //       console.log('all')
-  //       if (activeDummy.length != 0) {
-  //         this.activeNamespaces = []
-  //       }
-  //     }
-  //   },
-  // },
   watch: {
-    // whenever question changes, this function will run
     activeNamespaces: function (activeNamespaces) {
+      // a namespace was selected
       if (activeNamespaces.length != 0) {
+        console.log("a namespace was clicked");
+
         if (this.$route.name !== "Index") {
           this.$router.push({ name: "Index" });
         }
         this.activeDummy = [];
         this.setVuexNamespaceData();
+        // a namespace was deselected
+      } else if (activeNamespaces.length == 0 && this.activeDummy.length == 0) {
+        this.activeDummy = [this.dummyTree[0]];
       }
     },
     activeDummy: function (activeDummy) {
+      // a dummy namespace was selected
       if (activeDummy.length != 0) {
+        console.log("a dummy namespace was clicked");
         if (this.$route.name !== "Index") {
           this.$router.push({ name: "Index" });
         }
         this.activeNamespaces = [];
         this.setVuexNamespaceData();
+        // a dummy namespace was deselected
       } else if (activeDummy.length == 0 && this.activeNamespaces.length == 0) {
         this.activeDummy = [this.dummyTree[0]];
       }
     },
   },
-  computed: {
-    // activeDummy: {
-    //   get: function () {
-    //     console.log("get");
-    //     return [this.dummyTree[0]];
-    //   },
-    //   set: function (activeDummy) {
-    //   },
-    // },
-  },
+
   beforeCreate() {
     var vm = this;
     Auth.currentAuthenticatedUser()
@@ -193,7 +169,7 @@ export default {
           ...vm.getNamespaceChildrenIds(namespace_obj.children[i]),
         ]);
       }
-      console.log("adding", namespace_obj.namespace_id);
+      // console.log("adding", namespace_obj.namespace_id);
       namespaceChildrenIds.add(namespace_obj.namespace_id);
       return namespaceChildrenIds;
     },
