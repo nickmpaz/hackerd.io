@@ -225,7 +225,6 @@ export default {
     vm.activeDummy = [vm.dummyTree[0]]
   },
   methods: {
-
     getNamespaceFilterSet: function (namespace_obj) {
       var vm = this;
       var namespaceFilterSet = new Set();
@@ -259,7 +258,6 @@ export default {
       vm.$store.commit("hotkeysActive", true);
       vm.confirmDeleteDialog = false;
     },
-
     createNamespace: function (name) {
       var vm = this;
       vm.createNamespaceDialog = false;
@@ -318,7 +316,6 @@ export default {
               console.log(response);
               vm.deleting = false;
               vm.namespaces = response.data.namespaces;
-              // vm.activeNamespaces = [];
               vm.activeDummy = [vm.dummyTree[0]];
               vm.$store.commit("hotkeysActive", true);
             })
@@ -333,9 +330,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.v-treeview-node__level {
-  width: 12px;
-}
-</style>
