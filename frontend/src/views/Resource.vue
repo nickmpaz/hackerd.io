@@ -2,7 +2,7 @@
   <v-container fluid>
       <loading-dialog :active=loading message="Loading" />
       <link-resource v-if="!loading && resource.type === 'link'"  :resource="resource" />
-      <note-resource v-if="!loading && resource.type === 'note'"  :resource="resource" />
+      <note-resource v-if="!loading && resource.type === 'note'"  :resource="resource" :editMode="edit"/>
   </v-container>
 </template>
 
@@ -23,9 +23,11 @@ export default {
   data: () => ({
     loading: true,
     resource: null,
+    edit: false
   }),
   async created() {
     var vm = this;
+    vm.edit = vm.$route.params.edit
     if (vm.$route.params.resource) {
       vm.resource = vm.$route.params.resource;
       vm.loading = false;

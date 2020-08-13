@@ -217,7 +217,7 @@ export default {
     EditableResourceHeader,
     ResourceHeader,
   },
-  props: ["resource"],
+  props: ["resource", "editMode"],
   data() {
     return {
       mode: "read",
@@ -287,7 +287,10 @@ export default {
     };
     document.addEventListener("keydown", this._keyListener);
   },
-
+  created() {
+    var vm = this
+    if (vm.editMode) vm.mode = 'write'
+  },
   methods: {
     clearSelection: function () {
       if (window.getSelection) {

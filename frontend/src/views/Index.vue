@@ -1,5 +1,8 @@
 <template>
   <v-container fluid>
+    <div v-for="(index, value) in $store.getters.activeNamespaceSet.values()" :key="value">
+      {{index}}
+    </div>
     <loading-dialog :active="loading" message="Loading" />
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />
@@ -49,8 +52,14 @@
 
       <v-row justify="center" class="my-12">
         <v-col cols="12" md="10" xl="8">
-
-          <v-text-field :label="'Search ' + ($store.getters.selectedNamespace ? $store.getters.selectedNamespace.name : 'All')" solo autofocus single-line v-model="query" class="mb-6"></v-text-field>
+          <v-text-field
+            :label="'Search ' + ($store.getters.selectedNamespace ? $store.getters.selectedNamespace.name : 'All')"
+            solo
+            autofocus
+            single-line
+            v-model="query"
+            class="mb-6"
+          ></v-text-field>
           <v-card
             v-for="(resource, index) in searchResults"
             :key="index"
@@ -143,12 +152,9 @@ export default {
   computed: {
     resourcesInNamespace: function () {
       var vm = this;
-      if (vm.activeNamespaceId == null) {
-        return vm.resources;
-      }
       var resourcesInNamespace = [];
       for (var i = 0, len = vm.resources.length; i < len; i++) {
-        if (vm.namespaceSet.has(vm.resources[i].namespace)) {
+        if (vm.resources[i].namespace == null || vm.$store.getters.activeNamespaceSet.has(vm.resources[i].namespace)) {
           resourcesInNamespace.push(vm.resources[i]);
         }
       }
@@ -186,12 +192,13 @@ export default {
     resources: [],
     focusIndex: 0,
     searchResultsLength: 0,
-    namespaceSet: {},
-    activeNamespaceId: null,
+    hotkeysActive: true
   }),
   mounted() {
     var vm = this;
-    this._keyListener = function (e) {
+    vm._keyListener = function (e) {
+      if (!vm.$store.getters.hotkeysActive) return
+      console.log(e);
       if (
         e.key === "ArrowDown" ||
         (e.key === "j" && (e.ctrlKey || e.metaKey))
@@ -205,16 +212,17 @@ export default {
         e.preventDefault();
         vm.decrementFocus();
       } else if (e.key === "Enter") {
+        console.log("yuh");
         e.preventDefault();
         vm.viewResource(vm.searchResults[vm.focusIndex]);
       }
     };
-    document.addEventListener("keydown", this._keyListener);
+    document.addEventListener("keydown", vm._keyListener);
   },
   beforeDestroy() {
-    document.removeEventListener("keydown", this._keyListener);
+    var vm = this
+    document.removeEventListener("keydown", vm._keyListener);
   },
-  beforeCreate() {},
   created() {
     var vm = this;
     // check for page content in session storage
@@ -227,6 +235,14 @@ export default {
     vm.getResources();
   },
   methods: {
+    ctrlJ: function (event) {
+      event.preventDefault();
+      console.log("ctrl j");
+    },
+    ctrlK: function (event) {
+      event.preventDefault();
+      console.log("ctrl k");
+    },
     getResources: function () {
       var vm = this;
       Auth.currentAuthenticatedUser()
@@ -254,18 +270,7 @@ export default {
           console.log(err);
         });
     },
-    updateActiveNamespaceId: function (namespace_id) {
-      console.log("UPDATE NAMESPACE ID");
-      console.log(namespace_id);
-      var vm = this;
-      vm.activeNamespaceId = namespace_id;
-    },
-    updateNamespaceSet: function (namespaceSet) {
-      console.log("UPDATE NAMESPACE SET");
-      console.log(namespaceSet);
-      var vm = this;
-      vm.namespaceSet = namespaceSet;
-    },
+
     scrollFocusToCenter: function () {
       const focused = document.getElementById("focused-resource");
       focused.scrollIntoView({
@@ -307,7 +312,7 @@ export default {
       var vm = this;
       vm.$router.push({
         name: "Resource",
-        params: { resource: resource, resource_id: resource.resource_id },
+        params: { resource: resource, resource_id: resource.resource_id, edit: true},
       });
     },
     createResource: function (type) {
@@ -323,7 +328,7 @@ export default {
             },
             data: {
               type: type,
-              namespace: vm.activeNamespaceId,
+              namespace: vm.$store.getters.selectedNamespace.namespace_id,
             },
           })
             .then((response) => {
@@ -334,6 +339,7 @@ export default {
                 params: {
                   resource: resource,
                   resource_id: resource.resource_id,
+                  edit: true,
                 },
               });
             })

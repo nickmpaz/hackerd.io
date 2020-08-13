@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ activeNamespace ? activeNamespace.name : 'null'}}
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />
     <single-prompt-dialog
@@ -18,18 +17,18 @@
       confirmMessage="delete"
       declineMessage="cancel"
       @confirm="deleteNamespace"
-      @decline="confirmDeleteDialog = false"
+      @decline="closeConfirmDeleteDialog"
     />
     <div class="d-flex justify-end py-1">
       <v-btn
-        @click="(activeNamespaces.length > 0) && (confirmDeleteDialog = true)"
+        @click="openConfirmDeleteDialog"
         x-small
         color="transparent"
         depressed
       >
         <v-icon class>mdi-delete</v-icon>
       </v-btn>
-      <v-btn @click="createNamespaceDialog = true" x-small color="transparent" depressed>
+      <v-btn @click="openCreateNamespaceDialog" x-small color="transparent" depressed>
         <v-icon>mdi-folder</v-icon>
       </v-btn>
       <v-btn @click="openItems = []" x-small color="transparent" depressed>
@@ -92,7 +91,6 @@ export default {
       var vm = this;
       var activeNamespace =
         vm.activeNamespaces.length == 0 ? null : vm.activeNamespaces[0];
-      vm.$store.commit("updateSelectedNamespace", activeNamespace);
       return activeNamespace;
     },
 
@@ -102,7 +100,6 @@ export default {
         vm.activeNamespaces.length == 0
           ? vm.namespaceSet
           : vm.getNamespaceChildrenIds(vm.activeNamespaces[0]);
-      vm.$store.commit("updateActiveNamespaceSet", activeNamespaceSet);
       return activeNamespaceSet;
     },
     namespaceTree: function () {
@@ -134,13 +131,16 @@ export default {
       var vm = this;
       var namespaceSet = new Set();
       for (var i = 0, len = vm.namespaces.length; i < len; i++) {
-        namespaceSet.add(vm.namespaces[i]);
+        namespaceSet.add(vm.namespaces[i].namespace_id);
       }
       return namespaceSet;
     },
   },
   watch: {
     activeNamespaces: function (activeNamespaces) {
+      var vm = this
+      vm.$store.commit("updateSelectedNamespace", vm.activeNamespace);
+      vm.$store.commit("updateActiveNamespaceSet", vm.activeNamespaceSet);
       // a namespace was selected
       if (activeNamespaces.length != 0) {
         if (this.$route.name !== "Index") {
@@ -164,8 +164,12 @@ export default {
         this.activeDummy = [this.dummyTree[0]];
       }
     },
+    namespaces: function() {
+      var vm = this
+      vm.$store.commit("updateSelectedNamespace", vm.activeNamespace);
+      vm.$store.commit("updateActiveNamespaceSet", vm.activeNamespaceSet);
+    },
   },
-
   beforeCreate() {
     var vm = this;
     Auth.currentAuthenticatedUser()
@@ -192,6 +196,27 @@ export default {
     this.activeDummy = [this.dummyTree[0]];
   },
   methods: {
+    openCreateNamespaceDialog: function () {
+      var vm = this
+      vm.$store.commit("hotkeysActive", false);
+      vm.createNamespaceDialog = true
+    },
+    closeCreateNamespaceDialog: function () {
+      var vm = this
+      vm.$store.commit("hotkeysActive", true);
+      vm.createNamespaceDialog = false
+    },
+    openConfirmDeleteDialog: function() {
+      var vm = this
+      if(!vm.activeNamespace) return
+      vm.confirmDeleteDialog = true
+      vm.$store.commit("hotkeysActive", false);
+    },
+    closeConfirmDeleteDialog: function() {
+      var vm = this
+      vm.$store.commit("hotkeysActive", true);
+      vm.confirmDeleteDialog = false
+    },
     getNamespaceChildrenIds: function (namespace_obj) {
       var vm = this;
       var namespaceChildrenIds = new Set();
@@ -230,9 +255,10 @@ export default {
               vm.creating = false;
               vm.namespaces.push(response.data.namespace);
               if (vm.openItems.indexOf(vm.activeNamespace) == -1) {
-                vm.openItems.push(vm.activeNamespace)
+                vm.openItems.push(vm.activeNamespace);
               }
-              vm.activeNamespaces = [response.data.namespace]
+              vm.activeNamespaces = [response.data.namespace];
+              vm.$store.commit("hotkeysActive", true);
             })
             .catch((err) => {
               console.error(err);
@@ -261,7 +287,8 @@ export default {
               console.log(response);
               vm.deleting = false;
               vm.namespaces = response.data.namespaces;
-              vm.activeNamespaces = []
+              vm.activeNamespaces = [];
+              vm.$store.commit("hotkeysActive", true);
             })
             .catch((err) => {
               console.error(err);
