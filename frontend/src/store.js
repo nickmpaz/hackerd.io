@@ -6,33 +6,31 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     hotkeysActive: true,
-    activeNamespaceSet: new Set(),
-    selectedNamespace: {
-      name: ""
-    }
+    activeNamespace: {
+      name: "All",
+      id: 0,
+      namespace_id: null,
+      filter: function () {
+        return true;
+      },
+    },
   },
   getters: {
     hotkeysActive: state => {
       return state.hotkeysActive
     },
-    activeNamespaceSet: state => {
-      return state.activeNamespaceSet
+    activeNamespace: state => {
+      return state.activeNamespace
     },
-    selectedNamespace: state => {
-      return state.selectedNamespace
-    }
+
   },
   mutations: {
     hotkeysActive (state, hotkeysActive) {
       state.hotkeysActive = hotkeysActive
     },
-    updateActiveNamespaceSet (state, activeNamespaceSet) {
-      console.log('update', activeNamespaceSet)
-      state.activeNamespaceSet = activeNamespaceSet
-    },
-    updateSelectedNamespace (state, selectedNamespace) {
-      state.selectedNamespace = selectedNamespace
-    },
+    activeNamespace (state, activeNamespace) {
+      state.activeNamespace = activeNamespace
+    }
   }
 })
 

@@ -2,18 +2,10 @@
   <v-menu bottom offset-y>
     <template v-slot:activator="{ on, attrs }">
       <v-btn icon v-bind="attrs" v-on="on" class="mt-1">
-        <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-account-circle-outline</v-icon>
+        <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-account-circle</v-icon>
       </v-btn>
     </template>
     <v-list dense>
-      <v-list-item link @click="$router.push({name: 'Index'})">
-        <v-list-item-action>
-          <v-icon>mdi-view-dashboard</v-icon>
-        </v-list-item-action>
-        <v-list-item-content>
-          <v-list-item-title>Dashboard</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
       <v-list-item link @click="$router.push({name: 'Settings'})">
         <v-list-item-action>
           <v-icon>mdi-cog</v-icon>

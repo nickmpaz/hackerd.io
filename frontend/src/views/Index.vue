@@ -1,8 +1,5 @@
 <template>
   <v-container fluid>
-    <div v-for="(index, value) in $store.getters.activeNamespaceSet.values()" :key="value">
-      {{index}}
-    </div>
     <loading-dialog :active="loading" message="Loading" />
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />
@@ -53,7 +50,7 @@
       <v-row justify="center" class="my-12">
         <v-col cols="12" md="10" xl="8">
           <v-text-field
-            :label="'Search ' + ($store.getters.selectedNamespace ? $store.getters.selectedNamespace.name : 'All')"
+            :label="'Search ' + activeNamespace.name"
             solo
             autofocus
             single-line
@@ -150,27 +147,17 @@ export default {
   },
   props: ["drawer"],
   computed: {
-    resourcesInNamespace: function () {
-      var vm = this;
-      var resourcesInNamespace = [];
-      for (var i = 0, len = vm.resources.length; i < len; i++) {
-        if (vm.resources[i].namespace == null || vm.$store.getters.activeNamespaceSet.has(vm.resources[i].namespace)) {
-          resourcesInNamespace.push(vm.resources[i]);
-        }
-      }
-      return resourcesInNamespace;
-    },
     searchResults: function () {
       var vm = this;
-      if (vm.query === "") {
-        vm.searchResultsLength = vm.resourcesInNamespace.length;
-        return vm.resourcesInNamespace;
-      }
+      var filteredResources = vm.resources.filter((e) =>
+        vm.activeNamespace.filter(e)
+      );
+      if (vm.query == "") return filteredResources
       const options = {
         threshold: 0.25,
         keys: ["title", "tags"],
       };
-      const fuse = new Fuse(vm.resourcesInNamespace, options);
+      const fuse = new Fuse(filteredResources, options);
       const result = fuse.search(vm.query);
       const finalResult = result.map((a) => a.item);
       vm.searchResultsLength = finalResult.length;
@@ -179,6 +166,9 @@ export default {
           vm.searchResultsLength == 0 ? 0 : vm.searchResultsLength - 1;
       }
       return finalResult;
+    },
+    activeNamespace: function () {
+      return this.$store.getters.activeNamespace;
     },
   },
   data: () => ({
@@ -192,12 +182,12 @@ export default {
     resources: [],
     focusIndex: 0,
     searchResultsLength: 0,
-    hotkeysActive: true
+    hotkeysActive: true,
   }),
   mounted() {
     var vm = this;
     vm._keyListener = function (e) {
-      if (!vm.$store.getters.hotkeysActive) return
+      if (!vm.$store.getters.hotkeysActive) return;
       console.log(e);
       if (
         e.key === "ArrowDown" ||
@@ -220,7 +210,7 @@ export default {
     document.addEventListener("keydown", vm._keyListener);
   },
   beforeDestroy() {
-    var vm = this
+    var vm = this;
     document.removeEventListener("keydown", vm._keyListener);
   },
   created() {
@@ -312,7 +302,11 @@ export default {
       var vm = this;
       vm.$router.push({
         name: "Resource",
-        params: { resource: resource, resource_id: resource.resource_id, edit: true},
+        params: {
+          resource: resource,
+          resource_id: resource.resource_id,
+          edit: true,
+        },
       });
     },
     createResource: function (type) {
@@ -328,7 +322,7 @@ export default {
             },
             data: {
               type: type,
-              namespace: vm.$store.getters.selectedNamespace.namespace_id,
+              namespace: vm.activeNamespace.namespace_id,
             },
           })
             .then((response) => {
@@ -374,7 +368,6 @@ export default {
               vm.resources = vm.resources.filter(
                 (e) => e !== vm.resourceToDelete
               );
-              // vm.resourceToDelete = null
             })
             .catch((err) => {
               console.error(err);

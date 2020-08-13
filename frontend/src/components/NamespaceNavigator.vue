@@ -9,7 +9,7 @@
       confirmMessage="Create"
       declineMessage="Cancel"
       @confirm="createNamespace"
-      @decline="createNamespaceDialog = false"
+      @decline="closeCreateNamespaceDialog"
     />
     <confirm-dialog
       :active="confirmDeleteDialog"
@@ -20,12 +20,7 @@
       @decline="closeConfirmDeleteDialog"
     />
     <div class="d-flex justify-end py-1">
-      <v-btn
-        @click="openConfirmDeleteDialog"
-        x-small
-        color="transparent"
-        depressed
-      >
+      <v-btn @click="openConfirmDeleteDialog" x-small color="transparent" depressed>
         <v-icon class>mdi-delete</v-icon>
       </v-btn>
       <v-btn @click="openCreateNamespaceDialog" x-small color="transparent" depressed>
@@ -55,6 +50,7 @@
       :open.sync="openItems"
       expand-icon="mdi-chevron-down"
       return-object
+      open-all
     ></v-treeview>
   </div>
 </template>
@@ -73,10 +69,6 @@ export default {
     LoadingDialog,
   },
   data: () => ({
-    dummyTree: [
-      { name: "All", id: 0 },
-      { name: "New", id: 1 },
-    ],
     createNamespaceDialog: false,
     openItems: [],
     activeNamespaces: [],
@@ -87,87 +79,123 @@ export default {
     deleting: false,
   }),
   computed: {
+    dummyTree: function () {
+      var vm = this
+      return [
+        {
+          name: "All",
+          id: 0,
+          namespace_id: null,
+          filter: function (resource_obj) {
+            console.log(vm.namespaceSet)
+            return vm.namespaceSet.has(resource_obj.namespace) || resource_obj.namespace == null;
+          },
+        },
+        {
+          name: "Unlabeled",
+          id: 2,
+          namespace_id: null,
+          filter: function (resource_obj) {
+            return resource_obj.title == "" || resource_obj.tags.length == 0;
+          },
+        },
+        {
+          name: "New",
+          id: 3,
+          namespace_id: null,
+          filter: function (resource_obj) {
+            return vm.namespaceSet.has(resource_obj.namespace) || resource_obj.namespace == null;
+          },
+        },
+      ];
+    },
     activeNamespace: function () {
       var vm = this;
-      var activeNamespace =
-        vm.activeNamespaces.length == 0 ? null : vm.activeNamespaces[0];
-      return activeNamespace;
-    },
-
-    activeNamespaceSet: function () {
-      var vm = this;
-      var activeNamespaceSet =
-        vm.activeNamespaces.length == 0
-          ? vm.namespaceSet
-          : vm.getNamespaceChildrenIds(vm.activeNamespaces[0]);
-      return activeNamespaceSet;
+      if (vm.activeNamespaces.length > 0) {
+        return vm.activeNamespaces[0];
+      } else if (vm.activeDummy.length > 0) {
+        return vm.activeDummy[0];
+      } else {
+        return vm.dummyTree[0];
+      }
     },
     namespaceTree: function () {
       var vm = this;
-      var arr = JSON.parse(JSON.stringify(vm.namespaces));
-      var tree = [];
-      var mappedArr = {};
+      var namespaces = JSON.parse(JSON.stringify(vm.namespaces));
+      var namespaceTree = [];
+      var mappedNamespaces = {};
       var arrElem;
       var mappedElem;
-
-      for (var i = 0; i < arr.length; i++) {
-        arrElem = arr[i];
-        mappedArr[arrElem.namespace_id] = arrElem;
-        mappedArr[arrElem.namespace_id]["children"] = [];
+      for (var i = 0; i < namespaces.length; i++) {
+        arrElem = namespaces[i];
+        mappedNamespaces[arrElem.namespace_id] = arrElem;
+        mappedNamespaces[arrElem.namespace_id]["children"] = [];
       }
-
-      for (var namespace_id in mappedArr) {
-        mappedElem = mappedArr[namespace_id];
+      for (var namespace_id in mappedNamespaces) {
+        mappedElem = mappedNamespaces[namespace_id];
         if (mappedElem.parent) {
-          mappedArr[mappedElem["parent"]]["children"].push(mappedElem);
+          mappedNamespaces[mappedElem["parent"]]["children"].push(mappedElem);
         } else {
-          tree.push(mappedElem);
+          namespaceTree.push(mappedElem);
         }
       }
-
-      return tree;
+      for (var j in mappedNamespaces) {
+        mappedElem = mappedNamespaces[j];
+        mappedElem.namespaceFilterSet = vm.getNamespaceFilterSet(mappedElem);
+        mappedElem.filter = function (resource_obj) {
+          console.log(resource_obj);
+          console.log(this.namespaceFilterSet);
+          return this.namespaceFilterSet.has(resource_obj.namespace);
+        };
+      }
+      return namespaceTree;
     },
     namespaceSet: function () {
       var vm = this;
       var namespaceSet = new Set();
-      for (var i = 0, len = vm.namespaces.length; i < len; i++) {
+      for (var i = 0; i < vm.namespaces.length; i++) {
         namespaceSet.add(vm.namespaces[i].namespace_id);
       }
       return namespaceSet;
     },
   },
   watch: {
-    activeNamespaces: function (activeNamespaces) {
-      var vm = this
-      vm.$store.commit("updateSelectedNamespace", vm.activeNamespace);
-      vm.$store.commit("updateActiveNamespaceSet", vm.activeNamespaceSet);
+    activeNamespaces: function (newActiveNamespaces, oldActiveNamespaces) {
+      var vm = this;
+      if (vm.$route.name !== "Index") {
+        vm.$router.push({ name: "Index" });
+      }
       // a namespace was selected
-      if (activeNamespaces.length != 0) {
-        if (this.$route.name !== "Index") {
-          this.$router.push({ name: "Index" });
-        }
-        this.activeDummy = [];
+      if (newActiveNamespaces.length != 0) {
+        vm.activeDummy = [];
+        vm.$store.commit("activeNamespace", vm.activeNamespace);
+
         // a namespace was deselected
-      } else if (activeNamespaces.length == 0 && this.activeDummy.length == 0) {
-        this.activeDummy = [this.dummyTree[0]];
+      } else if (
+        newActiveNamespaces.length == 0 &&
+        vm.activeDummy.length == 0
+      ) {
+        console.log("namespace deselected");
+        vm.activeNamespaces.push(oldActiveNamespaces[0]);
       }
     },
-    activeDummy: function (activeDummy) {
+    activeDummy: function (newActiveDummy, oldActiveDummy) {
+      var vm = this;
+      if (vm.$route.name !== "Index") {
+        vm.$router.push({ name: "Index" });
+      }
       // a dummy namespace was selected
-      if (activeDummy.length != 0) {
-        if (this.$route.name !== "Index") {
-          this.$router.push({ name: "Index" });
-        }
-        this.activeNamespaces = [];
+      if (newActiveDummy.length != 0) {
+        vm.activeNamespaces = [];
+        vm.$store.commit("activeNamespace", vm.activeNamespace);
+
         // a dummy namespace was deselected
-      } else if (activeDummy.length == 0 && this.activeNamespaces.length == 0) {
-        this.activeDummy = [this.dummyTree[0]];
+      } else if (
+        newActiveDummy.length == 0 &&
+        vm.activeNamespaces.length == 0
+      ) {
+        vm.activeDummy.push(oldActiveDummy[0]);
       }
-    },
-    namespaces: function() {
-      var vm = this
-      vm.$store.commit("updateSelectedNamespace", vm.activeNamespace);
-      vm.$store.commit("updateActiveNamespaceSet", vm.activeNamespaceSet);
     },
   },
   beforeCreate() {
@@ -193,42 +221,45 @@ export default {
       });
   },
   created() {
-    this.activeDummy = [this.dummyTree[0]];
+    var vm = this
+    vm.activeDummy = [vm.dummyTree[0]]
   },
   methods: {
-    openCreateNamespaceDialog: function () {
-      var vm = this
-      vm.$store.commit("hotkeysActive", false);
-      vm.createNamespaceDialog = true
-    },
-    closeCreateNamespaceDialog: function () {
-      var vm = this
-      vm.$store.commit("hotkeysActive", true);
-      vm.createNamespaceDialog = false
-    },
-    openConfirmDeleteDialog: function() {
-      var vm = this
-      if(!vm.activeNamespace) return
-      vm.confirmDeleteDialog = true
-      vm.$store.commit("hotkeysActive", false);
-    },
-    closeConfirmDeleteDialog: function() {
-      var vm = this
-      vm.$store.commit("hotkeysActive", true);
-      vm.confirmDeleteDialog = false
-    },
-    getNamespaceChildrenIds: function (namespace_obj) {
+
+    getNamespaceFilterSet: function (namespace_obj) {
       var vm = this;
-      var namespaceChildrenIds = new Set();
+      var namespaceFilterSet = new Set();
       for (var i = 0, len = namespace_obj.children.length; i < len; i++) {
-        namespaceChildrenIds = new Set([
-          ...namespaceChildrenIds,
-          ...vm.getNamespaceChildrenIds(namespace_obj.children[i]),
+        namespaceFilterSet = new Set([
+          ...namespaceFilterSet,
+          ...vm.getNamespaceFilterSet(namespace_obj.children[i]),
         ]);
       }
-      namespaceChildrenIds.add(namespace_obj.namespace_id);
-      return namespaceChildrenIds;
+      namespaceFilterSet.add(namespace_obj.namespace_id);
+      return namespaceFilterSet;
     },
+    openCreateNamespaceDialog: function () {
+      var vm = this;
+      vm.$store.commit("hotkeysActive", false);
+      vm.createNamespaceDialog = true;
+    },
+    closeCreateNamespaceDialog: function () {
+      var vm = this;
+      vm.$store.commit("hotkeysActive", true);
+      vm.createNamespaceDialog = false;
+    },
+    openConfirmDeleteDialog: function () {
+      var vm = this;
+      if (vm.activeNamespaces.length == 0) return
+      vm.$store.commit("hotkeysActive", false);
+      vm.confirmDeleteDialog = true;
+    },
+    closeConfirmDeleteDialog: function () {
+      var vm = this;
+      vm.$store.commit("hotkeysActive", true);
+      vm.confirmDeleteDialog = false;
+    },
+
     createNamespace: function (name) {
       var vm = this;
       vm.createNamespaceDialog = false;
@@ -278,7 +309,7 @@ export default {
             method: vm.$variables.api.deleteNamespace.method,
             url:
               vm.$variables.api.deleteNamespace.url +
-              vm.activeNamespaces[0].namespace_id,
+              vm.activeNamespace.namespace_id,
             headers: {
               Authorization: data.signInUserSession.idToken.jwtToken,
             },
@@ -287,7 +318,8 @@ export default {
               console.log(response);
               vm.deleting = false;
               vm.namespaces = response.data.namespaces;
-              vm.activeNamespaces = [];
+              // vm.activeNamespaces = [];
+              vm.activeDummy = [vm.dummyTree[0]];
               vm.$store.commit("hotkeysActive", true);
             })
             .catch((err) => {

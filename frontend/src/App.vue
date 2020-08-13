@@ -1,12 +1,9 @@
 <template>
   <v-app id="inspire" :class="$vuetify.theme.dark ? 'bg-dark' : 'bg-light'">
     <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
-      <v-app-bar-nav-icon  @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-container fluid class="d-flex align-center">
-        <v-toolbar-title
-          class="cursor-pointer"
-          @click="$router.push({name: 'Index'})"
-        >{{ navBarTitle }}</v-toolbar-title>
+        <v-toolbar-title>{{ navBarTitle }}</v-toolbar-title>
         <div class="ml-auto">
           <user-options />
         </div>
