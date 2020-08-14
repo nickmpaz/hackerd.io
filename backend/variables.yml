@@ -1,4 +1,7 @@
-cognitoUserPoolArn: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_BElf1DHEt"
+cognitoUserPoolArn: 
+    local: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_9nm9MkAFi"
+    dev: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_s3yah6W0R"
+    prod: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_Zq4vQ9fQf"
 customDomain:
     domainName: api.hackerd.io
     stage: ${opt:stage, 'dev'}

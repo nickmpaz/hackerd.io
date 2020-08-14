@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "dolphinamplify69febdeb_identitypool_69febdeb",
+    "identityPoolName": "dolphinamplify5c836ad1_identitypool_5c836ad1",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "dolphi69febdeb",
-    "userPoolName": "dolphinamplify69febdeb_userpool_69febdeb",
+    "resourceNameTruncated": "dolphi5c836ad1",
+    "userPoolName": "dolphinamplify5c836ad1_userpool_5c836ad1",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "dolphi69febdeb_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "dolphi5c836ad1_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "69febdeb",
-    "resourceName": "dolphinamplify69febdeb",
+    "sharedId": "5c836ad1",
+    "resourceName": "dolphinamplify5c836ad1",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -47,12 +47,12 @@
     },
     "useDefault": "defaultSocial",
     "hostedUI": true,
-    "hostedUIDomainName": "dolphinamplify69febdeb-69febdeb",
+    "hostedUIDomainName": "dolphinamplify5c836ad1-5c836ad1",
     "authProvidersUserPool": [
         "Google"
     ],
     "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:8080/\"],\"LogoutURLs\":[\"http://localhost:8080/\"]}",
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://hackerd.io/\"],\"LogoutURLs\":[\"https://hackerd.io/\"]}",
     "userPoolGroupList": [],
     "dependsOn": []
 }

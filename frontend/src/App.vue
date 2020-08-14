@@ -1,70 +1,53 @@
 <template>
   <v-app id="inspire" :class="$vuetify.theme.dark ? 'bg-dark' : 'bg-light'">
+    <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
+      <v-app-bar-nav-icon
+        v-if="$route.name === 'Index' || $route.name === 'Resource'"
+        @click="drawer = !drawer"
+      ></v-app-bar-nav-icon>
+      <v-container fluid class="d-flex align-center">
+        <v-toolbar-title
+          class="cursor-pointer"
+          @click="$router.push({name: 'Index'})"
+        >{{ navBarTitle }}</v-toolbar-title>
+        <div class="ml-auto">
+          <user-options />
+        </div>
+      </v-container>
+    </v-app-bar>
     <v-navigation-drawer
-      v-if="authenticated"
+      v-if="$route.name === 'Index' || $route.name === 'Resource'"
       v-model="drawer"
       app
       clipped
       disable-route-watcher
       disable-resize-watcher
+      width="300"
+      class="pa-2"
+      v-show="$route.name !== 'Auth'"
     >
-      <v-list dense>
-        <v-list-item link @click="drawer = false; $router.push({name: 'Index'})">
-          <v-list-item-action>
-            <v-icon>mdi-view-dashboard</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Dashboard</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link @click="drawer = false; $router.push({name: 'Settings'})">
-          <v-list-item-action>
-            <v-icon>mdi-cog</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Settings</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-power-plug</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Integrations</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link @click="signOut">
-          <v-list-item-action>
-            <v-icon>mdi-logout</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Sign Out</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+      <namespace-navigator />
     </v-navigation-drawer>
 
-    <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title
-        class="cursor-pointer"
-        @click="$router.push({name: 'Index'})"
-      >{{ navBarTitle }}</v-toolbar-title>
-    </v-app-bar>
-
     <v-main>
-      <router-view />
+      <router-view :drawer="drawer" />
     </v-main>
   </v-app>
 </template>
 
 <script>
 import { Auth, Hub } from "aws-amplify";
+import UserOptions from "./components/UserOptions";
+import NamespaceNavigator from "./components/NamespaceNavigator";
 
 export default {
+  components: {
+    UserOptions,
+    NamespaceNavigator,
+  },
   data: () => ({
-    drawer: false,
-    authenticated: false
+    drawer: true,
+    authenticated: false,
   }),
   computed: {
     navBarTitle() {
@@ -73,11 +56,12 @@ export default {
         ? " " + vm.$variables.stageIndicator
         : "";
       return vm.$variables.brand + stageIndicator;
-    }
+    },
   },
   beforeCreate() {
+    document.title = this.$variables.brand;
     // change authenticated variable when auth state changes
-    Hub.listen("auth", data => {
+    Hub.listen("auth", (data) => {
       console.log("A new auth event has happened: " + data.payload.event);
       if (data.payload.event === "signIn") {
         this.authenticated = true;
@@ -103,56 +87,23 @@ export default {
       this.$vuetify.theme.dark = this.$variables.darkModeDefault;
     }
   },
-  methods: {
-    signOut: async function() {
-      await Auth.signOut();
-      this.drawer = false;
-      this.$router.push({ name: "Auth" });
-    }
-  }
+  methods: {},
 };
 </script>
 
 <style lang="scss">
-@import "./styles/markdown-light.scss";
-@import "./styles/markdown-dark.scss";
-@import "prismjs/plugins/line-numbers/prism-line-numbers";
-
-.markdown-body-light {
-  @import "./styles/prism-themes/prism-material-light";
-  @import "./styles/prism-toolbar-light.scss";
-
-  #note-editor {
-    resize: none;
-    color: black;
-    outline: none;
-    width: 100%;
-    border: solid 1px grey;
-    padding: 1em;
-  }
-}
-
-.markdown-body-dark {
-  @import "./styles/prism-themes/prism-material-dark";
-  @import "./styles/prism-toolbar-dark.scss";
-
-  #note-editor {
-    resize: none;
-    color: white;
-    outline: none;
-    width: 100%;
-    border: solid 1px grey;
-    padding: 1em;
-  }
-}
-
 .cursor-pointer {
   cursor: pointer;
 }
 
+.title-case {
+  text-transform: capitalize;
+}
+
 #inspire.bg-light {
   background-repeat: repeat;
-  background: url("../public/Tortoise-Shell-light-bg-inverted.svg");
+  background-color: #eeeeee;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   /* background by SVGBackgrounds.com */
 }
 #inspire.bg-dark {
