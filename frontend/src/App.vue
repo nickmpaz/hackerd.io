@@ -100,6 +100,10 @@ export default {
   text-transform: capitalize;
 }
 
+.short-text-field {
+  height: 55px;
+}
+
 #inspire.bg-light {
   background-repeat: repeat;
   background-color: #eeeeee;

@@ -3,7 +3,7 @@
 
     <v-row align="center" justify="center">
         <v-col cols="12" md="10" xl="8">
-            <v-card class="elevation-12">
+            <v-card class="elevation-6">
                 <v-row>
                     <v-col cols="6">
                         <div class="mx-5 mt-5 mb-8">
