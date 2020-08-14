@@ -150,7 +150,7 @@ export default {
     searchResults: function () {
       var vm = this;
       var filteredResources = vm.resources.filter((e) =>
-        vm.activeNamespace.filter(e)
+        vm.activeNamespace.resourceFilter(e)
       );
       if (vm.query == "") return filteredResources
       const options = {

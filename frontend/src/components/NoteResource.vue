@@ -269,7 +269,6 @@ export default {
   mounted() {
     var vm = this;
     this._keyListener = function (e) {
-      console.log(e);
       if (e.key === "i" && (e.ctrlKey || e.metaKey) && vm.mode === "read") {
         e.preventDefault();
         vm.edit();

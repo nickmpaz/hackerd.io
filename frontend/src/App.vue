@@ -1,15 +1,22 @@
 <template>
   <v-app id="inspire" :class="$vuetify.theme.dark ? 'bg-dark' : 'bg-light'">
     <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        v-if="$route.name === 'Index' || $route.name === 'Resource'"
+        @click="drawer = !drawer"
+      ></v-app-bar-nav-icon>
       <v-container fluid class="d-flex align-center">
-        <v-toolbar-title>{{ navBarTitle }}</v-toolbar-title>
+        <v-toolbar-title
+          class="cursor-pointer"
+          @click="$router.push({name: 'Index'})"
+        >{{ navBarTitle }}</v-toolbar-title>
         <div class="ml-auto">
           <user-options />
         </div>
       </v-container>
     </v-app-bar>
     <v-navigation-drawer
+      v-if="$route.name === 'Index' || $route.name === 'Resource'"
       v-model="drawer"
       app
       clipped
@@ -95,7 +102,8 @@ export default {
 
 #inspire.bg-light {
   background-repeat: repeat;
-  background: url("./assets/lightmode-background.svg");
+  background-color: #eeeeee;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   /* background by SVGBackgrounds.com */
 }
 #inspire.bg-dark {

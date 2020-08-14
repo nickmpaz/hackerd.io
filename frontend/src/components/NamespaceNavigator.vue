@@ -31,27 +31,29 @@
       </v-btn>
     </div>
     <hr class="my-2" />
-    <v-treeview
-      dense
-      hoverable
-      activatable
-      :active.sync="activeDummy"
-      :items="dummyTree"
-      return-object
-    ></v-treeview>
-    <hr class="my-2" />
-    <v-treeview
-      dense
-      hoverable
-      activatable
-      :active.sync="activeNamespaces"
-      :items="namespaceTree"
-      item-key="namespace_id"
-      :open.sync="openItems"
-      expand-icon="mdi-chevron-down"
-      return-object
-      open-all
-    ></v-treeview>
+    <div @click="checkRoute">
+      <v-treeview
+        dense
+        hoverable
+        activatable
+        :active.sync="activeDummy"
+        :items="dummyTree"
+        return-object
+      ></v-treeview>
+      <hr class="my-2" />
+      <v-treeview
+        dense
+        hoverable
+        activatable
+        :active.sync="activeNamespaces"
+        :items="namespaceTree"
+        item-key="namespace_id"
+        :open.sync="openItems"
+        expand-icon="mdi-chevron-down"
+        return-object
+        open-all
+      ></v-treeview>
+    </div>
   </div>
 </template>
 
@@ -80,31 +82,38 @@ export default {
   }),
   computed: {
     dummyTree: function () {
-      var vm = this
+      var vm = this;
       return [
         {
           name: "All",
           id: 0,
           namespace_id: null,
-          filter: function (resource_obj) {
-            console.log(vm.namespaceSet)
-            return vm.namespaceSet.has(resource_obj.namespace) || resource_obj.namespace == null;
+          resourceFilter: function (resource_obj) {
+            return (
+              vm.namespaceSet.has(resource_obj.namespace) ||
+              !("namespace" in resource_obj) ||
+              resource_obj.namespace == null
+            );
           },
         },
         {
           name: "Unlabeled",
-          id: 2,
+          id: 1,
           namespace_id: null,
-          filter: function (resource_obj) {
+          resourceFilter: function (resource_obj) {
             return resource_obj.title == "" || resource_obj.tags.length == 0;
           },
         },
         {
           name: "New",
-          id: 3,
+          id: 2,
           namespace_id: null,
-          filter: function (resource_obj) {
-            return vm.namespaceSet.has(resource_obj.namespace) || resource_obj.namespace == null;
+          resourceFilter: function (resource_obj) {
+            return (
+              vm.namespaceSet.has(resource_obj.namespace) ||
+              !("namespace" in resource_obj) ||
+              resource_obj.namespace == null
+            );
           },
         },
       ];
@@ -142,9 +151,7 @@ export default {
       for (var j in mappedNamespaces) {
         mappedElem = mappedNamespaces[j];
         mappedElem.namespaceFilterSet = vm.getNamespaceFilterSet(mappedElem);
-        mappedElem.filter = function (resource_obj) {
-          console.log(resource_obj);
-          console.log(this.namespaceFilterSet);
+        mappedElem.resourceFilter = function (resource_obj) {
           return this.namespaceFilterSet.has(resource_obj.namespace);
         };
       }
@@ -162,9 +169,7 @@ export default {
   watch: {
     activeNamespaces: function (newActiveNamespaces, oldActiveNamespaces) {
       var vm = this;
-      if (vm.$route.name !== "Index") {
-        vm.$router.push({ name: "Index" });
-      }
+
       // a namespace was selected
       if (newActiveNamespaces.length != 0) {
         vm.activeDummy = [];
@@ -181,9 +186,9 @@ export default {
     },
     activeDummy: function (newActiveDummy, oldActiveDummy) {
       var vm = this;
-      if (vm.$route.name !== "Index") {
-        vm.$router.push({ name: "Index" });
-      }
+      // if (vm.$route.name !== "Index") {
+      //   vm.$router.push({ name: "Index" });
+      // }
       // a dummy namespace was selected
       if (newActiveDummy.length != 0) {
         vm.activeNamespaces = [];
@@ -221,10 +226,16 @@ export default {
       });
   },
   created() {
-    var vm = this
-    vm.activeDummy = [vm.dummyTree[0]]
+    var vm = this;
+    vm.activeDummy = [vm.dummyTree[0]];
   },
   methods: {
+    checkRoute: function () {
+      var vm = this
+      if (vm.$route.name !== "Index") {
+        vm.$router.push({ name: "Index" });
+      }
+    },
     getNamespaceFilterSet: function (namespace_obj) {
       var vm = this;
       var namespaceFilterSet = new Set();
@@ -249,7 +260,7 @@ export default {
     },
     openConfirmDeleteDialog: function () {
       var vm = this;
-      if (vm.activeNamespaces.length == 0) return
+      if (vm.activeNamespaces.length == 0) return;
       vm.$store.commit("hotkeysActive", false);
       vm.confirmDeleteDialog = true;
     },
