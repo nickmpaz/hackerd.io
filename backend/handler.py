@@ -3,6 +3,7 @@ import logging
 import uuid
 import time
 from http import HTTPStatus
+import secrets
 
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
@@ -11,6 +12,7 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 dynamodb = boto3.resource('dynamodb')
 resources_table = dynamodb.Table('dolphin_resources_table')
 namespaces_table = dynamodb.Table('dolphin_namespaces_table')
+api_tokens_table = dynamodb.Table('dolphin_api_tokens_table')
 
 
 def _make_response(body={}, status_code=HTTPStatus.OK):
@@ -107,7 +109,6 @@ def create_resource(event, context):
         'namespace': namespace
     }
 
-    # create the resource
     resources_table.put_item(Item=resource)
     return _make_response(body={"resource": resource})
 
@@ -119,7 +120,6 @@ def update_resource(event, context):
     updated_at = str(int(time.time()))
     resource['updated_at'] = updated_at
 
-    # make sure that user_id in resource matches claims
     if resource.get('user_id') != user_id:
         return _make_response(status_code=HTTPStatus.FORBIDDEN)
 
@@ -161,7 +161,6 @@ def create_namespace(event, context):
         'name': name
     }
 
-    # create the resource
     namespaces_table.put_item(Item=namespace)
     return _make_response(body={'namespace': namespace})
 
@@ -208,3 +207,27 @@ def delete_namespace(event, context):
 
 #     namespaces_table.put_item(Item=namespace)
 #     return _make_response(body={'namespace': namespace})
+
+### API TOKENS
+
+def get_api_token(event, context):
+    user_id = event['requestContext']['authorizer']['claims']['sub']
+    response = api_tokens_table.get_item(Key={
+        'user_id': user_id,
+    })
+    api_token_item = response.get('Item')
+
+    if api_token_item is None:
+        return generate_api_token(event, context)
+        
+    return _make_response(body={'api_token': api_token_item.get('api_token')})
+
+
+def generate_api_token(event, context):
+    user_id = event['requestContext']['authorizer']['claims']['sub']
+    api_token = secrets.token_hex(32)
+    api_tokens_table.put_item(Item={
+        'user_id': user_id,
+        'api_token': api_token
+    })
+    return _make_response(body={'api_token': api_token})

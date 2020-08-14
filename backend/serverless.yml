@@ -108,6 +108,24 @@ functions:
           authorizer:
             arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
           cors: true
+  get_api_token:
+    handler: handler.get_api_token
+    events:
+      - http:
+          path: api_token
+          method: get
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
+          cors: true
+  generate_api_token:
+    handler: handler.generate_api_token
+    events:
+      - http:
+          path: api_token
+          method: update
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
+          cors: true
 package:
   exclude:
     - node_modules/**
