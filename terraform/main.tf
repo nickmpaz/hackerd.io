@@ -23,26 +23,42 @@ resource "aws_acm_certificate" "default" {
 }
 
 resource "aws_route53_record" "validation" {
-  name    = aws_acm_certificate.default.domain_validation_options.0.resource_record_name
-  type    = aws_acm_certificate.default.domain_validation_options.0.resource_record_type
-  zone_id = data.aws_route53_zone.hosted_zone.zone_id
-  records = ["${aws_acm_certificate.default.domain_validation_options.0.resource_record_value}"]
-  ttl     = "60"
+  # name    = aws_acm_certificate.default.domain_validation_options.0.resource_record_name
+  # type    = aws_acm_certificate.default.domain_validation_options.0.resource_record_type
+  # zone_id = data.aws_route53_zone.hosted_zone.zone_id
+  # records = ["${aws_acm_certificate.default.domain_validation_options.0.resource_record_value}"]
+  # ttl     = "60"
+  for_each = {
+    for dvo in aws_acm_certificate.default.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.hosted_zone.zone_id
 }
 
 resource "aws_acm_certificate_validation" "default" {
-  certificate_arn = aws_acm_certificate.default.arn
-  validation_record_fqdns = [
-    "${aws_route53_record.validation.fqdn}",
-  ]
+  # certificate_arn = aws_acm_certificate.default.arn
+  # validation_record_fqdns = [
+  #   "${aws_route53_record.validation.fqdn}",
+  # ]
+  certificate_arn         = aws_acm_certificate.default.arn
+  validation_record_fqdns = [for record in aws_route53_record.validation : record.fqdn]
 }
 
 # DATABASE
 
-resource "aws_dynamodb_table" "dolphin_notes_table" {
-  name             = "dolphin_notes_table"
+resource "aws_dynamodb_table" "dolphin_resources_table" {
+  name             = "dolphin_resources_table"
   hash_key         = "user_id"
-  range_key        = "note_id"
+  range_key        = "resource_id"
   billing_mode     = "PAY_PER_REQUEST"
 
   attribute {
@@ -51,10 +67,26 @@ resource "aws_dynamodb_table" "dolphin_notes_table" {
   }
 
   attribute {
-    name = "note_id"
+    name = "resource_id"
+    type = "S"
+  }
+}
+
+resource "aws_dynamodb_table" "dolphin_namespaces_table" {
+  name             = "dolphin_namespaces_table"
+  hash_key         = "user_id"
+  range_key        = "namespace_id"
+  billing_mode     = "PAY_PER_REQUEST"
+
+  attribute {
+    name = "user_id"
     type = "S"
   }
 
+  attribute {
+    name = "namespace_id"
+    type = "S"
+  }
 }
 
 # WEBSITE - S3
@@ -78,6 +110,7 @@ resource "aws_s3_bucket" "prod" {
 POLICY
   website {
     index_document = "index.html"
+    error_document = "index.html"
   }
 }
 
@@ -100,6 +133,7 @@ resource "aws_s3_bucket" "dev" {
 POLICY
   website {
     index_document = "index.html"
+    error_document = "index.html"
   }
 }
 

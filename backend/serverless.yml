@@ -3,6 +3,7 @@ service: dolphin-backend
 custom: ${file(./variables.yml)} 
 provider:
   name: aws
+  stage: ${opt:stage, 'local'}
   runtime: python3.8
   iamRoleStatements:
     - Effect: Allow
@@ -33,54 +34,80 @@ functions:
           path: ping_auth
           method: get
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
           cors: true
-  get_notes:
-    handler: handler.get_notes
+  get_resources:
+    handler: handler.get_resources
     events:
       - http:
-          path: notes
+          path: resources
           method: get
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
           cors: true
-  create_note:
-    handler: handler.create_note
+  create_resource:
+    handler: handler.create_resource
     events:
       - http:
-          path: notes
+          path: resources
           method: post
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
           cors: true
-  get_note:
-    handler: handler.get_note
+  get_resource:
+    handler: handler.get_resource
     events:
       - http:
-          path: notes/{note_id}
+          path: resources/{resource_id}
           method: get
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
           cors: true
-  update_note:
-    handler: handler.update_note
+  update_resource:
+    handler: handler.update_resource
     events:
       - http:
-          path: notes/{note_id}
+          path: resources/{resource_id}
           method: post
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
           cors: true
-  delete_note:
-    handler: handler.delete_note
+  delete_resource:
+    handler: handler.delete_resource
     events:
       - http:
-          path: notes/{note_id}
+          path: resources/{resource_id}
           method: delete
           authorizer:
-            arn: ${self:custom.cognitoUserPoolArn}
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
           cors: true
-
+  get_namespaces:
+    handler: handler.get_namespaces
+    events:
+      - http:
+          path: namespaces
+          method: get
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
+          cors: true
+  create_namespace:
+    handler: handler.create_namespace
+    events:
+      - http:
+          path: namespaces
+          method: post
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
+          cors: true
+  delete_namespace:
+    handler: handler.delete_namespace
+    events:
+      - http:
+          path: namespaces/{namespace_id}
+          method: delete
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
+          cors: true
 package:
   exclude:
     - node_modules/**

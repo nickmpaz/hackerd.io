@@ -8,19 +8,30 @@ do
 done
 
 case $branch in
-  master) environment="prod";;
-  develop) environment="dev";;
+  master) 
+    environment="prod";
+    GOOGLE_POOL_ID=$GOOGLE_POOL_ID_PROD;
+    GOOGLE_POOL_SECRET=$GOOGLE_POOL_SECRET_PROD;
+    ;;
+  develop) 
+    environment="dev";
+    GOOGLE_POOL_ID=$GOOGLE_POOL_ID_DEV;
+    GOOGLE_POOL_SECRET=$GOOGLE_POOL_SECRET_DEV;
+    ;;
 esac
 
-echo "Deploying to $environment.";
+echo "Deploying to $environment";
 
 # install and initialize amplify
 
+which python3
+
 sudo npm install -g @aws-amplify/cli
-
 mkdir ~/.aws && touch ~/.aws/credentials && touch ~/.aws/config
-
 cd frontend
+
+export AMPLIFY_APP_ID=d37ibrfgmid9iy
+export AMPLIFY_APP_NAME=DolphinAmplify
 
 export VUECONFIG="{\
 \"SourceDir\":\"src\",\
@@ -45,8 +56,9 @@ export FRONTEND="{\
 }"
 
 export AMPLIFY="{\
-\"projectName\":\"DolphinAmplify\",\
-\"envName\":\"dev\",\
+\"projectName\":\"$AMPLIFY_APP_NAME\",\
+\"appId\":\"$AMPLIFY_APP_ID\",\
+\"envName\":\"$environment\",\
 \"defaultEditor\":\"vscode\"\
 }"
 
@@ -63,45 +75,33 @@ export CATEGORIES="{\
 \"auth\":$AUTHCONFIG\
 }"
 
-amplify init \
+amplify pull \
 --amplify $AMPLIFY \
 --frontend $FRONTEND \
 --providers $PROVIDERS \
 --categories $CATEGORIES \
 --yes
 
-# amplify pull
-
-ls -la src
-
 cd ..
 
 # initialize terraform 
 
 cd terraform 
-
 terraform init
-
 cd ..
 
 # deploy frontend
 
 cd frontend
-
 npm ci
-
 npm run build:$environment
-
 aws s3 sync --delete ./dist s3://$(cd ../terraform && terraform output bucket_$environment)
-
 cd ..
 
 # deploy backend
 
 cd backend
-
+python3 --version
 npm ci
-
 ./node_modules/.bin/serverless deploy --stage $environment
-
 cd ..

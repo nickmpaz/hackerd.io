@@ -26,16 +26,16 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/:note_id',
-    name: 'Note',
-    component: () => import('../views/Note.vue'),
+    path: '/:resource_id',
+    name: 'Resource',
+    component: () => import('../views/Resource.vue'),
     meta: { requiresAuth: true }
   },
   
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  // mode: 'history',
   routes
 })
 
