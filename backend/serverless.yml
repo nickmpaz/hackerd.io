@@ -122,7 +122,7 @@ functions:
     events:
       - http:
           path: api_token
-          method: update
+          method: post
           authorizer:
             arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
           cors: true
