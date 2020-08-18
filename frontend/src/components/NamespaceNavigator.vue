@@ -202,6 +202,24 @@ export default {
         vm.activeDummy.push(oldActiveDummy[0]);
       }
     },
+    namespaceTree: function () {
+      console.log("namespaceTree changed");
+      var vm = this;
+      var namespaceSelectorList = [];
+      for (var i = 0, len = vm.namespaceTree.length; i < len; i++) {
+        namespaceSelectorList = namespaceSelectorList.concat(
+          vm.getNamespaceSelectorList(vm.namespaceTree[i], "", "/")
+        );
+      }
+      namespaceSelectorList.sort((a, b) =>
+        a.text > b.text ? 1 : b.text > a.text ? -1 : 0
+      );
+      namespaceSelectorList.unshift({
+        text: "All",
+        value: null
+      })
+      vm.$store.commit("namespaceSelectorList", namespaceSelectorList);
+    },
   },
   beforeCreate() {
     var vm = this;
@@ -231,7 +249,7 @@ export default {
   },
   methods: {
     checkRoute: function () {
-      var vm = this
+      var vm = this;
       if (vm.$route.name !== "Index") {
         vm.$router.push({ name: "Index" });
       }
@@ -247,6 +265,24 @@ export default {
       }
       namespaceFilterSet.add(namespace_obj.namespace_id);
       return namespaceFilterSet;
+    },
+    getNamespaceSelectorList: function (namespaceObj, currPath, seperator) {
+      // var vm = this;
+      var namespaceSelectorList = [];
+      for (var i = 0, len = namespaceObj.children.length; i < len; i++) {
+        namespaceSelectorList = namespaceSelectorList.concat(
+          this.getNamespaceSelectorList(
+            namespaceObj.children[i],
+            currPath + namespaceObj.name + seperator,
+            seperator
+          )
+        );
+      }
+      namespaceSelectorList.push({
+        text: currPath + namespaceObj.name,
+        value: namespaceObj.namespace_id,
+      });
+      return namespaceSelectorList;
     },
     openCreateNamespaceDialog: function () {
       var vm = this;

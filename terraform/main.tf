@@ -89,6 +89,17 @@ resource "aws_dynamodb_table" "dolphin_namespaces_table" {
   }
 }
 
+resource "aws_dynamodb_table" "dolphin_api_tokens_table" {
+  name             = "dolphin_api_tokens_table"
+  hash_key         = "user_id"
+  billing_mode     = "PAY_PER_REQUEST"
+
+  attribute {
+    name = "user_id"
+    type = "S"
+  }
+}
+
 # WEBSITE - S3
 
 resource "aws_s3_bucket" "prod" {

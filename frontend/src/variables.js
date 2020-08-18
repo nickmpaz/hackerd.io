@@ -50,6 +50,14 @@ var api = {
     url: baseUrl + 'namespaces/',
     method: 'DELETE'
   },
+  getApiToken: {
+    url: baseUrl + 'api_token',
+    method: 'GET'
+  },
+  generateApiToken: {
+    url: baseUrl + 'api_token',
+    method: 'POST'
+  },
 }
 
 module.exports = {

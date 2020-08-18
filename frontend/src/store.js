@@ -10,10 +10,11 @@ const store = new Vuex.Store({
       name: "All",
       id: 0,
       namespace_id: null,
-      filter: function () {
+      resourceFilter: function () {
         return true;
       },
     },
+    namespaceSelectorList: [],
   },
   getters: {
     hotkeysActive: state => {
@@ -22,7 +23,9 @@ const store = new Vuex.Store({
     activeNamespace: state => {
       return state.activeNamespace
     },
-
+    namespaceSelectorList: state => {
+      return state.namespaceSelectorList
+    }
   },
   mutations: {
     hotkeysActive (state, hotkeysActive) {
@@ -30,6 +33,9 @@ const store = new Vuex.Store({
     },
     activeNamespace (state, activeNamespace) {
       state.activeNamespace = activeNamespace
+    },
+    namespaceSelectorList (state, namespaceSelectorList) {
+      state.namespaceSelectorList = namespaceSelectorList
     }
   }
 })

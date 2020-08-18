@@ -108,6 +108,39 @@ functions:
           authorizer:
             arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
           cors: true
+  get_api_token:
+    handler: handler.get_api_token
+    events:
+      - http:
+          path: api_token
+          method: get
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
+          cors: true
+  generate_api_token:
+    handler: handler.generate_api_token
+    events:
+      - http:
+          path: api_token
+          method: post
+          authorizer:
+            arn: ${self:custom.cognitoUserPoolArn.${self:provider.stage, 'local'}}
+          cors: true
+  # external functions
+  external_ping_auth:
+    handler: handler.external_ping_auth
+    events:
+      - http:
+          path: external/ping_auth
+          method: post
+          cors: true
+  external_create_resource:
+    handler: handler.external_create_resource
+    events:
+      - http:
+          path: external/create_resource
+          method: post
+          cors: true
 package:
   exclude:
     - node_modules/**

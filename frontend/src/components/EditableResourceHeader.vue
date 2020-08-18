@@ -1,13 +1,14 @@
 <template>
   <div>
-    <v-text-field v-model="resource.title" class="tag-input" label="Title" single-line solo></v-text-field>
+    <v-text-field v-model="resource.title" class="short-text-field" label="Title" single-line solo background-color="secondary darken-1"></v-text-field>
     <v-text-field
       v-model="tagInput"
       @keydown.enter="addTag()"
-      class="tag-input"
+      class="short-text-field"
       label="Add a tag"
       single-line
       solo
+      background-color="secondary darken-1"
     ></v-text-field>
     <v-row dense class="mb-3 mt-1">
       <v-col cols="auto" v-if="resource.tags.length == 0">
@@ -51,7 +52,5 @@ export default {
 </script>
 
 <style lang="scss">
-.tag-input {
-  height: 55px;
-}
+
 </style>

@@ -17,8 +17,25 @@
     <!-- main content -->
     <v-row justify="center">
       <v-col cols="12" md="10" xl="8">
-        <editable-resource-header :resource="resource" />
-        <v-text-field v-model="resource.content" label="Url" single-line solo></v-text-field>
+        <div class="d-flex my-6">
+          <v-btn color="secondary darken-1" width="125" @click="$router.push({name: 'Index'})">
+            <div class="d-flex justify-space-between align-center">
+              <v-icon class="mr-2">mdi-arrow-left</v-icon>
+              <span class="mr-2">Back</span>
+            </div>
+          </v-btn>
+        </div>
+        <v-card class="px-6 pt-6 pb-4">
+          <editable-resource-header :resource="resource" />
+          <v-text-field
+            v-model="resource.content"
+            label="Url"
+            single-line
+            solo
+            background-color="secondary darken-1"
+            class="short-text-field"
+          ></v-text-field>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>

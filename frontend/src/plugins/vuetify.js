@@ -9,20 +9,20 @@ export default new Vuetify({
     theme: {
         themes: {
             light: {
-                primary: '#1976D2',
-                secondary: colors.grey.darken3,
-                accent: '#424242',
-                error: '#FF5252',
-                info: '#2196F3',
-                success: '#4CAF50',
-                warning: '#FFC107',
-                background: colors.grey.lighten4,
+                // primary: '#1976D2',
+                secondary: colors.grey.lighten3,
+                // accent: '#424242',
+                // error: '#FF5252',
+                // info: '#2196F3',
+                // success: '#4CAF50',
+                // warning: '#FFC107',
+                // background: colors.grey.lighten4,
             },
             dark: {
                 primary: '#bb86fc',
-                secondary: colors.grey.darken3,
-                accent: '#03dac6',
-                error: '#cf6679',
+                // secondary: colors.grey.darken3,
+                // accent: '#03dac6',
+                // error: '#cf6679',
             }
         },
     },
