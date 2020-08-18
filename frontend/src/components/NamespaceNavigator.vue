@@ -204,11 +204,20 @@ export default {
     },
     namespaceTree: function () {
       console.log("namespaceTree changed");
-      var vm = this
-      var namespaceSelectorList = []
+      var vm = this;
+      var namespaceSelectorList = [];
       for (var i = 0, len = vm.namespaceTree.length; i < len; i++) {
-        namespaceSelectorList = namespaceSelectorList.concat(vm.getNamespaceSelectorList(vm.namespaceTree[i], "", "/"))
+        namespaceSelectorList = namespaceSelectorList.concat(
+          vm.getNamespaceSelectorList(vm.namespaceTree[i], "", "/")
+        );
       }
+      namespaceSelectorList.sort((a, b) =>
+        a.text > b.text ? 1 : b.text > a.text ? -1 : 0
+      );
+      namespaceSelectorList.unshift({
+        text: "All",
+        value: null
+      })
       vm.$store.commit("namespaceSelectorList", namespaceSelectorList);
     },
   },
@@ -271,9 +280,9 @@ export default {
       }
       namespaceSelectorList.push({
         text: currPath + namespaceObj.name,
-        value: namespaceObj.namespace_id
-      })
-      return namespaceSelectorList
+        value: namespaceObj.namespace_id,
+      });
+      return namespaceSelectorList;
     },
     openCreateNamespaceDialog: function () {
       var vm = this;

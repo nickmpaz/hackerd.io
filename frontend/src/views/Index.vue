@@ -109,7 +109,7 @@
                     @click="selecting = true; resourceToMove = resource"
                   >
                     <v-list-item-action>
-                      <v-icon color="orange">mdi-move</v-icon>
+                      <v-icon color="orange">mdi-folder-move</v-icon>
                     </v-list-item-action>
                     <v-list-item-content>
                       <v-list-item-title>Move</v-list-item-title>
