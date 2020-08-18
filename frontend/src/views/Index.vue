@@ -3,6 +3,14 @@
     <loading-dialog :active="loading" message="Loading" />
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />
+    <loading-dialog :active="moving" message="Moving" />
+    <namespace-selector-dialog
+      :active="selecting"
+      confirmMessage="Move"
+      declineMessage="Cancel"
+      @confirm="moveResource"
+      @decline="selecting = false"
+    />
     <confirm-dialog
       :active="confirmDeleteDialog"
       prompt="Delete Resource?"
@@ -98,6 +106,17 @@
                   </v-list-item>
                   <v-list-item
                     link
+                    @click="selecting = true; resourceToMove = resource"
+                  >
+                    <v-list-item-action>
+                      <v-icon color="orange">mdi-move</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Move</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item
+                    link
                     @click="confirmDeleteDialog = true; resourceToDelete = resource"
                   >
                     <v-list-item-action>
@@ -135,6 +154,7 @@
 <script>
 import LoadingDialog from "../components/LoadingDialog";
 import ConfirmDialog from "../components/ConfirmDialog";
+import NamespaceSelectorDialog from "../components/NamespaceSelectorDialog";
 
 import axios from "axios";
 import { Auth } from "aws-amplify";
@@ -144,6 +164,7 @@ export default {
   components: {
     LoadingDialog,
     ConfirmDialog,
+    NamespaceSelectorDialog,
   },
   props: ["drawer"],
   computed: {
@@ -168,12 +189,11 @@ export default {
       const finalResult = result.map((a) => a.item);
       vm.searchResultsLength = finalResult.length;
       if (vm.focusIndex > vm.searchResultsLength - 1) {
-          vm.focusIndex = vm.searchResultsLength - 1;
+        vm.focusIndex = vm.searchResultsLength - 1;
       }
       return finalResult;
     },
     activeNamespace: function () {
-      console.log(this.$store.getters.activeNamespace)
       return this.$store.getters.activeNamespace;
     },
   },
@@ -182,8 +202,11 @@ export default {
     fab: false,
     creating: false,
     deleting: false,
+    selecting: false,
+    moving: false,
     confirmDeleteDialog: false,
     resourceToDelete: null,
+    resourceToMove: null,
     loading: true,
     resources: [],
     focusIndex: -1,
@@ -333,7 +356,6 @@ export default {
           })
             .then((response) => {
               var resource = response.data.resource;
-              console.log();
               vm.$router.push({
                 name: "Resource",
                 params: {
@@ -374,6 +396,37 @@ export default {
               vm.resources = vm.resources.filter(
                 (e) => e !== vm.resourceToDelete
               );
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    moveResource: function(namespace_id) {
+      var vm = this
+      vm.selecting = false
+      vm.moving = true
+      vm.resourceToMove.namespace = namespace_id
+      Auth.currentAuthenticatedUser()
+        .then((data) => {
+          axios({
+            method: vm.$variables.api.updateResource.method,
+            url:
+              vm.$variables.api.updateResource.url +
+              vm.resourceToMove.resource_id,
+            headers: {
+              Authorization: data.signInUserSession.idToken.jwtToken,
+            },
+            data: {
+              resource: vm.resourceToMove
+            }
+          })
+            .then((response) => {
+              console.log(response);
+              vm.moving = false
             })
             .catch((err) => {
               console.error(err);
