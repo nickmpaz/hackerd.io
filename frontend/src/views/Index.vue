@@ -152,7 +152,14 @@ export default {
       var filteredResources = vm.resources.filter((e) =>
         vm.activeNamespace.resourceFilter(e)
       );
-      if (vm.query == "") return filteredResources
+      if (vm.query == "") {
+        vm.searchResultsLength = filteredResources.length;
+        if (vm.focusIndex > vm.searchResultsLength - 1) {
+          vm.focusIndex =
+            vm.searchResultsLength == 0 ? 0 : vm.searchResultsLength - 1;
+        }
+        return filteredResources;
+      }
       const options = {
         threshold: 0.25,
         keys: ["title", "tags"],
@@ -180,7 +187,7 @@ export default {
     resourceToDelete: null,
     loading: true,
     resources: [],
-    focusIndex: 0,
+    focusIndex: -1,
     searchResultsLength: 0,
     hotkeysActive: true,
   }),

@@ -182,7 +182,7 @@ def delete_namespace(event, context):
             'user_id': user_id,
             'namespace_id': curr_namespace_id
         })
-        # delete resources that have that namespace 
+        # delete resources that have that namespace
         response = resources_table.scan(
             FilterExpression=Attr('namespace').eq(curr_namespace_id))
         resources = response['Items']
@@ -210,6 +210,7 @@ def delete_namespace(event, context):
 
 ### API TOKENS
 
+
 def get_api_token(event, context):
     user_id = event['requestContext']['authorizer']['claims']['sub']
     response = api_tokens_table.get_item(Key={
@@ -219,7 +220,7 @@ def get_api_token(event, context):
 
     if api_token_item is None:
         return generate_api_token(event, context)
-        
+
     return _make_response(body={'api_token': api_token_item.get('api_token')})
 
 
@@ -231,3 +232,42 @@ def generate_api_token(event, context):
         'api_token': api_token
     })
     return _make_response(body={'api_token': api_token})
+
+
+### External Ping
+def external_ping_auth(event, context):
+    api_token = json.loads(event['body']).get('apiToken')
+    response = api_tokens_table.scan(
+        FilterExpression=Attr('api_token').eq(api_token))
+    items = response['Items']
+    if len(items) == 0:
+        return _make_response(status_code=HTTPStatus.FORBIDDEN)
+
+    user_id = items[0].get('user_id')
+    return _make_response(user_id)
+
+
+def external_create_resource(event, context):
+    api_token = json.loads(event['body']).get('apiToken')
+    response = api_tokens_table.scan(
+        FilterExpression=Attr('api_token').eq(api_token))
+    items = response['Items']
+    if len(items) == 0:
+        return _make_response(status_code=HTTPStatus.FORBIDDEN)
+
+    user_id = items[0].get('user_id')
+    resource_id = _generate_unique_id(resources_table, 'resource_id')
+    resource = {
+        'user_id': user_id,
+        'resource_id': resource_id,
+        'type': json.loads(event['body']).get('type', 'note'),
+        'title': json.loads(event['body']).get('title', ''),
+        'tags': json.loads(event['body']).get('tags', []),
+        'content': json.loads(event['body']).get('content', ''),
+        'created_at': str(int(time.time())),
+        'updated_at': str(int(time.time())),
+        'namespace': json.loads(event['body']).get('namespace')
+    }
+
+    resources_table.put_item(Item=resource)
+    return _make_response(body={"resource": resource})

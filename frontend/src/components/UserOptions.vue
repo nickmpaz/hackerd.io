@@ -6,6 +6,14 @@
       </v-btn>
     </template>
     <v-list dense>
+      <v-list-item link @click="$router.push({name: 'Index'})">
+        <v-list-item-action>
+          <v-icon>mdi-view-dashboard</v-icon>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>Resources</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
       <v-list-item link @click="$router.push({name: 'Settings'})">
         <v-list-item-action>
           <v-icon>mdi-cog</v-icon>

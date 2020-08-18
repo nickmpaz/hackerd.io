@@ -24,9 +24,7 @@
           </div>
         </v-card>
         <v-card class="elevation-6 pa-6 mt-6">
-          <div>
-            <span class="title px-2">Google Chrome Extension</span>
-          </div>
+          <span class="title px-2">Google Chrome Extension</span>
           <div class="d-flex pt-6">
             <span>placeholder</span>
           </div>
@@ -102,7 +100,7 @@ export default {
         });
     },
     fallbackCopyTextToClipboard: function () {
-      var vm = this
+      var vm = this;
       var textArea = document.createElement("textarea");
       textArea.value = vm.apiToken;
 
@@ -126,8 +124,8 @@ export default {
       document.body.removeChild(textArea);
     },
     copyTextToClipboard: function () {
-      console.log('fired')
-      var vm = this
+      console.log("fired");
+      var vm = this;
       if (!navigator.clipboard) {
         vm.fallbackCopyTextToClipboard();
         return;
@@ -144,6 +142,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>
