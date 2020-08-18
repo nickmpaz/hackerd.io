@@ -83,7 +83,7 @@
               <v-icon class="mr-2">mdi-pencil</v-icon>
               <span class="mr-2">Back</span>
             </div>
-          </v-btn> -->
+          </v-btn>-->
         </div>
         <v-card class="px-6 py-4 mb-6">
           <resource-header v-if="mode === 'read'" :resource="resource" />
@@ -196,7 +196,9 @@
               </div>
             </editor-menu-bar>
           </v-card>
-          <editor-content class="editor__content mt-4" :editor="editor" />
+          <div class="px-6 pb-4 pt-6">
+            <editor-content class="editor__content" :editor="editor" />
+          </div>
         </v-card>
       </v-col>
     </v-row>
@@ -419,12 +421,6 @@ export default {
   margin: 0.25em;
 }
 
-.ProseMirror {
-  padding-top: 1em;
-  padding-bottom: 1em;
-  padding-left: 1.5em;
-  padding-right: 1.5em;
-}
 .markdown-body-dark {
   pre {
     &::before {
