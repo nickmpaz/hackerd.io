@@ -59,7 +59,7 @@
     <v-row justify="center">
       <v-col cols="12" md="10" xl="8">
         <div class="d-flex my-6">
-          <v-btn color="secondary" width="125" @click="$router.push({name: 'Index'})">
+          <v-btn color="secondary darken-1" width="125" @click="$router.push({name: 'Index'})">
             <div class="d-flex justify-space-between align-center">
               <v-icon class="mr-2">mdi-arrow-left</v-icon>
               <span class="mr-2">Back</span>
@@ -90,7 +90,7 @@
           <editable-resource-header v-if="mode === 'write'" :resource="resource" />
         </v-card>
         <v-card :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')">
-          <v-toolbar v-if="mode === 'write'" color="secondary darken-1">
+          <v-card v-if="mode === 'write'" color="secondary darken-1" class="pa-1">
             <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
               <div class="menubar">
                 <v-btn
@@ -195,7 +195,7 @@
                 </v-btn>
               </div>
             </editor-menu-bar>
-          </v-toolbar>
+          </v-card>
           <editor-content class="editor__content mt-4" :editor="editor" />
         </v-card>
       </v-col>

@@ -155,8 +155,7 @@ export default {
       if (vm.query == "") {
         vm.searchResultsLength = filteredResources.length;
         if (vm.focusIndex > vm.searchResultsLength - 1) {
-          vm.focusIndex =
-            vm.searchResultsLength == 0 ? 0 : vm.searchResultsLength - 1;
+          vm.focusIndex = vm.searchResultsLength - 1;
         }
         return filteredResources;
       }
@@ -169,8 +168,7 @@ export default {
       const finalResult = result.map((a) => a.item);
       vm.searchResultsLength = finalResult.length;
       if (vm.focusIndex > vm.searchResultsLength - 1) {
-        vm.focusIndex =
-          vm.searchResultsLength == 0 ? 0 : vm.searchResultsLength - 1;
+          vm.focusIndex = vm.searchResultsLength - 1;
       }
       return finalResult;
     },
@@ -286,7 +284,7 @@ export default {
     },
     decrementFocus: function () {
       var vm = this;
-      if (vm.focusIndex > 0) {
+      if (vm.focusIndex > -1) {
         vm.focusIndex--;
       }
       vm.scrollFocusToCenter();
