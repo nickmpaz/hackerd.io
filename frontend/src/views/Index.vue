@@ -175,6 +175,7 @@ export default {
       return finalResult;
     },
     activeNamespace: function () {
+      console.log(this.$store.getters.activeNamespace)
       return this.$store.getters.activeNamespace;
     },
   },

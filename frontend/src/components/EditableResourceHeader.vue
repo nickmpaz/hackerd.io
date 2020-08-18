@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-text-field v-model="resource.title" class="short-text-field" label="Title" single-line solo></v-text-field>
+    <v-text-field v-model="resource.title" class="short-text-field" label="Title" single-line solo background-color="secondary"></v-text-field>
     <v-text-field
       v-model="tagInput"
       @keydown.enter="addTag()"
@@ -8,6 +8,7 @@
       label="Add a tag"
       single-line
       solo
+      background-color="secondary"
     ></v-text-field>
     <v-row dense class="mb-3 mt-1">
       <v-col cols="auto" v-if="resource.tags.length == 0">

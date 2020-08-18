@@ -101,7 +101,7 @@ export default {
 }
 
 .short-text-field {
-  height: 55px;
+  height: 60px;
 }
 
 #inspire.bg-light {

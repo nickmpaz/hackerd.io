@@ -20,9 +20,9 @@ export default new Vuetify({
             },
             dark: {
                 primary: '#bb86fc',
-                secondary: colors.grey.darken3,
-                accent: '#03dac6',
-                error: '#cf6679',
+                // secondary: colors.grey.darken3,
+                // accent: '#03dac6',
+                // error: '#cf6679',
             }
         },
     },

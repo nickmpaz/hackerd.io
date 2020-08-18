@@ -10,7 +10,7 @@ const store = new Vuex.Store({
       name: "All",
       id: 0,
       namespace_id: null,
-      filter: function () {
+      resourceFilter: function () {
         return true;
       },
     },

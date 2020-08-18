@@ -58,8 +58,37 @@
     </v-btn>
     <v-row justify="center">
       <v-col cols="12" md="10" xl="8">
-        <resource-header v-if="mode === 'read'" :resource="resource" />
-        <editable-resource-header v-if="mode === 'write'" :resource="resource" />
+        <div class="d-flex my-6">
+          <v-btn color="secondary" width="125" @click="$router.push({name: 'Index'})">
+            <div class="d-flex justify-space-between align-center">
+              <v-icon class="mr-2">mdi-arrow-left</v-icon>
+              <span class="mr-2">Back</span>
+            </div>
+          </v-btn>
+          <!-- <v-spacer></v-spacer>
+          <v-btn color="red" class="ml-4" width="135">
+            <div class="d-flex justify-space-between align-center">
+              <v-icon class="mr-2">mdi-delete</v-icon>
+              <span class="mr-2">Delete</span>
+            </div>
+          </v-btn>
+          <v-btn color="blue" class="ml-4" width="135">
+            <div class="d-flex justify-space-between align-center">
+              <v-icon class="mr-2">mdi-export</v-icon>
+              <span class="mr-2">Export</span>
+            </div>
+          </v-btn>
+          <v-btn color="green" class="ml-4" width="135">
+            <div class="d-flex justify-space-between align-center">
+              <v-icon class="mr-2">mdi-pencil</v-icon>
+              <span class="mr-2">Back</span>
+            </div>
+          </v-btn> -->
+        </div>
+        <v-card class="px-6 py-4 mb-6">
+          <resource-header v-if="mode === 'read'" :resource="resource" />
+          <editable-resource-header v-if="mode === 'write'" :resource="resource" />
+        </v-card>
         <v-card :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')">
           <v-toolbar v-if="mode === 'write'" color="secondary darken-1">
             <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
@@ -287,8 +316,8 @@ export default {
     document.addEventListener("keydown", this._keyListener);
   },
   created() {
-    var vm = this
-    if (vm.editMode) vm.mode = 'write'
+    var vm = this;
+    if (vm.editMode) vm.mode = "write";
   },
   methods: {
     clearSelection: function () {
