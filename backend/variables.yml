@@ -1,11 +1,11 @@
 cognitoUserPoolArn: 
-    local: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_9nm9MkAFi"
-    dev: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_s3yah6W0R"
-    prod: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_Zq4vQ9fQf"
+    local: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_121O4v0hC"
+    dev: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_F6gApko0q"
+    prod: "arn:aws:cognito-idp:us-east-1:706879839199:userpool/us-east-1_uzAVjcTi5"
 customDomain:
-    domainName: api.hackerd.io
-    stage: ${opt:stage, 'dev'}
-    basePath: ${opt:stage, 'dev'}
-    certificateName: '*.hackerd.io'
+    domainName: api.stashable.io
+    stage: ${opt:stage, 'local'}
+    basePath: ${opt:stage, 'local'}
+    certificateName: '*.stashable.io'
     createRoute53Record: true
    
