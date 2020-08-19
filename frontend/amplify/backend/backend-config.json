@@ -1,0 +1,10 @@
+{
+	"auth": {
+		"dolphin8f33ca53": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [],
+			"customAuth": false
+		}
+	}
+}
