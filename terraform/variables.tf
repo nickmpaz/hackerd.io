@@ -3,5 +3,5 @@ variable "region" {
 }
 
 variable "root_domain_name" {
-  default = "hackerd.io"
+  default = "stashable.io"
 }
