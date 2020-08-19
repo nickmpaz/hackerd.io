@@ -58,7 +58,7 @@ export FRONTEND="{\
 export AMPLIFY="{\
 \"projectName\":\"$AMPLIFY_APP_NAME\",\
 \"appId\":\"$AMPLIFY_APP_ID\",\
-\"envName\":\"local\",\
+\"envName\":\"$environment\",\
 \"defaultEditor\":\"vscode\"\
 }"
 
@@ -81,8 +81,6 @@ amplify pull \
 --providers $PROVIDERS \
 --categories $CATEGORIES \
 --yes
-
-amplify env checkout $environment --restore
 
 cd ..
 
