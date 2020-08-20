@@ -30,7 +30,7 @@
     </v-navigation-drawer>
 
     <v-main>
-      <router-view :drawer="drawer" />
+      <router-view />
     </v-main>
   </v-app>
 </template>

@@ -105,7 +105,7 @@ export default {
           },
         },
         {
-          name: "New",
+          name: "Recent",
           id: 2,
           namespace_id: null,
           resourceFilter: function (resource_obj) {
