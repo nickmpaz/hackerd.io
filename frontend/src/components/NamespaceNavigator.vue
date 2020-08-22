@@ -109,11 +109,9 @@ export default {
           id: 2,
           namespace_id: null,
           resourceFilter: function (resource_obj) {
-            return (
-              vm.namespaceSet.has(resource_obj.namespace) ||
-              !("namespace" in resource_obj) ||
-              resource_obj.namespace == null
-            );
+            var day = 86400 
+            var now = Date.now() / 1000
+            return parseInt(resource_obj.created_at) > now - day
           },
         },
       ];

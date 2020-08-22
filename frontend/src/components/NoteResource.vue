@@ -1,7 +1,7 @@
 <template>
   <div>
+    <!-- dialogs -->
     <loading-dialog :active="deleting" message="Deleting" />
-
     <confirm-dialog
       :active="confirmDeleteDialog"
       prompt="Delete Note?"
@@ -10,6 +10,7 @@
       @confirm="deleteResource"
       @decline="confirmDeleteDialog = false"
     />
+    <!-- floating action buttons -->
     <v-speed-dial
       v-model="fab"
       fixed
@@ -56,41 +57,26 @@
     >
       <v-icon>mdi-check</v-icon>
     </v-btn>
+    <!-- main content -->
     <v-row justify="center">
       <v-col cols="12" md="10" xl="8">
+        <!-- back button -->
         <div class="d-flex my-6">
-          <v-btn color="secondary darken-1" width="125" @click="$router.push({name: 'Index'})">
+          <v-btn color="secondary" width="125" @click="$router.push({name: 'Index'})">
             <div class="d-flex justify-space-between align-center">
               <v-icon class="mr-2">mdi-arrow-left</v-icon>
               <span class="mr-2">Back</span>
             </div>
           </v-btn>
-          <!-- <v-spacer></v-spacer>
-          <v-btn color="red" class="ml-4" width="135">
-            <div class="d-flex justify-space-between align-center">
-              <v-icon class="mr-2">mdi-delete</v-icon>
-              <span class="mr-2">Delete</span>
-            </div>
-          </v-btn>
-          <v-btn color="blue" class="ml-4" width="135">
-            <div class="d-flex justify-space-between align-center">
-              <v-icon class="mr-2">mdi-export</v-icon>
-              <span class="mr-2">Export</span>
-            </div>
-          </v-btn>
-          <v-btn color="green" class="ml-4" width="135">
-            <div class="d-flex justify-space-between align-center">
-              <v-icon class="mr-2">mdi-pencil</v-icon>
-              <span class="mr-2">Back</span>
-            </div>
-          </v-btn>-->
         </div>
+        <!-- header card -->
         <v-card class="px-6 py-4 mb-6">
           <resource-header v-if="mode === 'read'" :resource="resource" />
           <editable-resource-header v-if="mode === 'write'" :resource="resource" />
         </v-card>
+        <!-- editor card -->
         <v-card :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')">
-          <v-card v-if="mode === 'write'" color="secondary darken-1" class="pa-1">
+          <v-card v-if="mode === 'write'" color="secondary" class="pa-1">
             <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
               <div class="menubar">
                 <v-btn
@@ -229,11 +215,15 @@ import {
   Underline,
   History,
 } from "tiptap-extensions";
-import javascript from "highlight.js/lib/languages/javascript";
-import css from "highlight.js/lib/languages/css";
-import python from "highlight.js/lib/languages/python";
 import bash from "highlight.js/lib/languages/bash";
+import c from "highlight.js/lib/languages/c"
+import css from "highlight.js/lib/languages/css";
+import dockerfile from "highlight.js/lib/languages/dockerfile";
+import java from "highlight.js/lib/languages/java";
+import javascript from "highlight.js/lib/languages/javascript";
+import python from "highlight.js/lib/languages/python";
 import sql from "highlight.js/lib/languages/sql";
+import xml from "highlight.js/lib/languages/xml";
 import LoadingDialog from "../components/LoadingDialog";
 import EditableResourceHeader from "../components/EditableResourceHeader";
 import ResourceHeader from "../components/ResourceHeader";
@@ -260,11 +250,15 @@ export default {
         extensions: [
           new CodeBlockHighlight({
             languages: {
-              javascript,
-              css,
-              python,
               bash,
+              c,
+              css,
+              dockerfile,
+              java,
+              javascript,
+              python,
               sql,
+              xml,
             },
           }),
           new Blockquote(),
