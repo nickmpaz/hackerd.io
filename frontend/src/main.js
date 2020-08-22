@@ -6,8 +6,10 @@ import Amplify from 'aws-amplify'
 import aws_exports from './aws-exports'
 import variables from './variables.js'
 import store from './store.js'
+import utils from './utils.js'
 
 Vue.prototype.$variables = variables
+Vue.prototype.$utils = utils
 Vue.config.productionTip = false
 Amplify.configure(aws_exports)
 

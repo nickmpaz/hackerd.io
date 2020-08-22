@@ -18,7 +18,7 @@
     <v-row justify="center">
       <v-col cols="12" md="10" xl="8">
         <div class="d-flex my-6">
-          <v-btn color="secondary" width="125" @click="$router.push({name: 'Index'})">
+          <v-btn color="secondary" width="150" @click="$router.push({name: 'Index'})">
             <div class="d-flex justify-space-between align-center">
               <v-icon class="mr-2">mdi-arrow-left</v-icon>
               <span class="mr-2">Back</span>
@@ -33,7 +33,7 @@
             single-line
             solo
             background-color="secondary"
-            class="short-text-field"
+            class="short-text-field mt-4"
           ></v-text-field>
         </v-card>
       </v-col>

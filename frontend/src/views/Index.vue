@@ -19,51 +19,52 @@
       @confirm="deleteResource"
       @decline="confirmDeleteDialog = false"
     />
+    <create-resource-prompt-dialog
+      :active="createResourcePromptDialog"
+      confirmMessage="Create"
+      declineMessage="cancel"
+      @confirm="createResource"
+      @decline="createResourcePromptDialog = false"
+    />
     <div v-if="!loading">
-      <v-speed-dial
-        v-model="fab"
-        fixed
-        bottom
-        right
-        direction="top"
-        transition="slide-y-reverse-transition"
-        class="ma-6"
-      >
-        <template v-slot:activator>
-          <v-btn v-model="fab" color="primary" dark fab :large="$vuetify.breakpoint.lgAndUp">
-            <v-icon v-if="fab">mdi-close</v-icon>
-            <v-icon v-else>mdi-plus</v-icon>
-          </v-btn>
-        </template>
-        <v-btn
-          fab
-          dark
-          :large="$vuetify.breakpoint.lgAndUp"
-          color="success"
-          @click="createResource('note')"
-        >
-          <v-icon>mdi-note-text</v-icon>
-        </v-btn>
-        <v-btn
-          fab
-          dark
-          :large="$vuetify.breakpoint.lgAndUp"
-          color="success"
-          @click="createResource('link')"
-        >
-          <v-icon>mdi-link-variant</v-icon>
-        </v-btn>
-      </v-speed-dial>
-
-      <v-row justify="center" class="my-12">
+      <v-row justify="center">
         <v-col cols="12" md="10" xl="8">
+          <div class="d-flex my-6">
+            <v-spacer></v-spacer>
+            <!-- <v-btn color="secondary" width="125" @click="createResourcePromptDialog = true">
+              <div class="d-flex justify-space-between align-center">
+                <v-icon class="mr-2">mdi-plus</v-icon>
+                <span class="mr-2">Create</span>
+              </div>
+            </v-btn>-->
+            <v-menu bottom offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn v-bind="attrs" v-on="on" width="150">
+                  <div class="d-flex justify-space-between align-center">
+                    <v-icon class="mr-2">mdi-cog</v-icon>
+                    <span class="mr-2">Actions</span>
+                  </div>
+                </v-btn>
+              </template>
+              <v-list dense>
+                <v-list-item link @click="createResourcePromptDialog = true">
+                  <v-list-item-action>
+                    <v-icon color="green">mdi-plus</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title>Create</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </div>
           <v-text-field
             :label="'Search ' + activeNamespace.name"
             solo
             autofocus
             single-line
             v-model="query"
-            class="mb-6"
+            class="short-text-field mb-9"
           ></v-text-field>
           <v-card
             v-for="(resource, index) in searchResults"
@@ -104,10 +105,7 @@
                       <v-list-item-title>Export</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
-                  <v-list-item
-                    link
-                    @click="selecting = true; resourceToMove = resource"
-                  >
+                  <v-list-item link @click="selecting = true; resourceToMove = resource">
                     <v-list-item-action>
                       <v-icon color="orange">mdi-folder-move</v-icon>
                     </v-list-item-action>
@@ -155,6 +153,7 @@
 import LoadingDialog from "../components/LoadingDialog";
 import ConfirmDialog from "../components/ConfirmDialog";
 import NamespaceSelectorDialog from "../components/NamespaceSelectorDialog";
+import CreateResourcePromptDialog from "../components/CreateResourcePromptDialog";
 
 import axios from "axios";
 import { Auth } from "aws-amplify";
@@ -165,6 +164,7 @@ export default {
     LoadingDialog,
     ConfirmDialog,
     NamespaceSelectorDialog,
+    CreateResourcePromptDialog,
   },
   props: ["drawer"],
   computed: {
@@ -204,6 +204,7 @@ export default {
     deleting: false,
     selecting: false,
     moving: false,
+    createResourcePromptDialog: false,
     confirmDeleteDialog: false,
     resourceToDelete: null,
     resourceToMove: null,
@@ -338,9 +339,22 @@ export default {
         },
       });
     },
-    createResource: function (type) {
+    createResource: async function (type, method) {
       var vm = this;
+      vm.createResourcePromptDialog = false;
+      var payload;
+      if (method === "import") {
+        payload = {
+          resource: await vm.$utils.getLocalFileContents(),
+        };
+      } else {
+        payload = {
+          type: type,
+          namespace: vm.activeNamespace.namespace_id,
+        };
+      }
       vm.creating = true;
+
       Auth.currentAuthenticatedUser()
         .then((data) => {
           axios({
@@ -349,10 +363,7 @@ export default {
             headers: {
               Authorization: data.signInUserSession.idToken.jwtToken,
             },
-            data: {
-              type: type,
-              namespace: vm.activeNamespace.namespace_id,
-            },
+            data: payload,
           })
             .then((response) => {
               var resource = response.data.resource;
@@ -405,11 +416,11 @@ export default {
           console.log(err);
         });
     },
-    moveResource: function(namespace_id) {
-      var vm = this
-      vm.selecting = false
-      vm.moving = true
-      vm.resourceToMove.namespace = namespace_id
+    moveResource: function (namespace_id) {
+      var vm = this;
+      vm.selecting = false;
+      vm.moving = true;
+      vm.resourceToMove.namespace = namespace_id;
       Auth.currentAuthenticatedUser()
         .then((data) => {
           axios({
@@ -421,12 +432,12 @@ export default {
               Authorization: data.signInUserSession.idToken.jwtToken,
             },
             data: {
-              resource: vm.resourceToMove
-            }
+              resource: vm.resourceToMove,
+            },
           })
             .then((response) => {
               console.log(response);
-              vm.moving = false
+              vm.moving = false;
             })
             .catch((err) => {
               console.error(err);
