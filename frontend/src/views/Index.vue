@@ -1,5 +1,6 @@
 <template>
   <v-container fluid>
+    {{ namespaceBreadcrumbsList }}
     <loading-dialog :active="loading" message="Loading" />
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />
@@ -31,17 +32,11 @@
         <v-col cols="12" md="10" xl="8">
           <div class="d-flex my-6">
             <v-spacer></v-spacer>
-            <!-- <v-btn color="secondary" width="125" @click="createResourcePromptDialog = true">
-              <div class="d-flex justify-space-between align-center">
-                <v-icon class="mr-2">mdi-plus</v-icon>
-                <span class="mr-2">Create</span>
-              </div>
-            </v-btn>-->
             <v-menu bottom offset-y>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn v-bind="attrs" v-on="on" width="150">
                   <div class="d-flex justify-space-between align-center">
-                    <v-icon class="mr-2">mdi-cog</v-icon>
+                    <v-icon class="mr-2">mdi-chevron-down</v-icon>
                     <span class="mr-2">Actions</span>
                   </div>
                 </v-btn>
@@ -53,6 +48,14 @@
                   </v-list-item-action>
                   <v-list-item-content>
                     <v-list-item-title>Create</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item link @click="importResource">
+                  <v-list-item-action>
+                    <v-icon color="blue">mdi-import</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title>Import</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
@@ -75,16 +78,35 @@
             :ripple="false"
             role="button"
           >
-            <div class="d-flex">
-              <h1 class="flex-grow-1 truncate title-case">
-                <v-icon v-if="resource.type === 'note'" class="mr-2">mdi-note-text</v-icon>
-                <v-icon v-if="resource.type === 'link'" class="mr-2">mdi-link-variant</v-icon>
-                {{ resource.title ? resource.title : "Untitled"}}
-              </h1>
-              <!-- <v-icon class="align-self-start mt-2">mdi-dots-horizontal</v-icon> -->
+            <div class="d-flex align-center">
+              <div class="d-flex align-center truncate flex-grow-1">
+                <h1 class="title-case">
+                  <v-icon v-if="resource.type === 'note'" class="mr-2">mdi-note-text</v-icon>
+                  <v-icon v-if="resource.type === 'link'" class="mr-2">mdi-link-variant</v-icon>
+                  {{ resource.title ? resource.title : "Untitled"}}
+                </h1>
+                <v-icon class="mx-3">mdi-minus</v-icon>
+
+                <v-card color="primary" class="px-1 py-1" dark v-if="resource.tags.length == 0">
+                  <v-icon small class="ml-1">mdi-tag</v-icon>
+                  <span class="px-1">No tags</span>
+                </v-card>
+                <v-card
+                  color="primary"
+                  class="px-1 py-1 ml-2"
+                  dark
+                  v-for="(tag, index) in resource.tags"
+                  :key="index"
+                >
+                  <div class="d-flex flex-nowrap">
+                    <v-icon small class="ml-1">mdi-tag</v-icon>
+                    <span class="px-1">{{ tag }}</span>
+                  </div>
+                </v-card>
+              </div>
               <v-menu bottom offset-y>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on" class="mt-1">
+                  <v-btn icon v-bind="attrs" v-on="on" class="ml-4">
                     <v-icon>mdi-dots-horizontal</v-icon>
                   </v-btn>
                 </template>
@@ -97,7 +119,7 @@
                       <v-list-item-title>Edit</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
-                  <v-list-item link>
+                  <v-list-item link @click="exportResource(resource)">
                     <v-list-item-action>
                       <v-icon color="blue">mdi-export</v-icon>
                     </v-list-item-action>
@@ -127,7 +149,7 @@
                 </v-list>
               </v-menu>
             </div>
-            <v-row dense>
+            <!-- <v-row dense>
               <v-col cols="auto" v-if="resource.tags.length == 0">
                 <v-card color="primary" class="px-1 py-1" dark>
                   <v-icon small class="ml-1">mdi-tag</v-icon>
@@ -141,7 +163,7 @@
                   <span class="px-1">{{ tag }}</span>
                 </v-card>
               </v-col>
-            </v-row>
+            </v-row>-->
           </v-card>
         </v-col>
       </v-row>
@@ -195,6 +217,9 @@ export default {
     },
     activeNamespace: function () {
       return this.$store.getters.activeNamespace;
+    },
+    namespaceBreadcrumbsList: function () {
+      return this.$store.getters.namespaceBreadcrumbsList;
     },
   },
   data: () => ({
@@ -255,6 +280,11 @@ export default {
     vm.getResources();
   },
   methods: {
+    exportResource: function (resource) {
+      console.log(resource);
+      var vm = this;
+      vm.$utils.downloadObj(resource, resource.title);
+    },
     ctrlJ: function (event) {
       event.preventDefault();
       console.log("ctrl j");
@@ -339,52 +369,41 @@ export default {
         },
       });
     },
-    createResource: async function (type, method) {
+    createResource: async function (type) {
       var vm = this;
       vm.createResourcePromptDialog = false;
-      var payload;
-      if (method === "import") {
-        payload = {
-          resource: await vm.$utils.getLocalFileContents(),
-        };
-      } else {
-        payload = {
-          type: type,
-          namespace: vm.activeNamespace.namespace_id,
-        };
-      }
       vm.creating = true;
-
-      Auth.currentAuthenticatedUser()
-        .then((data) => {
-          axios({
-            method: vm.$variables.api.createResource.method,
-            url: vm.$variables.api.createResource.url,
-            headers: {
-              Authorization: data.signInUserSession.idToken.jwtToken,
-            },
-            data: payload,
-          })
-            .then((response) => {
-              var resource = response.data.resource;
-              vm.$router.push({
-                name: "Resource",
-                params: {
-                  resource: resource,
-                  resource_id: resource.resource_id,
-                  edit: true,
-                },
-              });
-            })
-            .catch((err) => {
-              vm.loading = false;
-              console.error(err);
-            });
-        })
-        .catch((err) => {
-          vm.loading = false;
-          console.log(err);
-        });
+      var payload = {
+        type: type,
+        namespace: vm.activeNamespace.namespace_id,
+      };
+      var resource = await vm.$api.createResource(payload);
+      vm.creating = false;
+      vm.$router.push({
+        name: "Resource",
+        params: {
+          resource: resource,
+          resource_id: resource.resource_id,
+          edit: true,
+        },
+      });
+    },
+    importResource: async function () {
+      var vm = this;
+      var payload = {
+        resource: await vm.$utils.getLocalFileContents(),
+      };
+      vm.creating = true;
+      var resource = await vm.$api.createResource(payload);
+      vm.creating = false;
+      vm.$router.push({
+        name: "Resource",
+        params: {
+          resource: resource,
+          resource_id: resource.resource_id,
+          edit: true,
+        },
+      });
     },
     deleteResource: function () {
       var vm = this;

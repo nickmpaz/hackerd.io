@@ -15,6 +15,7 @@ const store = new Vuex.Store({
       },
     },
     namespaceSelectorList: [],
+    namespaceBreadcrumbsList: [],
   },
   getters: {
     hotkeysActive: state => {
@@ -25,6 +26,9 @@ const store = new Vuex.Store({
     },
     namespaceSelectorList: state => {
       return state.namespaceSelectorList
+    },
+    namespaceBreadcrumbsList: state => {
+      return state.namespaceBreadcrumbsList
     }
   },
   mutations: {
@@ -36,6 +40,9 @@ const store = new Vuex.Store({
     },
     namespaceSelectorList (state, namespaceSelectorList) {
       state.namespaceSelectorList = namespaceSelectorList
+    },
+    namespaceBreadcrumbsList (state, namespaceBreadcrumbsList) {
+      state.namespaceBreadcrumbsList = namespaceBreadcrumbsList
     }
   }
 })

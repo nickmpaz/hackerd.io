@@ -26,7 +26,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-btn v-bind="attrs" v-on="on" width="150">
                 <div class="d-flex justify-space-between align-center">
-                  <v-icon class="mr-2">mdi-cog</v-icon>
+                  <v-icon class="mr-2">mdi-chevron-down</v-icon>
                   <span class="mr-2">Actions</span>
                 </div>
               </v-btn>
@@ -184,7 +184,7 @@
               v-if=" (resource.content === '' || resource.content === '<p></p>') && mode === 'read' "
               class="d-flex justify-center mb-12"
             >
-              <span class="title">There's nothing here...</span>
+              <span class="title">There's nothing here yet.</span>
             </div>
           </div>
         </v-card>

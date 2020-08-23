@@ -8,7 +8,7 @@
     <v-list dense>
       <v-list-item link @click="$router.push({name: 'Index'})">
         <v-list-item-action>
-          <v-icon color="yellow">mdi-view-dashboard</v-icon>
+          <v-icon color="orange">mdi-view-dashboard</v-icon>
         </v-list-item-action>
         <v-list-item-content>
           <v-list-item-title>Resources</v-list-item-title>
