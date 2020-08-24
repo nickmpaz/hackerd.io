@@ -120,30 +120,13 @@ export default {
       var vm = this;
       var activeNamespace;
       if (vm.activeNamespaces.length > 0) {
-        activeNamespace =  vm.activeNamespaces[0];
+        activeNamespace = vm.activeNamespaces[0];
       } else if (vm.activeDummy.length > 0) {
         activeNamespace = vm.activeDummy[0];
       } else {
         activeNamespace = vm.dummyTree[0];
       }
-      vm.$store.commit("activeNamespace", activeNamespace);
-
-      // make breadcrumbs list
-      var namespaces = JSON.parse(JSON.stringify(vm.namespaces));
-      var mappedNamespaces = {};
-      var arrElem;
-      for (var j = 0; j < namespaces.length; j++) {
-        arrElem = namespaces[j];
-        mappedNamespaces[arrElem.namespace_id] = arrElem;
-      }
-      var curr = activeNamespace;
-      var breadcrumbList = [];
-      while (curr != null) {
-        breadcrumbList.unshift(curr);
-        curr = mappedNamespaces[curr.parent];
-      }
-      vm.$store.commit('namespaceBreadcrumbsList', breadcrumbList)
-      return activeNamespace
+      return activeNamespace;
     },
     namespaceTree: function () {
       var vm = this;
@@ -234,7 +217,28 @@ export default {
     },
     // force update
     activeNamespace: function () {
+      var vm = this;
+      vm.$store.commit("activeNamespace", vm.activeNamespace);
 
+      // make breadcrumbs list
+      var namespaces = JSON.parse(JSON.stringify(vm.namespaces));
+      var mappedNamespaces = {};
+      var arrElem;
+      for (var j = 0; j < namespaces.length; j++) {
+        arrElem = namespaces[j];
+        mappedNamespaces[arrElem.namespace_id] = arrElem;
+      }
+      var curr = vm.activeNamespace;
+      var dummyNamespace = vm.activeDummy.length > 0;
+      var breadcrumbList = [];
+      while (curr != null) {
+        breadcrumbList.unshift(curr);
+        curr = mappedNamespaces[curr.parent];
+      }
+      if (!dummyNamespace) {
+        breadcrumbList.unshift(vm.dummyTree[0])
+      }
+      vm.$store.commit("namespaceBreadcrumbsList", breadcrumbList);
     },
   },
   beforeCreate() {

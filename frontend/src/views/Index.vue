@@ -1,6 +1,5 @@
 <template>
   <v-container fluid>
-    {{ namespaceBreadcrumbsList }}
     <loading-dialog :active="loading" message="Loading" />
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />
@@ -30,8 +29,19 @@
     <div v-if="!loading">
       <v-row justify="center">
         <v-col cols="12" md="10" xl="8">
-          <div class="d-flex my-6">
-            <v-spacer></v-spacer>
+          <div class="d-flex my-6 align-center">
+            <v-row class="flex-grow-1" no-gutters>
+              <v-col cols="auto">
+                <v-icon class="pr-1">mdi-chevron-right</v-icon>
+              </v-col>
+              <v-col v-for="(namespace, index) in namespaceBreadcrumbsList" :key="index" cols="auto">
+                <span class="primary--text">{{ namespace.name }}</span>
+                <v-icon
+                  class="px-1"
+                  v-if="index != namespaceBreadcrumbsList.length - 1"
+                >mdi-chevron-right</v-icon>
+              </v-col>
+            </v-row>
             <v-menu bottom offset-y>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn v-bind="attrs" v-on="on" width="150">
