@@ -1,10 +1,12 @@
-var brand = 'stashable.io'
+var brand = 'Stashable.io'
 var tagLine = 'Integrated knowledge base manager for programmers'
 var baseUrl = 'https://api.stashable.io/' + process.env.VUE_APP_ENVIRONMENT + '/'
 var stageIndicator =
   process.env.VUE_APP_ENVIRONMENT === 'prod'
     ? ''
     : ' (' + process.env.VUE_APP_ENVIRONMENT + ')'
+  
+
 
 var api = {
   baseUrl: baseUrl,
@@ -65,5 +67,6 @@ module.exports = {
   tagLine: tagLine,
   stageIndicator: stageIndicator,
   api: api,
-  darkModeDefault: true
+  darkModeDefault: true,
+  chromeExtensionUrl: "https://chrome.google.com/webstore/detail/stashableio/lnfgdekmfoghbhpabiecoloehfdafoim"
 }
