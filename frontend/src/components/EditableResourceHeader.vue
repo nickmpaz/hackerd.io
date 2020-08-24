@@ -12,7 +12,7 @@
       v-model="tagInput"
       @keydown.enter="addTag()"
       class="short-text-field"
-      label="Add a tag"
+      label="Add a tag (press Enter)"
       single-line
       solo
       background-color="secondary"
