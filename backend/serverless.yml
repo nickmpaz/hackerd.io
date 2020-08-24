@@ -143,9 +143,10 @@ functions:
           cors: true
 package:
   exclude:
-    - node_modules/**
-    - venv/**
-
+    - ./**
+  include:
+    - ./handler.py
+    - requirements.txt
 
 plugins:
   - serverless-python-requirements
