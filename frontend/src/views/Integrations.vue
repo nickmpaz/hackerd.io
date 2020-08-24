@@ -9,8 +9,11 @@
           <div>
             <span class="title px-2">API Token</span>
           </div>
+          <div class="d-flex pt-6 px-2">
+            <span>Use this token to connect {{ $variables.brand }} integrations to your account.</span>
+          </div>
           <div class="d-flex pt-6">
-            <v-btn height="48" color="secondary" class="mr-2" @click="regenerateApiToken">regenerate</v-btn>
+            <v-btn height="48" width="150" color="secondary" class="mr-2" @click="regenerateApiToken">regenerate</v-btn>
             <v-text-field
               class="short-text-field"
               background-color="secondary"
@@ -25,9 +28,10 @@
         </v-card>
         <v-card class="elevation-6 pa-6 mt-6">
           <span class="title px-2">Google Chrome Extension</span>
-          <div class="d-flex pt-6">
-            <span>placeholder</span>
+          <div class="d-flex pt-6 px-2">
+            <span>Use the {{ $variables.brand }} browser extension to quickly save web content to your knowledge base.</span>
           </div>
+          <v-btn height="48" width="150" color="secondary" class="mt-6" @click="$utils.openInNewTab($variables.chromeExtensionUrl)">Install</v-btn>
         </v-card>
       </v-col>
     </v-row>
