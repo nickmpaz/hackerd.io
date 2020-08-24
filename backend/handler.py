@@ -94,20 +94,26 @@ def get_resource(event, context):
 
 def create_resource(event, context):
     user_id = event['requestContext']['authorizer']['claims']['sub']
-    resource_id = _generate_unique_id(resources_table, 'resource_id')
-    resource_type = json.loads(event['body']).get('type', 'note')
-    namespace = json.loads(event['body']).get('namespace')
-    resource = {
-        'user_id': user_id,
-        'resource_id': resource_id,
-        'type': resource_type,
-        'title': "",
-        'tags': [],
-        'content': "",
-        'created_at': str(int(time.time())),
-        'updated_at': str(int(time.time())),
-        'namespace': namespace
-    }
+
+    resource = json.loads(event['body']).get('resource')
+    if resource is not None:
+        resource['user_id'] = user_id
+        resource['resource_id'] = _generate_unique_id(resources_table, 'resource_id')
+    else:
+        resource_id = _generate_unique_id(resources_table, 'resource_id')
+        resource_type = json.loads(event['body']).get('type', 'note')
+        namespace = json.loads(event['body']).get('namespace')
+        resource = {
+            'user_id': user_id,
+            'resource_id': resource_id,
+            'type': resource_type,
+            'title': "",
+            'tags': [],
+            'content': "",
+            'created_at': str(int(time.time())),
+            'updated_at': str(int(time.time())),
+            'namespace': namespace
+        }
 
     resources_table.put_item(Item=resource)
     return _make_response(body={"resource": resource})

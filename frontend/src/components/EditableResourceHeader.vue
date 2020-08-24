@@ -1,6 +1,13 @@
 <template>
   <div>
-    <v-text-field v-model="resource.title" class="short-text-field" label="Title" single-line solo background-color="secondary darken-1"></v-text-field>
+    <v-text-field
+      v-model="resource.title"
+      class="short-text-field"
+      label="Title"
+      single-line
+      solo
+      background-color="secondary"
+    ></v-text-field>
     <v-text-field
       v-model="tagInput"
       @keydown.enter="addTag()"
@@ -8,17 +15,27 @@
       label="Add a tag"
       single-line
       solo
-      background-color="secondary darken-1"
+      background-color="secondary"
     ></v-text-field>
-    <v-row dense class="mb-3 mt-1">
+    <v-row dense class="my-1">
       <v-col cols="auto" v-if="resource.tags.length == 0">
-        <v-card color="primary" class="px-1 py-1" dark>
+        <v-card
+          outlined
+          class="px-1 py-1"
+          dark
+          :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
+        >
           <v-icon small class="ml-1">mdi-tag</v-icon>
-          <span class="px-1">No tags</span>
+          <span class="px-1">no tags</span>
         </v-card>
       </v-col>
       <v-col cols="auto" v-for="(tag, index) in resource.tags" :key="index">
-        <v-card color="primary" class="px-1 py-1" dark>
+        <v-card
+          outlined
+          class="px-1 py-1"
+          dark
+          :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
+        >
           <v-icon @click="removeTag(tag)">mdi-close</v-icon>
           <span class="px-1">{{ tag }}</span>
         </v-card>
@@ -52,5 +69,4 @@ export default {
 </script>
 
 <style lang="scss">
-
 </style>

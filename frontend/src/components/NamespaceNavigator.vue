@@ -52,6 +52,7 @@
         expand-icon="mdi-chevron-down"
         return-object
         open-all
+        v-if="treeview"
       ></v-treeview>
     </div>
   </div>
@@ -79,6 +80,7 @@ export default {
     confirmDeleteDialog: false,
     creating: false,
     deleting: false,
+    treeview: false,
   }),
   computed: {
     dummyTree: function () {
@@ -105,28 +107,28 @@ export default {
           },
         },
         {
-          name: "New",
+          name: "Recent",
           id: 2,
           namespace_id: null,
           resourceFilter: function (resource_obj) {
-            return (
-              vm.namespaceSet.has(resource_obj.namespace) ||
-              !("namespace" in resource_obj) ||
-              resource_obj.namespace == null
-            );
+            var day = 86400;
+            var now = Date.now() / 1000;
+            return parseInt(resource_obj.created_at) > now - day;
           },
         },
       ];
     },
     activeNamespace: function () {
       var vm = this;
+      var activeNamespace;
       if (vm.activeNamespaces.length > 0) {
-        return vm.activeNamespaces[0];
+        activeNamespace = vm.activeNamespaces[0];
       } else if (vm.activeDummy.length > 0) {
-        return vm.activeDummy[0];
+        activeNamespace = vm.activeDummy[0];
       } else {
-        return vm.dummyTree[0];
+        activeNamespace = vm.dummyTree[0];
       }
+      return activeNamespace;
     },
     namespaceTree: function () {
       var vm = this;
@@ -165,35 +167,29 @@ export default {
       }
       return namespaceSet;
     },
+    mappedNamespaces: function () {
+      return 0;
+    },
   },
   watch: {
     activeNamespaces: function (newActiveNamespaces, oldActiveNamespaces) {
       var vm = this;
-
       // a namespace was selected
       if (newActiveNamespaces.length != 0) {
         vm.activeDummy = [];
-        vm.$store.commit("activeNamespace", vm.activeNamespace);
-
         // a namespace was deselected
       } else if (
         newActiveNamespaces.length == 0 &&
         vm.activeDummy.length == 0
       ) {
-        console.log("namespace deselected");
         vm.activeNamespaces.push(oldActiveNamespaces[0]);
       }
     },
     activeDummy: function (newActiveDummy, oldActiveDummy) {
       var vm = this;
-      // if (vm.$route.name !== "Index") {
-      //   vm.$router.push({ name: "Index" });
-      // }
       // a dummy namespace was selected
       if (newActiveDummy.length != 0) {
         vm.activeNamespaces = [];
-        vm.$store.commit("activeNamespace", vm.activeNamespace);
-
         // a dummy namespace was deselected
       } else if (
         newActiveDummy.length == 0 &&
@@ -202,9 +198,11 @@ export default {
         vm.activeDummy.push(oldActiveDummy[0]);
       }
     },
+    // this is for the namespace selector list
     namespaceTree: function () {
       console.log("namespaceTree changed");
       var vm = this;
+      vm.treeview = true;
       var namespaceSelectorList = [];
       for (var i = 0, len = vm.namespaceTree.length; i < len; i++) {
         namespaceSelectorList = namespaceSelectorList.concat(
@@ -216,9 +214,33 @@ export default {
       );
       namespaceSelectorList.unshift({
         text: "All",
-        value: null
-      })
+        value: null,
+      });
       vm.$store.commit("namespaceSelectorList", namespaceSelectorList);
+    },
+    activeNamespace: function () {
+      var vm = this;
+      vm.$store.commit("activeNamespace", vm.activeNamespace);
+
+      // make breadcrumbs list
+      var namespaces = JSON.parse(JSON.stringify(vm.namespaces));
+      var mappedNamespaces = {};
+      var arrElem;
+      for (var j = 0; j < namespaces.length; j++) {
+        arrElem = namespaces[j];
+        mappedNamespaces[arrElem.namespace_id] = arrElem;
+      }
+      var curr = vm.activeNamespace;
+      // var dummyNamespace = vm.activeDummy.length > 0;
+      var breadcrumbList = [];
+      while (curr != null) {
+        breadcrumbList.unshift(curr);
+        curr = mappedNamespaces[curr.parent];
+      }
+      // if (!dummyNamespace) {
+      //   breadcrumbList.unshift(vm.dummyTree[0])
+      // }
+      vm.$store.commit("namespaceBreadcrumbsList", breadcrumbList);
     },
   },
   beforeCreate() {

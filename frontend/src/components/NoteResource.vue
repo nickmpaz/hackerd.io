@@ -1,7 +1,7 @@
 <template>
   <div>
+    <!-- dialogs -->
     <loading-dialog :active="deleting" message="Deleting" />
-
     <confirm-dialog
       :active="confirmDeleteDialog"
       prompt="Delete Note?"
@@ -10,87 +10,69 @@
       @confirm="deleteResource"
       @decline="confirmDeleteDialog = false"
     />
-    <v-speed-dial
-      v-model="fab"
-      fixed
-      bottom
-      right
-      direction="top"
-      transition="slide-y-reverse-transition"
-      class="ma-6"
-      v-if="mode === 'read'"
-    >
-      <template v-slot:activator>
-        <v-btn v-model="fab" color="primary" dark fab :large="$vuetify.breakpoint.lgAndUp">
-          <v-icon v-if="fab">mdi-close</v-icon>
-          <v-icon v-else>mdi-dots-vertical</v-icon>
-        </v-btn>
-      </template>
-      <v-btn fab dark :large="$vuetify.breakpoint.lgAndUp" color="green" @click="edit">
-        <v-icon>mdi-pencil</v-icon>
-      </v-btn>
-      <v-btn fab dark :large="$vuetify.breakpoint.lgAndUp" color="blue">
-        <v-icon>mdi-export</v-icon>
-      </v-btn>
-      <v-btn
-        fab
-        dark
-        :large="$vuetify.breakpoint.lgAndUp"
-        color="red"
-        @click="confirmDeleteDialog = true"
-      >
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-    </v-speed-dial>
-    <v-btn
-      fab
-      dark
-      fixed
-      bottom
-      right
-      :large="$vuetify.breakpoint.lgAndUp"
-      color="success"
-      @click="save"
-      class="ma-6"
-      v-if="mode === 'write'"
-    >
-      <v-icon>mdi-check</v-icon>
-    </v-btn>
+    <!-- main content -->
     <v-row justify="center">
       <v-col cols="12" md="10" xl="8">
+        <!-- back button -->
         <div class="d-flex my-6">
-          <v-btn color="secondary darken-1" width="125" @click="$router.push({name: 'Index'})">
+          <v-btn color="secondary" width="150" @click="$router.push({name: 'Index'})">
             <div class="d-flex justify-space-between align-center">
               <v-icon class="mr-2">mdi-arrow-left</v-icon>
               <span class="mr-2">Back</span>
             </div>
           </v-btn>
-          <!-- <v-spacer></v-spacer>
-          <v-btn color="red" class="ml-4" width="135">
+          <v-spacer></v-spacer>
+          <v-menu bottom offset-y v-if="mode === 'read'">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn v-bind="attrs" v-on="on" width="150">
+                <div class="d-flex justify-space-between align-center">
+                  <v-icon class="mr-2">mdi-chevron-down</v-icon>
+                  <span class="mr-2">Actions</span>
+                </div>
+              </v-btn>
+            </template>
+            <v-list dense>
+              <v-list-item link @click="edit">
+                <v-list-item-action>
+                  <v-icon color="green">mdi-pencil</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title>Edit</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item link @click="exportResource">
+                <v-list-item-action>
+                  <v-icon color="blue">mdi-export</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title>Export</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item link @click="confirmDeleteDialog = true">
+                <v-list-item-action>
+                  <v-icon color="red">mdi-delete</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title>Delete</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+          <v-btn color="secondary" width="150" @click="save" v-else>
             <div class="d-flex justify-space-between align-center">
-              <v-icon class="mr-2">mdi-delete</v-icon>
-              <span class="mr-2">Delete</span>
+              <v-icon class="mr-2">mdi-check</v-icon>
+              <span class="mr-2">Save</span>
             </div>
           </v-btn>
-          <v-btn color="blue" class="ml-4" width="135">
-            <div class="d-flex justify-space-between align-center">
-              <v-icon class="mr-2">mdi-export</v-icon>
-              <span class="mr-2">Export</span>
-            </div>
-          </v-btn>
-          <v-btn color="green" class="ml-4" width="135">
-            <div class="d-flex justify-space-between align-center">
-              <v-icon class="mr-2">mdi-pencil</v-icon>
-              <span class="mr-2">Back</span>
-            </div>
-          </v-btn>-->
         </div>
+        <!-- header card -->
         <v-card class="px-6 py-4 mb-6">
           <resource-header v-if="mode === 'read'" :resource="resource" />
           <editable-resource-header v-if="mode === 'write'" :resource="resource" />
         </v-card>
+        <!-- editor card -->
         <v-card :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')">
-          <v-card v-if="mode === 'write'" color="secondary darken-1" class="pa-1">
+          <v-card v-if="mode === 'write'" color="secondary" class="pa-1">
             <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
               <div class="menubar">
                 <v-btn
@@ -198,6 +180,12 @@
           </v-card>
           <div class="px-6 pb-4 pt-6">
             <editor-content class="editor__content" :editor="editor" />
+            <div
+              v-if=" (resource.content === '' || resource.content === '<p></p>') && mode === 'read' "
+              class="d-flex justify-center mb-12"
+            >
+              <span class="title">There's nothing here yet.</span>
+            </div>
           </div>
         </v-card>
       </v-col>
@@ -229,11 +217,14 @@ import {
   Underline,
   History,
 } from "tiptap-extensions";
-import javascript from "highlight.js/lib/languages/javascript";
-import css from "highlight.js/lib/languages/css";
-import python from "highlight.js/lib/languages/python";
 import bash from "highlight.js/lib/languages/bash";
+import css from "highlight.js/lib/languages/css";
+import dockerfile from "highlight.js/lib/languages/dockerfile";
+import java from "highlight.js/lib/languages/java";
+import javascript from "highlight.js/lib/languages/javascript";
+import python from "highlight.js/lib/languages/python";
 import sql from "highlight.js/lib/languages/sql";
+import xml from "highlight.js/lib/languages/xml";
 import LoadingDialog from "../components/LoadingDialog";
 import EditableResourceHeader from "../components/EditableResourceHeader";
 import ResourceHeader from "../components/ResourceHeader";
@@ -260,11 +251,14 @@ export default {
         extensions: [
           new CodeBlockHighlight({
             languages: {
-              javascript,
-              css,
-              python,
               bash,
+              css,
+              dockerfile,
+              java,
+              javascript,
+              python,
               sql,
+              xml,
             },
           }),
           new Blockquote(),
@@ -394,6 +388,10 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    exportResource: function () {
+      var vm = this;
+      vm.$utils.downloadObj(vm.resource, vm.resource.title);
     },
   },
   beforeDestroy() {

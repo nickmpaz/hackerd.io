@@ -1,40 +1,23 @@
 <template>
-  <!-- <v-container fluid class="fill-height"> -->
-  <!-- <img src="../../public/homepage-top.svg" alt="triangle with all three sides equal" height="50%" width="100%" /> -->
-
-  <!-- <v-carousel :value="mainCarousel" hide-delimiter-background show-arrows-on-hover height="100%">
-    <v-carousel-item>
-      
-    </v-carousel-item>
-    <v-carousel-item>
-      <v-sheet :color="colors[0]" height="100%"></v-sheet>
-    </v-carousel-item>
-  </v-carousel>-->
-
   <v-row justify="center" align="center" class="fill-height">
-    <v-col cols="12" xl="8">
+    <v-col cols="12" lg="8">
       <div class="d-flex justify-center">
         <span>
           <div class="d-flex">
-            <span id="brand" class="display-4">{{ $variables.brand }}</span>
-            <v-img
-              :src="getImgUrl('icon.png')"
-              contain
-              height="100"
-              width="109"
-            ></v-img>
+            <span id="brand" :style="brandCss">{{ $variables.brand }}</span>
+            <v-img :src="getImgUrl('icon.png')" contain :height="logoSize" :width="logoSize"></v-img>
           </div>
 
-          <div class="mt-4">
+          <div v-if="$vuetify.breakpoint.smAndUp">
             <span class="display-1">{{ $variables.tagLine }}</span>
           </div>
-          <div class="mt-4">
+          <div class="mt-6" v-if="$vuetify.breakpoint.smAndUp">
             <v-btn outlined @click="mainCarousel = 1">Learn more</v-btn>
           </div>
         </span>
       </div>
     </v-col>
-    <v-col cols="4">
+    <v-col cols="12" lg="4">
       <div class="d-flex justify-center">
         <v-btn
           @click="federatedSignIn"
@@ -44,14 +27,12 @@
           color="white"
           light
         >
-          <v-img :src="getImgUrl('btn_google_light_normal_ios.svg')" contain height="60" width="60"></v-img>
+          <v-img :src="getImgUrl('btn_google_light_normal_ios.svg')" contain height="60" width="60" flat></v-img>
           <span class="mr-6 ml-4">Sign in with Google</span>
         </v-btn>
       </div>
     </v-col>
   </v-row>
-
-  <!-- </v-container> -->
 </template>
 
 <script>
@@ -61,15 +42,6 @@ export default {
   data() {
     return {
       loading: false,
-      mainCarousel: 0,
-      colors: [
-        "indigo",
-        "warning",
-        "pink darken-2",
-        "red lighten-1",
-        "deep-purple accent-4",
-      ],
-      slides: ["First", "Second", "Third", "Fourth", "Fifth"],
     };
   },
   methods: {
@@ -85,11 +57,42 @@ export default {
       return images("./" + img);
     },
   },
+  computed: {
+    brandCss: function () {
+      var vm = this;
+      var brandCss = "font-size: 2em;";
+      if (vm.$vuetify.breakpoint.lgAndUp) {
+        brandCss = "font-size: 5em;";
+      } else if (vm.$vuetify.breakpoint.smAndUp) {
+        brandCss = "font-size: 4em;";
+      }
+      return brandCss;
+    },
+    logoSize: function () {
+      var vm = this;
+      var logoSize = 50;
+      if (vm.$vuetify.breakpoint.lgAndUp) {
+        logoSize = 100;
+      } else if (vm.$vuetify.breakpoint.smAndUp) {
+        logoSize = 75;
+      }
+      console.log(logoSize);
+      return logoSize;
+    },
+  },
+
+  // created() {
+  //   console.log(this.)
+  // }
 };
 </script>
 
 <style lang="scss">
-#brand.display-4 {
+#brand {
   font-family: "Source Code Pro", monospace !important;
+}
+
+#brand.xl {
+  font-size: 5em;
 }
 </style>
