@@ -52,6 +52,7 @@
         expand-icon="mdi-chevron-down"
         return-object
         open-all
+        v-if="treeview"
       ></v-treeview>
     </div>
   </div>
@@ -79,6 +80,7 @@ export default {
     confirmDeleteDialog: false,
     creating: false,
     deleting: false,
+    treeview: false,
   }),
   computed: {
     dummyTree: function () {
@@ -200,6 +202,7 @@ export default {
     namespaceTree: function () {
       console.log("namespaceTree changed");
       var vm = this;
+      vm.treeview = true;
       var namespaceSelectorList = [];
       for (var i = 0, len = vm.namespaceTree.length; i < len; i++) {
         namespaceSelectorList = namespaceSelectorList.concat(
@@ -215,7 +218,6 @@ export default {
       });
       vm.$store.commit("namespaceSelectorList", namespaceSelectorList);
     },
-    // force update
     activeNamespace: function () {
       var vm = this;
       vm.$store.commit("activeNamespace", vm.activeNamespace);
@@ -229,15 +231,15 @@ export default {
         mappedNamespaces[arrElem.namespace_id] = arrElem;
       }
       var curr = vm.activeNamespace;
-      var dummyNamespace = vm.activeDummy.length > 0;
+      // var dummyNamespace = vm.activeDummy.length > 0;
       var breadcrumbList = [];
       while (curr != null) {
         breadcrumbList.unshift(curr);
         curr = mappedNamespaces[curr.parent];
       }
-      if (!dummyNamespace) {
-        breadcrumbList.unshift(vm.dummyTree[0])
-      }
+      // if (!dummyNamespace) {
+      //   breadcrumbList.unshift(vm.dummyTree[0])
+      // }
       vm.$store.commit("namespaceBreadcrumbsList", breadcrumbList);
     },
   },

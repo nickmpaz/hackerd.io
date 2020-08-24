@@ -10,21 +10,10 @@
       @confirm="deleteResource"
       @decline="confirmDeleteDialog = false"
     />
-    <!-- floating action buttons -->
-    <!-- <v-btn fab dark fixed bottom right large color="success" @click="saveResource" class="ma-6">
-      <v-icon large>mdi-check</v-icon>
-    </v-btn> -->
     <!-- main content -->
     <v-row justify="center">
       <v-col cols="12" md="10" xl="8">
-        <!-- <div class="d-flex my-6">
-          <v-btn color="secondary" width="150" @click="$router.push({name: 'Index'})">
-            <div class="d-flex justify-space-between align-center">
-              <v-icon class="mr-2">mdi-arrow-left</v-icon>
-              <span class="mr-2">Back</span>
-            </div>
-          </v-btn>
-        </div>-->
+
         <div class="d-flex my-6">
           <v-btn color="secondary" width="150" @click="$router.push({name: 'Index'})">
             <div class="d-flex justify-space-between align-center">

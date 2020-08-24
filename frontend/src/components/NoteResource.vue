@@ -34,7 +34,7 @@
             <v-list dense>
               <v-list-item link @click="edit">
                 <v-list-item-action>
-                  <v-icon color="green">mdi-plus</v-icon>
+                  <v-icon color="green">mdi-pencil</v-icon>
                 </v-list-item-action>
                 <v-list-item-content>
                   <v-list-item-title>Edit</v-list-item-title>

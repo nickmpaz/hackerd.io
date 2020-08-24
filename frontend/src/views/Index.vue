@@ -34,7 +34,11 @@
               <v-col cols="auto">
                 <v-icon class="pr-1">mdi-chevron-right</v-icon>
               </v-col>
-              <v-col v-for="(namespace, index) in namespaceBreadcrumbsList" :key="index" cols="auto">
+              <v-col
+                v-for="(namespace, index) in namespaceBreadcrumbsList"
+                :key="index"
+                cols="auto"
+              >
                 <span class="primary--text">{{ namespace.name }}</span>
                 <v-icon
                   class="px-1"
@@ -83,7 +87,7 @@
             v-for="(resource, index) in searchResults"
             :key="index"
             :id="index == focusIndex ? 'focused-resource' : ''"
-            :class="'px-4 pt-1 pb-2 mb-4 ' + (index == focusIndex ? ('focused-resource-' + ($vuetify.theme.dark ? 'dark' : 'light')) : '')"
+            :class="'px-4 py-1 mb-4 ' + (index == focusIndex ? ('focused-resource-' + ($vuetify.theme.dark ? 'dark' : 'light')) : '')"
             @click="viewResource(resource)"
             :ripple="false"
             role="button"
@@ -91,22 +95,29 @@
             <div class="d-flex align-center">
               <div class="d-flex align-center truncate flex-grow-1">
                 <h1 class="title-case">
-                  <v-icon v-if="resource.type === 'note'" class="mr-2">mdi-note-text</v-icon>
-                  <v-icon v-if="resource.type === 'link'" class="mr-2">mdi-link-variant</v-icon>
+                  <v-icon v-if="resource.type === 'note'" class="mr-2 pb-1">mdi-note-text</v-icon>
+                  <v-icon v-if="resource.type === 'link'" class="mr-2 pb-1">mdi-link-variant</v-icon>
                   {{ resource.title ? resource.title : "Untitled"}}
                 </h1>
                 <v-icon class="mx-3">mdi-minus</v-icon>
 
-                <v-card color="primary" class="px-1 py-1" dark v-if="resource.tags.length == 0">
+                <v-card
+                  class="px-1 py-1"
+                  dark
+                  outlined
+                  v-if="resource.tags.length == 0"
+                  :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
+                >
                   <v-icon small class="ml-1">mdi-tag</v-icon>
-                  <span class="px-1">No tags</span>
+                  <span class="px-1">no tags</span>
                 </v-card>
                 <v-card
-                  color="primary"
                   class="px-1 py-1 ml-2"
                   dark
+                  outlined
                   v-for="(tag, index) in resource.tags"
                   :key="index"
+                  :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
                 >
                   <div class="d-flex flex-nowrap">
                     <v-icon small class="ml-1">mdi-tag</v-icon>
@@ -288,6 +299,7 @@ export default {
       vm.loading = false;
     }
     vm.getResources();
+    console.log(vm.$vuetify);
   },
   methods: {
     exportResource: function (resource) {
