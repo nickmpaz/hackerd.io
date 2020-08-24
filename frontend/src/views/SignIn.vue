@@ -27,7 +27,7 @@
           color="white"
           light
         >
-          <v-img :src="getImgUrl('btn_google_light_normal_ios.svg')" contain height="60" width="60"></v-img>
+          <v-img :src="getImgUrl('btn_google_light_normal_ios.svg')" contain height="60" width="60" flat></v-img>
           <span class="mr-6 ml-4">Sign in with Google</span>
         </v-btn>
       </div>

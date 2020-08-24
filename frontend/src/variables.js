@@ -1,5 +1,5 @@
 var brand = 'stashable.io'
-var tagLine = 'Bookmark and notes manager for programmers'
+var tagLine = 'Integrated knowledge base manager for programmers'
 var baseUrl = 'https://api.stashable.io/' + process.env.VUE_APP_ENVIRONMENT + '/'
 var stageIndicator =
   process.env.VUE_APP_ENVIRONMENT === 'prod'
