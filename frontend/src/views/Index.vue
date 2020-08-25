@@ -72,7 +72,6 @@
                     <v-list-item-title>Import</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
-
               </v-list>
             </v-menu>
           </div>
@@ -84,6 +83,9 @@
             v-model="query"
             class="short-text-field mb-9"
           ></v-text-field>
+          <div v-if="searchResults.length == 0" class="d-flex justify-center pt-12">
+              <h1>There's nothing here yet.</h1>
+          </div>
           <v-card
             v-for="(resource, index) in searchResults"
             :key="index"

@@ -349,6 +349,7 @@ import javascript from "highlight.js/lib/languages/javascript";
 import python from "highlight.js/lib/languages/python";
 import sql from "highlight.js/lib/languages/sql";
 import xml from "highlight.js/lib/languages/xml";
+
 import LoadingDialog from "../components/LoadingDialog";
 import EditableResourceHeader from "../components/EditableResourceHeader";
 import ResourceHeader from "../components/ResourceHeader";
