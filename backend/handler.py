@@ -13,6 +13,7 @@ dynamodb = boto3.resource('dynamodb')
 resources_table = dynamodb.Table('dolphin_resources_table')
 namespaces_table = dynamodb.Table('dolphin_namespaces_table')
 api_tokens_table = dynamodb.Table('dolphin_api_tokens_table')
+users_table = dynamodb.Table('dolphin_users_table')
 
 
 def _make_response(body={}, status_code=HTTPStatus.OK):
@@ -69,6 +70,29 @@ def ping_auth(event, context):
 
 def get_resources(event, context):
     user_id = event['requestContext']['authorizer']['claims']['sub']
+
+    # check if user is in the users table
+    response = users_table.get_item(Key={
+        'user_id': user_id,
+    })
+    user = response.get('Item')
+    if user is None:
+        users_table.put_item(Item={
+            'user_id': user_id,
+        })
+        tutorial_note = {
+            'user_id': user_id,
+            'resource_id': _generate_unique_id(resources_table, 'resource_id'),
+            'type': 'note',
+            'title': "Getting Started",
+            'tags': ["tutorial", "onboarding"],
+            'content': "<p>TODO</p>",
+            'created_at': str(int(time.time())),
+            'updated_at': str(int(time.time())),
+            'namespace': None
+        }
+        resources_table.put_item(Item=tutorial_note)
+        return _make_response(body={'resources': [tutorial_note]})
 
     response = resources_table.query(
         KeyConditionExpression=Key('user_id').eq(user_id))

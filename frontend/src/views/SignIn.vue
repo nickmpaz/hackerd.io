@@ -1,38 +1,100 @@
 <template>
-  <v-row justify="center" align="center" class="fill-height">
-    <v-col cols="12" lg="8">
-      <div class="d-flex justify-center">
-        <span>
-          <div class="d-flex">
-            <span id="brand" :style="brandCss">{{ $variables.brand }}</span>
-            <v-img :src="getImgUrl('icon.png')" contain :height="logoSize" :width="logoSize"></v-img>
-          </div>
+  <v-container>
+    <div class="d-flex align-center" style="min-height: 100vh;">
+      <v-row justify="center" align="center">
+        <v-col cols="12" lg="8">
+          <div class="d-flex justify-center">
+            <span>
+              <div class="d-flex">
+                <span id="brand" :style="brandCss">{{ $variables.brand }}</span>
+                <v-img :src="getImgUrl('icon.png')" contain :height="logoSize" :width="logoSize"></v-img>
+              </div>
 
-          <div v-if="$vuetify.breakpoint.smAndUp">
-            <span class="display-1">{{ $variables.tagLine }}</span>
+              <div v-if="$vuetify.breakpoint.smAndUp">
+                <span class="display-1">{{ $variables.tagLine }}</span>
+              </div>
+              <div class="mt-6" v-if="$vuetify.breakpoint.smAndUp">
+                <v-btn outlined @click="scrollToAbout">Learn more</v-btn>
+              </div>
+            </span>
           </div>
-          <div class="mt-6" v-if="$vuetify.breakpoint.smAndUp">
-            <v-btn outlined @click="mainCarousel = 1">Learn more</v-btn>
+        </v-col>
+        <v-col cols="12" lg="4">
+          <div class="d-flex justify-center">
+            <v-btn
+              @click="federatedSignIn"
+              :loading="loading"
+              height="75"
+              width="300"
+              color="white"
+              light
+            >
+              <v-img
+                :src="getImgUrl('btn_google_light_normal_ios.svg')"
+                contain
+                height="60"
+                width="60"
+                flat
+              ></v-img>
+              <span class="mr-6 ml-4">Sign in with Google</span>
+            </v-btn>
           </div>
-        </span>
-      </div>
-    </v-col>
-    <v-col cols="12" lg="4">
-      <div class="d-flex justify-center">
-        <v-btn
-          @click="federatedSignIn"
-          :loading="loading"
-          height="75"
-          width="300"
-          color="white"
-          light
-        >
-          <v-img :src="getImgUrl('btn_google_light_normal_ios.svg')" contain height="60" width="60" flat></v-img>
-          <span class="mr-6 ml-4">Sign in with Google</span>
-        </v-btn>
-      </div>
-    </v-col>
-  </v-row>
+        </v-col>
+      </v-row>
+    </div>
+    <div class="pa-6" id="about">
+      <v-row align="center" justify="center">
+        <v-col cols="12" md="10" xl="10">
+          <v-row class="my-6">
+            <v-col cols="12" lg="6">
+              <v-card class="pa-6 fill-height">
+                <h1>Store your entire knowledge base in one place.</h1>
+                <hr class="my-6" />
+                <span class="title">
+                  Unify your bookmarks, notes, and code snippets.
+                  Use {{ $variables.brand }} to consolidate the knowledge base resources you use in your development workflow.
+                </span>
+              </v-card>
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-img :src="getImgUrl('index-page.png')" flat contain class="fill-height"></v-img>
+            </v-col>
+          </v-row>
+          <v-row class="my-6">
+            <v-col cols="12" lg="6">
+              <v-img :src="getImgUrl('notes-page.png')" flat contain class="fill-height"></v-img>
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-card class="pa-6 fill-height">
+                <h1>Add to your knowledge base quickly and easily.</h1>
+                <hr class="my-6" />
+                <span class="title">
+                  {{ $variables.brand }}'s data model makes it easy to add to your knowledge base.
+                  Don't worry about hierarchy or structure -
+                  just create resources and use {{ $variables.brand }}'s powerful search features to find them when you need to.
+                </span>
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-row class="my-6">
+            <v-col cols="12" lg="6">
+              <v-card class="pa-6 fill-height">
+                <h1>Integrate your knowledge base with the tools you use every day.</h1>
+                <hr class="my-6" />
+                <span
+                  class="title"
+                >Get the most out of your knowledge base by connecting it to tools like your web browser and IDE.</span>
+              </v-card>
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-img :src="getImgUrl('chrome-logo.jpg')" height="175" flat class="mb-6"></v-img>
+              <v-img :src="getImgUrl('vscode-logo.png')" height="175" flat></v-img>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </div>
+  </v-container>
 </template>
 
 <script>
@@ -55,6 +117,10 @@ export default {
       var images = require.context("../assets/");
       console.log(this.$route);
       return images("./" + img);
+    },
+    scrollToAbout: function () {
+      const elem = document.getElementById("about");
+      elem.scrollIntoView({behavior: 'smooth'});
     },
   },
   computed: {
@@ -90,9 +156,5 @@ export default {
 <style lang="scss">
 #brand {
   font-family: "Source Code Pro", monospace !important;
-}
-
-#brand.xl {
-  font-size: 5em;
 }
 </style>

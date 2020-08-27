@@ -83,7 +83,7 @@
             v-model="query"
             class="short-text-field mb-9"
           ></v-text-field>
-          <div v-if="searchResults.length == 0" class="d-flex justify-center pt-12">
+          <div v-if="searchResults.length == 0" class="d-flex flex-column align-center pt-12">
               <h1>There's nothing here yet.</h1>
           </div>
           <v-card
