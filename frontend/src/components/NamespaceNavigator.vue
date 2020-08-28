@@ -20,15 +20,51 @@
       @decline="closeConfirmDeleteDialog"
     />
     <div class="d-flex justify-end py-1">
-      <v-btn @click="openConfirmDeleteDialog" x-small color="transparent" depressed>
-        <v-icon class>mdi-delete</v-icon>
-      </v-btn>
-      <v-btn @click="openCreateNamespaceDialog" x-small color="transparent" depressed>
-        <v-icon>mdi-folder</v-icon>
-      </v-btn>
-      <v-btn @click="openItems = []" x-small color="transparent" depressed>
-        <v-icon class="py-4">mdi-minus</v-icon>
-      </v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            @click="openConfirmDeleteDialog"
+            x-small
+            color="transparent"
+            depressed
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon class>mdi-delete</v-icon>
+          </v-btn>
+        </template>
+        <span>Delete Folder</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            @click="openCreateNamespaceDialog"
+            x-small
+            color="transparent"
+            depressed
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-folder</v-icon>
+          </v-btn>
+        </template>
+        <span>Create Folder</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            @click="openItems = []"
+            x-small
+            color="transparent"
+            depressed
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon class="py-4">mdi-minus</v-icon>
+          </v-btn>
+        </template>
+        <span>Collapse Folders</span>
+      </v-tooltip>
     </div>
     <hr class="my-2" />
     <div @click="checkRoute">
