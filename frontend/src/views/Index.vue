@@ -100,6 +100,7 @@
                 <h1 class="title-case">
                   <v-icon v-if="resource.type === 'note'" class="mr-2 pb-1">mdi-note-text</v-icon>
                   <v-icon v-if="resource.type === 'link'" class="mr-2 pb-1">mdi-link-variant</v-icon>
+                  <v-icon v-if="resource.type === 'snippet'" class="mr-2 pb-1">mdi-code-braces</v-icon>
                   {{ resource.title ? resource.title : "Untitled"}}
                 </h1>
                 <v-icon class="mx-3">mdi-minus</v-icon>
