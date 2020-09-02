@@ -4,11 +4,12 @@
       app
       clipped
       permanent
-      :width="$vuetify.breakpoint.lgAndUp ? '380' : '356'"
+      :width="$vuetify.breakpoint.lgAndUp ? '430' : '356'"
       :mini-variant="!(drawer && ( $route.name === 'Index' || $route.name === 'Resource' ))"
       :mini-variant-width="$vuetify.breakpoint.lgAndUp ? '80' : '56'"
       class="no-transition"
       v-if="$route.name !== 'Auth'"
+      :temporary="($vuetify.breakpoint.mdAndDown && drawer)"
     >
       <div class="d-flex fill-height">
         <side-nav :drawer="drawer" @open-drawer="openDrawer" @close-drawer="closeDrawer" />
@@ -23,7 +24,7 @@
       <v-toolbar-title>{{ navBarTitle }}</v-toolbar-title>
     </v-app-bar>
 
-    <v-main class="no-transition">
+    <v-main class="no-transition" :style="($vuetify.breakpoint.mdAndDown && drawer) ? 'margin-left: 56px;' : ''">
       <router-view />
     </v-main>
   </v-app>
@@ -110,6 +111,10 @@ export default {
 
 .no-transition {
   transition: none !important;
+}
+.v-navigation-drawer--temporary.v-navigation-drawer--clipped {
+    z-index: 5;
+    padding-top: 56px;
 }
 
 #inspire.bg-light {
