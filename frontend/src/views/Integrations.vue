@@ -3,8 +3,9 @@
     <loading-dialog :active="loading" message="Loading" />
     <loading-dialog :active="generating" message="Generating API Token" />
 
-    <v-row justify="center" class="my-12">
+    <v-row justify="center">
       <v-col cols="12" md="10" xl="8">
+        <h1 class="source-code-pro mb-6">Integrations</h1>
         <v-card class="elevation-6 pa-6">
           <div>
             <span class="title px-2">API Token</span>

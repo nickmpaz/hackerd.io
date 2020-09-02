@@ -29,6 +29,7 @@
     <div v-if="!loading">
       <v-row justify="center">
         <v-col cols="12" md="10" xl="8">
+          <h1 class="source-code-pro">Resources</h1>
           <div class="d-flex my-6 align-center">
             <v-row class="flex-grow-1" no-gutters>
               <v-col cols="auto">

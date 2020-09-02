@@ -21,7 +21,7 @@
     </v-navigation-drawer>
 
     <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
-      <v-toolbar-title>{{ navBarTitle }}</v-toolbar-title>
+      <v-toolbar-title class="source-code-pro">{{ navBarTitle }}</v-toolbar-title>
     </v-app-bar>
 
     <v-main
@@ -100,6 +100,10 @@ export default {
 </script>
 
 <style lang="scss">
+.source-code-pro {
+  font-family: "Source Code Pro", monospace !important;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }

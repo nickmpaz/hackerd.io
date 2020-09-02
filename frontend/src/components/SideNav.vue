@@ -38,11 +38,11 @@
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item link @click="$router.push({name: 'Index'})">
+      <v-list-item link @click="$router.push({name: 'Daily'})">
         <v-list-item-action>
           <v-icon
             :large="$vuetify.breakpoint.lgAndUp"
-            :color="$route.name === '' ? 'primary' : ''"
+            :color="$route.name === 'Daily' ? 'primary' : ''"
           >mdi-calendar</v-icon>
         </v-list-item-action>
         <v-list-item-content>
