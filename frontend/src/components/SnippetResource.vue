@@ -71,21 +71,17 @@
           <editable-resource-header v-if="mode === 'write'" :resource="resource" />
         </v-card>
         <!-- editor card -->
-        <v-card :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')">
+        <no-content
+          v-if=" editor.getHTML() === '<pre><code></code></pre>' && mode === 'read' "
+          callToAction="Click here to start editing."
+          @engage="mode = 'write'"
+        />
+        <v-card
+          v-else
+          :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')"
+        >
           <div class="px-6 py-3">
-            <div
-              v-if=" editor.getHTML() === '<pre><code></code></pre>' && mode === 'read' "
-              class="d-flex justify-center py-9"
-            >
-              <span class="title">
-                There's nothing here yet.
-                <span
-                  @click="mode = 'write'"
-                  class="cursor-pointer primary--text"
-                >Click here to start editing.</span>
-              </span>
-            </div>
-            <editor-content v-else class="editor__content pt-3" :editor="editor" />
+            <editor-content class="editor__content pt-3" :editor="editor" />
           </div>
         </v-card>
       </v-col>
@@ -112,6 +108,7 @@ import LoadingDialog from "../components/LoadingDialog";
 import EditableResourceHeader from "../components/EditableResourceHeader";
 import ResourceHeader from "../components/ResourceHeader";
 import ConfirmDialog from "../components/ConfirmDialog";
+import NoContent from "@/components/NoContent";
 
 export default {
   components: {
@@ -120,6 +117,7 @@ export default {
     LoadingDialog,
     EditableResourceHeader,
     ResourceHeader,
+    NoContent,
   },
   props: ["resource", "editMode"],
   data() {

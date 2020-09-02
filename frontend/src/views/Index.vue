@@ -84,10 +84,12 @@
             v-model="query"
             class="short-text-field mb-4"
           ></v-text-field>
-          <v-card class="px-4 pt-4 pb-1">
-            <div v-if="searchResults.length == 0" class="d-flex justify-center pt-8 pb-12">
-              <span class="title">There's nothing here yet.</span>
-            </div>
+          <no-content
+            v-if="searchResults.length == 0"
+            callToAction="Click here to create a resource."
+            @engage="createResourcePromptDialog = true"
+          />
+          <v-card v-else class="px-4 pt-4 pb-1">
             <v-card
               v-for="(resource, index) in searchResults"
               :key="index"
@@ -193,6 +195,7 @@ import LoadingDialog from "../components/LoadingDialog";
 import ConfirmDialog from "../components/ConfirmDialog";
 import NamespaceSelectorDialog from "../components/NamespaceSelectorDialog";
 import CreateResourcePromptDialog from "../components/CreateResourcePromptDialog";
+import NoContent from "@/components/NoContent";
 
 import axios from "axios";
 import { Auth } from "aws-amplify";
@@ -204,6 +207,7 @@ export default {
     ConfirmDialog,
     NamespaceSelectorDialog,
     CreateResourcePromptDialog,
+    NoContent,
   },
   props: ["drawer"],
   computed: {

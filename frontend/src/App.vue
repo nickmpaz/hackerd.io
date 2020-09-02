@@ -9,7 +9,7 @@
       :mini-variant-width="$vuetify.breakpoint.lgAndUp ? '80' : '56'"
       class="no-transition"
       v-if="$route.name !== 'Auth'"
-      :temporary="($vuetify.breakpoint.mdAndDown && drawer)"
+      :temporary="($vuetify.breakpoint.smAndDown && drawer)"
     >
       <div class="d-flex fill-height">
         <side-nav :drawer="drawer" @open-drawer="openDrawer" @close-drawer="closeDrawer" />
@@ -35,12 +35,10 @@
 
 <script>
 import { Auth, Hub } from "aws-amplify";
-// import UserOptions from "./components/UserOptions";
-import NamespaceNavigator from "./components/NamespaceNavigator";
+import NamespaceNavigator from "@/components/NamespaceNavigator";
 import SideNav from "@/components/SideNav";
 export default {
   components: {
-    // UserOptions,
     NamespaceNavigator,
     SideNav,
   },
