@@ -108,6 +108,7 @@ export default {
   text-transform: capitalize;
 }
 
+// vuetify text fields are too tall
 .short-text-field {
   height: 60px;
 }
@@ -115,6 +116,8 @@ export default {
 .no-transition {
   transition: none !important;
 }
+
+// let temporary drawer sit over content but under toolbar
 .v-navigation-drawer--temporary.v-navigation-drawer--clipped {
   z-index: 5;
   padding-top: 56px;
