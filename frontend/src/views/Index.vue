@@ -231,9 +231,11 @@ export default {
         threshold: 0.25,
         keys: ["title", "tags"],
       };
+
       const fuse = new Fuse(filteredResources, options);
       const result = fuse.search(vm.query);
       const finalResult = result.map((a) => a.item);
+
       vm.searchResultsLength = finalResult.length;
       if (vm.focusIndex > vm.searchResultsLength - 1) {
         vm.focusIndex = vm.searchResultsLength - 1;

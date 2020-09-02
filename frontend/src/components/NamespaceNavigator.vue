@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <v-card width="300" class="py-2" transition="slide-x-transition">
+    
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />
     <single-prompt-dialog
@@ -19,7 +20,9 @@
       @confirm="deleteNamespace"
       @decline="closeConfirmDeleteDialog"
     />
+
     <div class="d-flex justify-end py-1">
+
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -91,7 +94,7 @@
         v-if="treeview"
       ></v-treeview>
     </div>
-  </div>
+  </v-card> 
 </template>
 
 <script>

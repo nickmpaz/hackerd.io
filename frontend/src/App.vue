@@ -1,35 +1,29 @@
 <template>
   <v-app id="inspire" :class="$vuetify.theme.dark ? 'bg-dark' : 'bg-light'">
-    <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
-      <v-app-bar-nav-icon
-        v-if="$route.name === 'Index' || $route.name === 'Resource'"
-        @click="drawer = !drawer"
-      ></v-app-bar-nav-icon>
-      <v-container fluid class="d-flex align-center">
-        <v-toolbar-title
-          class="cursor-pointer"
-          @click="$router.push({name: 'Index'})"
-        >{{ navBarTitle }}</v-toolbar-title>
-        <div class="ml-auto">
-          <user-options />
-        </div>
-      </v-container>
-    </v-app-bar>
     <v-navigation-drawer
-      v-if="$route.name === 'Index' || $route.name === 'Resource'"
-      v-model="drawer"
       app
       clipped
-      disable-route-watcher
-      disable-resize-watcher
-      width="300"
-      class="pa-2"
-      v-show="$route.name !== 'Auth'"
+      permanent
+      :width="$vuetify.breakpoint.lgAndUp ? '380' : '356'"
+      :mini-variant="!(drawer && ( $route.name === 'Index' || $route.name === 'Resource' ))"
+      :mini-variant-width="$vuetify.breakpoint.lgAndUp ? '80' : '56'"
+      class="no-transition"
+      v-if="$route.name !== 'Auth'"
     >
-      <namespace-navigator />
+      <div class="d-flex fill-height">
+        <side-nav :drawer="drawer" @open-drawer="openDrawer" @close-drawer="closeDrawer" />
+        <v-spacer></v-spacer>
+        <namespace-navigator
+          v-show="drawer && ( $route.name === 'Index' || $route.name === 'Resource' )"
+        />
+      </div>
     </v-navigation-drawer>
 
-    <v-main>
+    <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
+      <v-toolbar-title>{{ navBarTitle }}</v-toolbar-title>
+    </v-app-bar>
+
+    <v-main class="no-transition">
       <router-view />
     </v-main>
   </v-app>
@@ -37,13 +31,14 @@
 
 <script>
 import { Auth, Hub } from "aws-amplify";
-import UserOptions from "./components/UserOptions";
+// import UserOptions from "./components/UserOptions";
 import NamespaceNavigator from "./components/NamespaceNavigator";
-
+import SideNav from "@/components/SideNav";
 export default {
   components: {
-    UserOptions,
+    // UserOptions,
     NamespaceNavigator,
+    SideNav,
   },
   data: () => ({
     drawer: true,
@@ -87,7 +82,16 @@ export default {
       this.$vuetify.theme.dark = this.$variables.darkModeDefault;
     }
   },
-  methods: {},
+  methods: {
+    openDrawer: function () {
+      var vm = this;
+      vm.drawer = true;
+    },
+    closeDrawer: function () {
+      var vm = this;
+      vm.drawer = false;
+    },
+  },
 };
 </script>
 
@@ -102,6 +106,10 @@ export default {
 
 .short-text-field {
   height: 60px;
+}
+
+.no-transition {
+  transition: none !important;
 }
 
 #inspire.bg-light {

@@ -74,7 +74,7 @@
         <v-card :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')">
           <div class="px-6 py-3">
             <div
-              v-if=" (resource.content === '' || resource.content === '<pre><code></code></pre>') && mode === 'read' "
+              v-if=" editor.getHTML() === '<pre><code></code></pre>' && mode === 'read' "
               class="d-flex justify-center py-9"
             >
               <span class="title">
@@ -124,18 +124,20 @@ export default {
   props: ["resource", "editMode"],
   data() {
     var vm = this;
-    console.log(vm.resource.content);
+    console.log("content", vm.resource.content);
     vm.resource.content = {
       type: "doc",
       content: [
         {
           type: "code_block",
-          content: [
-            {
-              type: "text",
-              text: vm.resource.content,
-            },
-          ],
+          content: vm.resource.content
+            ? [
+                {
+                  type: "text",
+                  text: vm.resource.content,
+                },
+              ]
+            : [],
         },
       ],
     };
@@ -211,7 +213,11 @@ export default {
     },
     save: function () {
       var vm = this;
-      vm.resource.content = vm.editor.getJSON().content[0].content[0].text;
+      try {
+        vm.resource.content = vm.editor.getJSON().content[0].content[0].text;
+      } catch {
+        vm.resource.content = "";
+      }
       Auth.currentAuthenticatedUser()
         .then((data) => {
           axios({

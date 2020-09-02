@@ -265,6 +265,8 @@ def generate_api_token(event, context):
 
 
 ### External Ping
+
+
 def external_ping_auth(event, context):
     api_token = json.loads(event['body']).get('apiToken')
     response = api_tokens_table.scan(
