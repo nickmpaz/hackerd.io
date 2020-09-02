@@ -11,7 +11,7 @@
     <v-navigation-drawer
       permanent
       mini-variant
-      :mini-variant-width="$vuetify.breakpoint.lgAndUp ? '80' : '56'"
+      :mini-variant-width="width"
     >
       <v-list :dense="$vuetify.breakpoint.lgAndDown" nav>
         <v-list-item
@@ -102,7 +102,7 @@ import { Auth } from "aws-amplify";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default {
-  props: ["drawer"],
+  props: ["drawer", "width"],
   components: {
     ConfirmDialog,
   },

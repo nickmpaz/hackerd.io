@@ -4,29 +4,32 @@
       app
       clipped
       permanent
-      :width="$vuetify.breakpoint.lgAndUp ? '430' : '356'"
-      :mini-variant="!(drawer && ( $route.name === 'Index' || $route.name === 'Resource' ))"
-      :mini-variant-width="$vuetify.breakpoint.lgAndUp ? '80' : '56'"
+      :width="drawerWidth"
+      :mini-variant="!namespaceNavIsVisible"
+      :mini-variant-width="sideNavWidth"
       class="no-transition"
-      v-if="$route.name !== 'Auth'"
-      :temporary="($vuetify.breakpoint.smAndDown && drawer)"
+      v-if="authenticated"
+      :temporary="drawerIsTemporary"
     >
       <div class="d-flex fill-height">
-        <side-nav :drawer="drawer" @open-drawer="openDrawer" @close-drawer="closeDrawer" />
-        <v-spacer></v-spacer>
-        <namespace-navigator
-          v-show="drawer && ( $route.name === 'Index' || $route.name === 'Resource' )"
+        <side-nav
+          :drawer="drawer"
+          :width="sideNavWidth"
+          @open-drawer="openDrawer"
+          @close-drawer="closeDrawer"
         />
+        <v-spacer></v-spacer>
+        <namespace-navigator v-show="namespaceNavIsVisible" :width="namespaceNavWidth" />
       </div>
     </v-navigation-drawer>
 
-    <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
+    <v-app-bar app clipped-left v-if="authenticated">
       <v-toolbar-title class="source-code-pro">{{ $variables.navBarTitle }}</v-toolbar-title>
     </v-app-bar>
 
     <v-main
       class="no-transition"
-      :style="($vuetify.breakpoint.mdAndDown && drawer && ($route.name === 'Index' || $route.name === 'Resource')) ? 'margin-left: 56px;' : ''"
+      :style="drawerIsTemporary ? ('margin-left: ' + sideNavWidth + 'px;') : ''"
     >
       <router-view />
     </v-main>
@@ -45,9 +48,45 @@ export default {
   data: () => ({
     drawer: true,
     authenticated: false,
+    smallSideNavWidth: 56,
+    largeSideNavWidth: 80,
+    smallNamespaceNavWidth: 300,
+    largeNamespaceNavWidth: 350,
   }),
   computed: {
-
+    sideNavWidth: function () {
+      var vm = this;
+      var sideNavWidth = vm.$vuetify.breakpoint.lgAndUp
+        ? vm.largeSideNavWidth
+        : vm.smallSideNavWidth;
+      return sideNavWidth;
+    },
+    namespaceNavWidth: function () {
+      var vm = this;
+      var namespaceNavWidth = vm.$vuetify.breakpoint.lgAndUp
+        ? vm.largeNamespaceNavWidth
+        : vm.smallNamespaceNavWidth;
+      return namespaceNavWidth;
+    },
+    drawerWidth: function () {
+      var vm = this;
+      var drawerWidth = vm.sideNavWidth + vm.namespaceNavWidth;
+      console.log("drawer width", drawerWidth);
+      return drawerWidth;
+    },
+    namespaceNavIsVisible: function () {
+      var vm = this;
+      var namespaceNavIsVisible =
+        vm.drawer &&
+        (vm.$route.name === "Index" || vm.$route.name === "Resource");
+      return namespaceNavIsVisible;
+    },
+    drawerIsTemporary: function () {
+      var vm = this;
+      var drawerIsTemporary =
+        vm.$vuetify.breakpoint.smAndDown && vm.namespaceNavIsVisible;
+      return drawerIsTemporary;
+    },
   },
   beforeCreate() {
     document.title = this.$variables.brand;
