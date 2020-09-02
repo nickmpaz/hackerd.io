@@ -1,5 +1,5 @@
 <template>
-  <v-card :width="width" class="py-2" transition="slide-x-transition">
+  <v-card :width="width" class="py-2">
     
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />
