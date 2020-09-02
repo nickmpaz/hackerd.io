@@ -302,14 +302,14 @@
               </div>
             </editor-menu-bar>
           </v-card>
-          <div class="px-6 pb-4 pt-6">
-            <editor-content class="editor__content" :editor="editor" />
+          <div class="px-6 py-3">
             <div
               v-if=" (resource.content === '' || resource.content === '<p></p>') && mode === 'read' "
-              class="d-flex justify-center mb-12"
+              class="d-flex justify-center py-9"
             >
               <span class="title">There's nothing here yet. <span @click="mode = 'write'" class="cursor-pointer primary--text">Click here to start editing.</span> </span>
             </div>
+            <editor-content v-else class="editor__content pt-3" :editor="editor" />
           </div>
         </v-card>
       </v-col>

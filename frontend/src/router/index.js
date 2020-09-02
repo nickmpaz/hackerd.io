@@ -14,6 +14,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/',
+    name: 'Daily',
+    component: () => import('../views/Daily.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/auth',
     name: 'Auth',
     component: SignIn,

@@ -26,6 +26,10 @@ export default {
         text: "Link",
         value: "link",
       },
+      {
+        text: "Snippet",
+        value: "snippet"
+      }
     ],
     selectedType: null,
   }),
