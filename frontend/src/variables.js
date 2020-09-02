@@ -6,7 +6,7 @@ var stageIndicator =
     ? ''
     : ' (' + process.env.VUE_APP_ENVIRONMENT + ')'
   
-
+var navBarTitle = brand + stageIndicator
 
 var api = {
   baseUrl: baseUrl,
@@ -68,5 +68,6 @@ module.exports = {
   stageIndicator: stageIndicator,
   api: api,
   darkModeDefault: true,
-  chromeExtensionUrl: "https://chrome.google.com/webstore/detail/stashableio/lnfgdekmfoghbhpabiecoloehfdafoim"
+  chromeExtensionUrl: "https://chrome.google.com/webstore/detail/stashableio/lnfgdekmfoghbhpabiecoloehfdafoim",
+  navBarTitle
 }

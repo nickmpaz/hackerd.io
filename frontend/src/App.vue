@@ -21,7 +21,7 @@
     </v-navigation-drawer>
 
     <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
-      <v-toolbar-title class="source-code-pro">{{ navBarTitle }}</v-toolbar-title>
+      <v-toolbar-title class="source-code-pro">{{ $variables.navBarTitle }}</v-toolbar-title>
     </v-app-bar>
 
     <v-main
@@ -47,13 +47,7 @@ export default {
     authenticated: false,
   }),
   computed: {
-    navBarTitle() {
-      var vm = this;
-      var stageIndicator = vm.$variables.stageIndicator
-        ? " " + vm.$variables.stageIndicator
-        : "";
-      return vm.$variables.brand + stageIndicator;
-    },
+
   },
   beforeCreate() {
     document.title = this.$variables.brand;
