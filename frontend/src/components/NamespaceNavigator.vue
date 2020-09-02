@@ -1,5 +1,5 @@
 <template>
-  <v-card width="350" class="py-2" transition="slide-x-transition">
+  <v-card :width="$vuetify.breakpoint.lgAndUp ? '350' : '300'" class="py-2" transition="slide-x-transition">
     
     <loading-dialog :active="creating" message="Creating" />
     <loading-dialog :active="deleting" message="Deleting" />

@@ -24,7 +24,10 @@
       <v-toolbar-title>{{ navBarTitle }}</v-toolbar-title>
     </v-app-bar>
 
-    <v-main class="no-transition" :style="($vuetify.breakpoint.mdAndDown && drawer) ? 'margin-left: 56px;' : ''">
+    <v-main
+      class="no-transition"
+      :style="($vuetify.breakpoint.mdAndDown && drawer && ($route.name === 'Index' || $route.name === 'Resource')) ? 'margin-left: 56px;' : ''"
+    >
       <router-view />
     </v-main>
   </v-app>
@@ -113,8 +116,8 @@ export default {
   transition: none !important;
 }
 .v-navigation-drawer--temporary.v-navigation-drawer--clipped {
-    z-index: 5;
-    padding-top: 56px;
+  z-index: 5;
+  padding-top: 56px;
 }
 
 #inspire.bg-light {
