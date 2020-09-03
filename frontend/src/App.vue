@@ -1,35 +1,36 @@
 <template>
   <v-app id="inspire" :class="$vuetify.theme.dark ? 'bg-dark' : 'bg-light'">
-    <v-app-bar app clipped-left v-if="$route.name !== 'Auth'">
-      <v-app-bar-nav-icon
-        v-if="$route.name === 'Index' || $route.name === 'Resource'"
-        @click="drawer = !drawer"
-      ></v-app-bar-nav-icon>
-      <v-container fluid class="d-flex align-center">
-        <v-toolbar-title
-          class="cursor-pointer"
-          @click="$router.push({name: 'Index'})"
-        >{{ navBarTitle }}</v-toolbar-title>
-        <div class="ml-auto">
-          <user-options />
-        </div>
-      </v-container>
-    </v-app-bar>
     <v-navigation-drawer
-      v-if="$route.name === 'Index' || $route.name === 'Resource'"
-      v-model="drawer"
       app
       clipped
-      disable-route-watcher
-      disable-resize-watcher
-      width="300"
-      class="pa-2"
-      v-show="$route.name !== 'Auth'"
+      permanent
+      :width="drawerWidth"
+      :mini-variant="!namespaceNavIsVisible"
+      :mini-variant-width="sideNavWidth"
+      class="no-transition"
+      v-if="authenticated"
+      :temporary="drawerIsTemporary"
     >
-      <namespace-navigator />
+      <div class="d-flex fill-height">
+        <side-nav
+          :drawer="drawer"
+          :width="sideNavWidth"
+          @open-drawer="openDrawer"
+          @close-drawer="closeDrawer"
+        />
+        <v-spacer></v-spacer>
+        <namespace-navigator v-show="namespaceNavIsVisible" :width="namespaceNavWidth" />
+      </div>
     </v-navigation-drawer>
 
-    <v-main>
+    <v-app-bar app clipped-left v-if="authenticated">
+      <v-toolbar-title class="source-code-pro">{{ $variables.navBarTitle }}</v-toolbar-title>
+    </v-app-bar>
+
+    <v-main
+      class="no-transition"
+      :style="drawerIsTemporary ? ('margin-left: ' + sideNavWidth + 'px;') : ''"
+    >
       <router-view />
     </v-main>
   </v-app>
@@ -37,25 +38,54 @@
 
 <script>
 import { Auth, Hub } from "aws-amplify";
-import UserOptions from "./components/UserOptions";
-import NamespaceNavigator from "./components/NamespaceNavigator";
-
+import NamespaceNavigator from "@/components/NamespaceNavigator";
+import SideNav from "@/components/SideNav";
 export default {
   components: {
-    UserOptions,
     NamespaceNavigator,
+    SideNav,
   },
   data: () => ({
     drawer: true,
     authenticated: false,
+    smallSideNavWidth: 56,
+    largeSideNavWidth: 80,
+    smallNamespaceNavWidth: 300,
+    largeNamespaceNavWidth: 350,
   }),
   computed: {
-    navBarTitle() {
+    sideNavWidth: function () {
       var vm = this;
-      var stageIndicator = vm.$variables.stageIndicator
-        ? " " + vm.$variables.stageIndicator
-        : "";
-      return vm.$variables.brand + stageIndicator;
+      var sideNavWidth = vm.$vuetify.breakpoint.lgAndUp
+        ? vm.largeSideNavWidth
+        : vm.smallSideNavWidth;
+      return sideNavWidth;
+    },
+    namespaceNavWidth: function () {
+      var vm = this;
+      var namespaceNavWidth = vm.$vuetify.breakpoint.lgAndUp
+        ? vm.largeNamespaceNavWidth
+        : vm.smallNamespaceNavWidth;
+      return namespaceNavWidth;
+    },
+    drawerWidth: function () {
+      var vm = this;
+      var drawerWidth = vm.sideNavWidth + vm.namespaceNavWidth;
+      console.log("drawer width", drawerWidth);
+      return drawerWidth;
+    },
+    namespaceNavIsVisible: function () {
+      var vm = this;
+      var namespaceNavIsVisible =
+        vm.drawer &&
+        (vm.$route.name === "Index" || vm.$route.name === "Resource");
+      return namespaceNavIsVisible;
+    },
+    drawerIsTemporary: function () {
+      var vm = this;
+      var drawerIsTemporary =
+        vm.$vuetify.breakpoint.smAndDown && vm.namespaceNavIsVisible;
+      return drawerIsTemporary;
     },
   },
   beforeCreate() {
@@ -87,11 +117,24 @@ export default {
       this.$vuetify.theme.dark = this.$variables.darkModeDefault;
     }
   },
-  methods: {},
+  methods: {
+    openDrawer: function () {
+      var vm = this;
+      vm.drawer = true;
+    },
+    closeDrawer: function () {
+      var vm = this;
+      vm.drawer = false;
+    },
+  },
 };
 </script>
 
 <style lang="scss">
+.source-code-pro {
+  font-family: "Source Code Pro", monospace !important;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
@@ -100,8 +143,19 @@ export default {
   text-transform: capitalize;
 }
 
+// vuetify text fields are too tall
 .short-text-field {
   height: 60px;
+}
+
+.no-transition {
+  transition: none !important;
+}
+
+// let temporary drawer sit over content but under toolbar
+.v-navigation-drawer--temporary.v-navigation-drawer--clipped {
+  z-index: 5;
+  padding-top: 56px;
 }
 
 #inspire.bg-light {

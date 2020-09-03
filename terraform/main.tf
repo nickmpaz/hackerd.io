@@ -159,6 +159,8 @@ POLICY
   }
 }
 
+
+
 # WEBSITE - CLOUDFRONT
 
 resource "aws_cloudfront_distribution" "prod" {
@@ -244,6 +246,8 @@ resource "aws_cloudfront_distribution" "dev" {
     ssl_support_method       = "sni-only"
   }
 }
+
+
 
 # WEBSITE - DNS
 

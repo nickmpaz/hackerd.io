@@ -6,7 +6,7 @@
           <div class="d-flex justify-center">
             <span>
               <div class="d-flex">
-                <span id="brand" :style="brandCss">{{ $variables.brand }}</span>
+                <span class="source-code-pro" :style="brandCss">{{ $variables.brand }}</span>
                 <v-img :src="getImgUrl('icon.png')" contain :height="logoSize" :width="logoSize"></v-img>
               </div>
 
@@ -154,7 +154,5 @@ export default {
 </script>
 
 <style lang="scss">
-#brand {
-  font-family: "Source Code Pro", monospace !important;
-}
+
 </style>

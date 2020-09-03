@@ -3,6 +3,7 @@
       <loading-dialog :active=loading message="Loading" />
       <link-resource v-if="!loading && resource.type === 'link'"  :resource="resource" />
       <note-resource v-if="!loading && resource.type === 'note'"  :resource="resource" :editMode="edit"/>
+      <snippet-resource v-if="!loading && resource.type === 'snippet'"  :resource="resource" :editMode="edit"/>
   </v-container>
 </template>
 
@@ -13,12 +14,14 @@ import { Auth } from "aws-amplify";
 import LoadingDialog from "../components/LoadingDialog";
 import LinkResource from "../components/LinkResource"
 import NoteResource from "../components/NoteResource"
+import SnippetResource from "../components/SnippetResource"
 
 export default {
   components: {
     LoadingDialog,
     LinkResource,
-    NoteResource
+    NoteResource,
+    SnippetResource,
   },
   data: () => ({
     loading: true,
