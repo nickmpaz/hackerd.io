@@ -24,6 +24,7 @@
         :collapse="$vuetify.breakpoint.mdAndDown"
         menuText="Actions"
         menuIcon="mdi-chevron-down"
+        menuWidth="150"
       />
       <v-btn color="secondary" width="150" @click="save" v-else>
         <v-icon left color="green">mdi-check</v-icon>Save
