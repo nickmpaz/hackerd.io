@@ -1,20 +1,13 @@
 <template>
   <v-container fluid>
     <loading-dialog :active="loading" message="Loading" />
-    <v-row justify="center">
-      <v-col cols="12" md="10" xl="8">
-        <div v-if="!loading">
-          <h1 class="source-code-pro">Resources</h1>
-          <note-resource v-if="resource.type === 'note'" :resource="resource" :editMode="edit" />
-          <link-resource v-if="resource.type === 'link'" :resource="resource" />
-          <snippet-resource
-            v-if="resource.type === 'snippet'"
-            :resource="resource"
-            :editMode="edit"
-          />
-        </div>
-      </v-col>
-    </v-row>
+
+    <div v-if="!loading">
+      <h1 class="source-code-pro">Resources</h1>
+      <note-resource v-if="resource.type === 'note'" :resource="resource" :editMode="edit" />
+      <link-resource v-if="resource.type === 'link'" :resource="resource" />
+      <snippet-resource v-if="resource.type === 'snippet'" :resource="resource" :editMode="edit" />
+    </div>
   </v-container>
 </template>
 
