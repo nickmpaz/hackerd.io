@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <div>
     <loading-dialog :active="deleting" message="Deleting" />
     <loading-dialog :active="saving" message="Saving" />
     <confirm-dialog
@@ -11,38 +11,28 @@
       @decline="confirmDeleteDialog = false"
     />
     <!-- main content -->
-    <v-row justify="center">
-      <v-col cols="12" md="10" xl="8">
 
-        <div class="d-flex my-6">
-          <v-btn color="secondary" width="150" @click="$router.push({name: 'Index'})">
-            <div class="d-flex justify-space-between align-center">
-              <v-icon class="mr-2">mdi-arrow-left</v-icon>
-              <span class="mr-2">Back</span>
-            </div>
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn color="secondary" width="150" @click="saveResource">
-            <div class="d-flex justify-space-between align-center">
-              <v-icon class="mr-2">mdi-check</v-icon>
-              <span class="mr-2">Save</span>
-            </div>
-          </v-btn>
-        </div>
-        <v-card class="px-6 pt-6 pb-4">
-          <editable-resource-header :resource="resource" />
-          <v-text-field
-            v-model="resource.content"
-            label="Url"
-            single-line
-            solo
-            background-color="secondary"
-            class="short-text-field mt-4"
-          ></v-text-field>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+    <div class="d-flex my-6">
+      <v-btn width="150" @click="$router.push({name: 'Index'})">
+        <v-icon left>mdi-arrow-left</v-icon>Back
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn width="150" @click="saveResource">
+          <v-icon left color="green">mdi-check</v-icon>Save
+      </v-btn>
+    </div>
+    <v-card class="px-6 pt-6 pb-4">
+      <editable-resource-header :resource="resource" />
+      <v-text-field
+        v-model="resource.content"
+        label="Url"
+        single-line
+        solo
+        background-color="secondary"
+        class="short-text-field mt-4"
+      ></v-text-field>
+    </v-card>
+  </div>
 </template>
 
 <script>

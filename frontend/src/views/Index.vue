@@ -47,34 +47,13 @@
                 >mdi-chevron-right</v-icon>
               </v-col>
             </v-row>
-            <v-menu bottom offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs" v-on="on" width="150">
-                  <div class="d-flex justify-space-between align-center">
-                    <v-icon class="mr-2">mdi-chevron-down</v-icon>
-                    <span class="mr-2">Actions</span>
-                  </div>
-                </v-btn>
-              </template>
-              <v-list dense>
-                <v-list-item link @click="createResourcePromptDialog = true">
-                  <v-list-item-action>
-                    <v-icon color="green">mdi-plus</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Create</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click="importResource">
-                  <v-list-item-action>
-                    <v-icon color="blue">mdi-import</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Import</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-menu>
+            <responsive-button-group
+              :items="actionItems"
+              :collapse="$vuetify.breakpoint.mdAndDown"
+              menuText="Actions"
+              menuIcon="mdi-chevron-down"
+              menuWidth="150"
+            />
           </div>
           <v-text-field
             :label="'Search ' + activeNamespace.name"
@@ -196,6 +175,7 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import NamespaceSelectorDialog from "../components/NamespaceSelectorDialog";
 import CreateResourcePromptDialog from "../components/CreateResourcePromptDialog";
 import NoContent from "@/components/NoContent";
+import ResponsiveButtonGroup from "@/components/ResponsiveButtonGroup";
 
 import axios from "axios";
 import { Auth } from "aws-amplify";
@@ -208,6 +188,7 @@ export default {
     NamespaceSelectorDialog,
     CreateResourcePromptDialog,
     NoContent,
+    ResponsiveButtonGroup,
   },
   props: ["drawer"],
   computed: {
@@ -245,23 +226,48 @@ export default {
       return this.$store.getters.namespaceBreadcrumbsList;
     },
   },
-  data: () => ({
-    query: "",
-    fab: false,
-    creating: false,
-    deleting: false,
-    selecting: false,
-    moving: false,
-    createResourcePromptDialog: false,
-    confirmDeleteDialog: false,
-    resourceToDelete: null,
-    resourceToMove: null,
-    loading: true,
-    resources: [],
-    focusIndex: -1,
-    searchResultsLength: 0,
-    hotkeysActive: true,
-  }),
+  data() {
+    var vm = this;
+    return {
+      query: "",
+      fab: false,
+      creating: false,
+      deleting: false,
+      selecting: false,
+      moving: false,
+      createResourcePromptDialog: false,
+      confirmDeleteDialog: false,
+      resourceToDelete: null,
+      resourceToMove: null,
+      loading: true,
+      resources: [],
+      focusIndex: -1,
+      searchResultsLength: 0,
+      hotkeysActive: true,
+      actionItems: [
+        {
+          text: "Create",
+          icon: "mdi-plus",
+          buttonColor: "none",
+          buttonWidth: "150",
+          iconColor: "green",
+          function: function () {
+            vm.createResourcePromptDialog = true;
+          },
+        },
+        {
+          text: "Import",
+          icon: "mdi-import",
+          buttonColor: "none",
+          buttonWidth: "150",
+          iconColor: "blue",
+          function: function () {
+            vm.importResource();
+          },
+        },
+      ],
+    };
+  },
   mounted() {
     var vm = this;
     vm._keyListener = function (e) {
