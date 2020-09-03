@@ -11,311 +11,273 @@
       @decline="confirmDeleteDialog = false"
     />
     <!-- main content -->
-    <v-row justify="center">
-      <v-col cols="12" md="10" xl="8">
-        <!-- back button -->
-        <div class="d-flex my-6">
-          <v-btn color="secondary" width="150" @click="$router.push({name: 'Index'})">
-            <div class="d-flex justify-space-between align-center">
-              <v-icon class="mr-2">mdi-arrow-left</v-icon>
-              <span class="mr-2">Back</span>
-            </div>
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-menu bottom offset-y v-if="mode === 'read'">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" width="150">
-                <div class="d-flex justify-space-between align-center">
-                  <v-icon class="mr-2">mdi-chevron-down</v-icon>
-                  <span class="mr-2">Actions</span>
-                </div>
-              </v-btn>
-            </template>
-            <v-list dense>
-              <v-list-item link @click="edit">
-                <v-list-item-action>
-                  <v-icon color="green">mdi-pencil</v-icon>
-                </v-list-item-action>
-                <v-list-item-content>
-                  <v-list-item-title>Edit</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item link @click="exportResource">
-                <v-list-item-action>
-                  <v-icon color="blue">mdi-export</v-icon>
-                </v-list-item-action>
-                <v-list-item-content>
-                  <v-list-item-title>Export</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item link @click="confirmDeleteDialog = true">
-                <v-list-item-action>
-                  <v-icon color="red">mdi-delete</v-icon>
-                </v-list-item-action>
-                <v-list-item-content>
-                  <v-list-item-title>Delete</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-          <v-btn color="secondary" width="150" @click="save" v-else>
-            <div class="d-flex justify-space-between align-center">
-              <v-icon class="mr-2">mdi-check</v-icon>
-              <span class="mr-2">Save</span>
-            </div>
-          </v-btn>
-        </div>
-        <!-- header card -->
-        <v-card class="px-6 py-4 mb-6">
-          <resource-header v-if="mode === 'read'" :resource="resource" />
-          <editable-resource-header v-if="mode === 'write'" :resource="resource" />
-        </v-card>
-        <!-- editor card -->
-        <no-content
-          v-if="(resource.content === '' || resource.content === '<p></p>') && mode === 'read'"
-          callToAction="Click here to start editing."
-          @engage="mode = 'write'"
-        />
-        <v-card
-          v-else
-          :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')"
-        >
-          <v-card v-if="mode === 'write'" color="secondary" class="pa-1">
-            <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
-              <div class="menubar">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.bold() ? 'primary' : 'secondary'"
-                      @click="commands.bold"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-bold</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Bold</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.italic() ? 'primary' : 'secondary'"
-                      @click="commands.italic"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-italic</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Italic</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.strike() ? 'primary' : 'secondary'"
-                      @click="commands.strike"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-strikethrough</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Strikethrough</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.underline() ? 'primary' : 'secondary'"
-                      @click="commands.underline"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-underline</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Underline</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.code() ? 'primary' : 'secondary'"
-                      @click="commands.code"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-code-braces</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Code</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.paragraph() ? 'primary' : 'secondary'"
-                      @click="commands.paragraph"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-pilcrow</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Paragraph</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.heading({ level: 1 }) ? 'primary' : 'secondary'"
-                      @click="commands.heading({ level: 1 })"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-1</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>H1</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.heading({ level: 2 }) ? 'primary' : 'secondary'"
-                      @click="commands.heading({ level: 2 })"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-2</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>H2</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.heading({ level: 3 }) ? 'primary' : 'secondary'"
-                      @click="commands.heading({ level: 3 })"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-3</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>H3</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.bullet_list() ? 'primary' : 'secondary'"
-                      @click="commands.bullet_list"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-list-bulleted-square</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Bullet List</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.ordered_list() ? 'primary' : 'secondary'"
-                      @click="commands.ordered_list"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-list-numbered</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Ordered List</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.blockquote() ? 'primary' : 'secondary'"
-                      @click="commands.blockquote"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-quote-close</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Blockquote</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      :color="isActive.code_block() ? 'primary' : 'secondary'"
-                      @click="commands.code_block"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-code-json</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Code Block</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      @click="commands.horizontal_rule"
-                      color="secondary"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-minus</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Horizontal Rule</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      @click="commands.undo"
-                      color="secondary"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-undo</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Undo</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      class="menubar__button"
-                      @click="commands.redo"
-                      color="secondary"
-                    >
-                      <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-redo</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Redo</span>
-                </v-tooltip>
-              </div>
-            </editor-menu-bar>
-          </v-card>
-          <div class="px-6 py-3">
-            <editor-content class="editor__content pt-3" :editor="editor" />
+
+    <!-- back button -->
+    <div class="d-flex my-6">
+      <v-btn color="secondary" width="150" @click="$router.push({name: 'Index'})">
+        <v-icon left>mdi-arrow-left</v-icon>Back
+      </v-btn>
+      <v-spacer></v-spacer>
+      <responsive-button-group
+        v-if="mode === 'read'"
+        :items="actionItems"
+        :collapse="$vuetify.breakpoint.mdAndDown"
+        menuText="Actions"
+        menuIcon="mdi-chevron-down"
+      />
+      <v-btn color="secondary" width="150" @click="save" v-else>
+          <v-icon left color="green">mdi-check</v-icon>Save
+      </v-btn>
+    </div>
+    <!-- header card -->
+    <v-card class="px-6 py-4 mb-6">
+      <resource-header v-if="mode === 'read'" :resource="resource" />
+      <editable-resource-header v-if="mode === 'write'" :resource="resource" />
+    </v-card>
+    <!-- editor card -->
+    <no-content
+      v-if="(resource.content === '' || resource.content === '<p></p>') && mode === 'read'"
+      callToAction="Click here to start editing."
+      @engage="mode = 'write'"
+    />
+    <v-card
+      v-else
+      :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')"
+    >
+      <v-card v-if="mode === 'write'" color="secondary" class="pa-1">
+        <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
+          <div class="menubar">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.bold() ? 'primary' : 'secondary'"
+                  @click="commands.bold"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-bold</v-icon>
+                </v-btn>
+              </template>
+              <span>Bold</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.italic() ? 'primary' : 'secondary'"
+                  @click="commands.italic"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-italic</v-icon>
+                </v-btn>
+              </template>
+              <span>Italic</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.strike() ? 'primary' : 'secondary'"
+                  @click="commands.strike"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-strikethrough</v-icon>
+                </v-btn>
+              </template>
+              <span>Strikethrough</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.underline() ? 'primary' : 'secondary'"
+                  @click="commands.underline"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-underline</v-icon>
+                </v-btn>
+              </template>
+              <span>Underline</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.code() ? 'primary' : 'secondary'"
+                  @click="commands.code"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-code-braces</v-icon>
+                </v-btn>
+              </template>
+              <span>Code</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.paragraph() ? 'primary' : 'secondary'"
+                  @click="commands.paragraph"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-pilcrow</v-icon>
+                </v-btn>
+              </template>
+              <span>Paragraph</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.heading({ level: 1 }) ? 'primary' : 'secondary'"
+                  @click="commands.heading({ level: 1 })"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-1</v-icon>
+                </v-btn>
+              </template>
+              <span>H1</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.heading({ level: 2 }) ? 'primary' : 'secondary'"
+                  @click="commands.heading({ level: 2 })"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-2</v-icon>
+                </v-btn>
+              </template>
+              <span>H2</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.heading({ level: 3 }) ? 'primary' : 'secondary'"
+                  @click="commands.heading({ level: 3 })"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-header-3</v-icon>
+                </v-btn>
+              </template>
+              <span>H3</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.bullet_list() ? 'primary' : 'secondary'"
+                  @click="commands.bullet_list"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-list-bulleted-square</v-icon>
+                </v-btn>
+              </template>
+              <span>Bullet List</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.ordered_list() ? 'primary' : 'secondary'"
+                  @click="commands.ordered_list"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-list-numbered</v-icon>
+                </v-btn>
+              </template>
+              <span>Ordered List</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.blockquote() ? 'primary' : 'secondary'"
+                  @click="commands.blockquote"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-format-quote-close</v-icon>
+                </v-btn>
+              </template>
+              <span>Blockquote</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  :color="isActive.code_block() ? 'primary' : 'secondary'"
+                  @click="commands.code_block"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-code-json</v-icon>
+                </v-btn>
+              </template>
+              <span>Code Block</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  @click="commands.horizontal_rule"
+                  color="secondary"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-minus</v-icon>
+                </v-btn>
+              </template>
+              <span>Horizontal Rule</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  @click="commands.undo"
+                  color="secondary"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-undo</v-icon>
+                </v-btn>
+              </template>
+              <span>Undo</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="menubar__button"
+                  @click="commands.redo"
+                  color="secondary"
+                >
+                  <v-icon :large="$vuetify.breakpoint.lgAndUp">mdi-redo</v-icon>
+                </v-btn>
+              </template>
+              <span>Redo</span>
+            </v-tooltip>
           </div>
-        </v-card>
-      </v-col>
-    </v-row>
+        </editor-menu-bar>
+      </v-card>
+      <div class="px-6 py-3">
+        <editor-content class="editor__content pt-3" :editor="editor" />
+      </div>
+    </v-card>
   </div>
 </template>
 
@@ -357,6 +319,7 @@ import EditableResourceHeader from "../components/EditableResourceHeader";
 import ResourceHeader from "../components/ResourceHeader";
 import ConfirmDialog from "../components/ConfirmDialog";
 import NoContent from "@/components/NoContent";
+import ResponsiveButtonGroup from "@/components/ResponsiveButtonGroup";
 
 export default {
   components: {
@@ -367,9 +330,11 @@ export default {
     EditableResourceHeader,
     ResourceHeader,
     NoContent,
+    ResponsiveButtonGroup,
   },
   props: ["resource", "editMode"],
   data() {
+    var vm = this;
     return {
       mode: "read",
       fab: false,
@@ -410,6 +375,38 @@ export default {
         ],
         content: this.resource.content,
       }),
+      actionItems: [
+        {
+          text: "Edit",
+          icon: "mdi-pencil",
+          buttonColor: "none",
+          buttonWidth: "150",
+          iconColor: "green",
+          function: function () {
+            vm.edit();
+          },
+        },
+        {
+          text: "Export",
+          icon: "mdi-export",
+          buttonColor: "none",
+          buttonWidth: "150",
+          iconColor: "blue",
+          function: function () {
+            vm.exportResource();
+          },
+        },
+        {
+          text: "Delete",
+          icon: "mdi-delete",
+          buttonColor: "none",
+          buttonWidth: "150",
+          iconColor: "red",
+          function: function () {
+            vm.confirmDeleteDialog = true;
+          },
+        },
+      ],
     };
   },
   watch: {

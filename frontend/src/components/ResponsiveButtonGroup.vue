@@ -4,7 +4,8 @@
       <v-menu bottom offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn v-bind="attrs" v-on="on" :width="menuWidth">
-            <v-icon left>{{ menuIcon }}</v-icon>{{ menuText }}
+            <v-icon left>{{ menuIcon }}</v-icon>
+            <span>{{ menuText }}</span>
           </v-btn>
         </template>
         <v-list dense>
@@ -23,7 +24,12 @@
     </div>
     <div v-else class="d-flex flex-row-reverse">
       <div v-for="(item, index) in items" :key="index">
-        <v-btn :color="item.buttonColor" :width="item.buttonWidth" :class="index == 0 ? '': 'mr-4'" @click="item.function">
+        <v-btn
+          :color="item.buttonColor"
+          :width="item.buttonWidth"
+          :class="index == 0 ? '': 'mr-4'"
+          @click="item.function"
+        >
           <v-icon left :color="item.iconColor">{{ item.icon }}</v-icon>
           {{ item.text }}
         </v-btn>

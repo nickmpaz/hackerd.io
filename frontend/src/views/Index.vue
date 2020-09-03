@@ -249,7 +249,7 @@ export default {
           text: "Create",
           icon: "mdi-plus",
           buttonColor: "none",
-          buttonWidth: "125",
+          buttonWidth: "150",
           iconColor: "green",
           function: function () {
             vm.createResourcePromptDialog = true;
@@ -259,7 +259,7 @@ export default {
           text: "Import",
           icon: "mdi-import",
           buttonColor: "none",
-          buttonWidth: "125",
+          buttonWidth: "150",
           iconColor: "blue",
           function: function () {
             vm.importResource();
