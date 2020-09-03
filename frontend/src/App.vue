@@ -131,6 +131,14 @@ export default {
 </script>
 
 <style lang="scss">
+.no-wrap {
+  white-space: nowrap;
+}
+
+.truncate-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .source-code-pro {
   font-family: "Source Code Pro", monospace !important;
 }

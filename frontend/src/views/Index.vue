@@ -80,7 +80,7 @@
               color="secondary"
             >
               <div class="d-flex align-center">
-                <div class="d-flex align-center truncate flex-grow-1">
+                <div class="d-flex align-center no-wrap truncate-overflow flex-grow-1">
                   <span class="title title-case">
                     <v-icon v-if="resource.type === 'note'" class="mr-2 pb-1">mdi-note-text</v-icon>
                     <v-icon v-if="resource.type === 'link'" class="mr-2 pb-1">mdi-link-variant</v-icon>
@@ -112,7 +112,7 @@
                   >
                     <div class="d-flex flex-nowrap">
                       <v-icon small class="ml-1">mdi-tag</v-icon>
-                      <span class="px-1">{{ tag }}</span>
+                      <span class="px-1 no-wrap">{{ tag }}</span>
                     </div>
                   </v-card>
                 </div>
@@ -522,12 +522,6 @@ export default {
 </script>
 
 <style lang="scss">
-.truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .focused-resource-dark {
   outline-style: solid;
   outline-color: white;
