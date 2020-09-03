@@ -27,22 +27,11 @@
       @confirm="createResource"
       @decline="createResourcePromptDialog = false"
     />
-    
+
     <div v-if="!loading">
       <h1 class="source-code-pro">Resources</h1>
       <div class="d-flex my-6 align-center">
-        <v-row class="flex-grow-1" no-gutters>
-          <v-col cols="auto">
-            <v-icon class="pr-1">mdi-chevron-right</v-icon>
-          </v-col>
-          <v-col v-for="(namespace, index) in namespaceBreadcrumbsList" :key="index" cols="auto">
-            <span class="primary--text">{{ namespace.name }}</span>
-            <v-icon
-              class="px-1"
-              v-if="index != namespaceBreadcrumbsList.length - 1"
-            >mdi-chevron-right</v-icon>
-          </v-col>
-        </v-row>
+        <bread-crumbs :items="namespaceBreadcrumbsList" class="flex-grow-1" />
         <responsive-button-group
           :items="actionItems"
           :collapse="$vuetify.breakpoint.mdAndDown"
@@ -167,6 +156,7 @@ import NamespaceSelectorDialog from "../components/NamespaceSelectorDialog";
 import CreateResourcePromptDialog from "../components/CreateResourcePromptDialog";
 import NoContent from "@/components/NoContent";
 import ResponsiveButtonGroup from "@/components/ResponsiveButtonGroup";
+import BreadCrumbs from "@/components/BreadCrumbs";
 
 import axios from "axios";
 import { Auth } from "aws-amplify";
@@ -180,6 +170,7 @@ export default {
     CreateResourcePromptDialog,
     NoContent,
     ResponsiveButtonGroup,
+    BreadCrumbs,
   },
   props: ["drawer"],
   computed: {

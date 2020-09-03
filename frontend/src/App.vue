@@ -66,7 +66,8 @@ export default {
       } else if (vm.$vuetify.breakpoint.mdAndUp) {
         contentCols = 10;
       }
-
+      // if the namespace nav is visible, make the content a bigger portion of vmain
+      // since vmain is getting smaller
       if (vm.namespaceNavIsVisible) {
         contentCols += 2;
       }
