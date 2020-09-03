@@ -192,9 +192,9 @@ export default {
   },
   props: ["drawer"],
   computed: {
-    searchResults: function () {
+    searchResults: function() {
       var vm = this;
-      var filteredResources = vm.resources.filter((e) =>
+      var filteredResources = vm.resources.filter(e =>
         vm.activeNamespace.resourceFilter(e)
       );
       if (vm.query == "") {
@@ -206,25 +206,46 @@ export default {
       }
       const options = {
         threshold: 0.25,
-        keys: ["title", "tags"],
+        keys: ["title", "tags"]
       };
 
       const fuse = new Fuse(filteredResources, options);
-      const result = fuse.search(vm.query);
-      const finalResult = result.map((a) => a.item);
 
+      var query = vm.query;
+      var tagsToSearch = [];
+      var uniqueTags = [];
+      var tag;
+
+      if (query.includes(" ")) {
+        query.split(" ");
+        query.forEach(element => uniqueTags.push({ element }));
+
+        for (var i = 0; i < uniqueTags.length; i++) {
+          tag = { tags: uniqueTags[i] };
+          tagsToSearch.push(tag);
+        }
+      } else {
+        tag = { tags: query };
+        tagsToSearch.push(tag);
+      }
+
+      const result = fuse.search({
+        $and: tagsToSearch
+      });
+
+      const finalResult = result.map(a => a.item);
       vm.searchResultsLength = finalResult.length;
       if (vm.focusIndex > vm.searchResultsLength - 1) {
         vm.focusIndex = vm.searchResultsLength - 1;
       }
       return finalResult;
     },
-    activeNamespace: function () {
+    activeNamespace: function() {
       return this.$store.getters.activeNamespace;
     },
-    namespaceBreadcrumbsList: function () {
+    namespaceBreadcrumbsList: function() {
       return this.$store.getters.namespaceBreadcrumbsList;
-    },
+    }
   },
   data() {
     var vm = this;
@@ -270,7 +291,7 @@ export default {
   },
   mounted() {
     var vm = this;
-    vm._keyListener = function (e) {
+    vm._keyListener = function(e) {
       if (!vm.$store.getters.hotkeysActive) return;
       console.log(e);
       if (
@@ -310,31 +331,31 @@ export default {
     console.log(vm.$vuetify);
   },
   methods: {
-    exportResource: function (resource) {
+    exportResource: function(resource) {
       console.log(resource);
       var vm = this;
       vm.$utils.downloadObj(resource, resource.title);
     },
-    ctrlJ: function (event) {
+    ctrlJ: function(event) {
       event.preventDefault();
       console.log("ctrl j");
     },
-    ctrlK: function (event) {
+    ctrlK: function(event) {
       event.preventDefault();
       console.log("ctrl k");
     },
-    getResources: function () {
+    getResources: function() {
       var vm = this;
       Auth.currentAuthenticatedUser()
-        .then((data) => {
+        .then(data => {
           axios({
             method: vm.$variables.api.getResources.method,
             url: vm.$variables.api.getResources.url,
             headers: {
-              Authorization: data.signInUserSession.idToken.jwtToken,
-            },
+              Authorization: data.signInUserSession.idToken.jwtToken
+            }
           })
-            .then((response) => {
+            .then(response => {
               vm.resources = response.data.resources;
               vm.loading = false;
               sessionStorage.setItem(
@@ -342,70 +363,70 @@ export default {
                 JSON.stringify(response.data.resources)
               );
             })
-            .catch((err) => {
+            .catch(err => {
               console.error(err);
             });
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     },
 
-    scrollFocusToCenter: function () {
+    scrollFocusToCenter: function() {
       const focused = document.getElementById("focused-resource");
       focused.scrollIntoView({
         behavior: "auto",
         block: "center",
-        inline: "center",
+        inline: "center"
       });
     },
-    incrementFocus: function () {
+    incrementFocus: function() {
       var vm = this;
       if (vm.focusIndex < vm.searchResultsLength - 1) {
         vm.focusIndex++;
       }
       vm.scrollFocusToCenter();
     },
-    decrementFocus: function () {
+    decrementFocus: function() {
       var vm = this;
       if (vm.focusIndex > -1) {
         vm.focusIndex--;
       }
       vm.scrollFocusToCenter();
     },
-    openInNewTab: function (url) {
+    openInNewTab: function(url) {
       var win = window.open(url, "_blank");
       win.focus();
     },
-    viewResource: function (resource) {
+    viewResource: function(resource) {
       var vm = this;
       if (resource.type === "link") {
         vm.openInNewTab(resource.content);
       } else {
         vm.$router.push({
           name: "Resource",
-          params: { resource: resource, resource_id: resource.resource_id },
+          params: { resource: resource, resource_id: resource.resource_id }
         });
       }
     },
-    editResource: function (resource) {
+    editResource: function(resource) {
       var vm = this;
       vm.$router.push({
         name: "Resource",
         params: {
           resource: resource,
           resource_id: resource.resource_id,
-          edit: true,
-        },
+          edit: true
+        }
       });
     },
-    createResource: async function (type) {
+    createResource: async function(type) {
       var vm = this;
       vm.createResourcePromptDialog = false;
       vm.creating = true;
       var payload = {
         type: type,
-        namespace: vm.activeNamespace.namespace_id,
+        namespace: vm.activeNamespace.namespace_id
       };
       var resource = await vm.$api.createResource(payload);
       vm.creating = false;
@@ -414,14 +435,14 @@ export default {
         params: {
           resource: resource,
           resource_id: resource.resource_id,
-          edit: true,
-        },
+          edit: true
+        }
       });
     },
-    importResource: async function () {
+    importResource: async function() {
       var vm = this;
       var payload = {
-        resource: await vm.$utils.getLocalFileContents(),
+        resource: await vm.$utils.getLocalFileContents()
       };
       vm.creating = true;
       var resource = await vm.$api.createResource(payload);
@@ -431,72 +452,72 @@ export default {
         params: {
           resource: resource,
           resource_id: resource.resource_id,
-          edit: true,
-        },
+          edit: true
+        }
       });
     },
-    deleteResource: function () {
+    deleteResource: function() {
       var vm = this;
       vm.confirmDeleteDialog = false;
       vm.deleting = true;
       Auth.currentAuthenticatedUser()
-        .then((data) => {
+        .then(data => {
           axios({
             method: vm.$variables.api.deleteResource.method,
             url:
               vm.$variables.api.deleteResource.url +
               vm.resourceToDelete.resource_id,
             headers: {
-              Authorization: data.signInUserSession.idToken.jwtToken,
-            },
+              Authorization: data.signInUserSession.idToken.jwtToken
+            }
           })
-            .then((response) => {
+            .then(response => {
               console.log(response);
               vm.deleting = false;
               vm.resources = vm.resources.filter(
-                (e) => e !== vm.resourceToDelete
+                e => e !== vm.resourceToDelete
               );
             })
-            .catch((err) => {
+            .catch(err => {
               console.error(err);
             });
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     },
-    moveResource: function (namespace_id) {
+    moveResource: function(namespace_id) {
       var vm = this;
       vm.selecting = false;
       vm.moving = true;
       vm.resourceToMove.namespace = namespace_id;
       Auth.currentAuthenticatedUser()
-        .then((data) => {
+        .then(data => {
           axios({
             method: vm.$variables.api.updateResource.method,
             url:
               vm.$variables.api.updateResource.url +
               vm.resourceToMove.resource_id,
             headers: {
-              Authorization: data.signInUserSession.idToken.jwtToken,
+              Authorization: data.signInUserSession.idToken.jwtToken
             },
             data: {
-              resource: vm.resourceToMove,
-            },
+              resource: vm.resourceToMove
+            }
           })
-            .then((response) => {
+            .then(response => {
               console.log(response);
               vm.moving = false;
             })
-            .catch((err) => {
+            .catch(err => {
               console.error(err);
             });
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
-    },
-  },
+    }
+  }
 };
 </script>
 
