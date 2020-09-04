@@ -1,6 +1,5 @@
 <template>
   <v-container fluid>
-    <loading-dialog :active="loading" message="Loading" />
     <loading-dialog :active="generating" message="Generating API Token" />
 
     <h1 class="source-code-pro mb-6">Integrations</h1>
@@ -18,6 +17,7 @@
           color="secondary"
           class="mr-2"
           @click="regenerateApiToken"
+          :loading="loading"
         >regenerate</v-btn>
         <v-text-field
           class="short-text-field"
