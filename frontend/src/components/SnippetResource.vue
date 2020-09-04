@@ -36,96 +36,118 @@
       <editable-resource-header v-if="mode === 'write'" :resource="resource" />
     </v-card>
     <!-- editor card -->
-    <no-content
-      v-if=" editor.getHTML() === '<pre><code></code></pre>' && mode === 'read' "
-      callToAction="Click here to start editing."
-      @engage="mode = 'write'"
-    />
-    <v-card
-      v-else
-      :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')"
-    >
-      <div class="px-6 py-3">
-        <editor-content class="editor__content pt-3" :editor="editor" />
+    <v-card :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')">
+      <div class="pa-6">
+        <div class="d-flex mb-6 align-center">
+          <v-select
+            :items="languages"
+            label="Language"
+            class="flex-grow-1 mr-12 short-text-field"
+            single-line
+            :readonly="mode === 'read'"
+            v-model="selectedLanguage"
+          ></v-select>
+          <v-btn @click="$utils.copyTextToClipboard(resource.content)">
+            <v-icon left small >mdi-content-copy</v-icon>Copy
+          </v-btn>
+        </div>
+        <codemirror v-model="resource.content" :options="cmOptions"></codemirror>
       </div>
     </v-card>
   </div>
 </template>
-
 <script>
 import axios from "axios";
 import { Auth } from "aws-amplify";
-import { Editor, EditorContent } from "tiptap";
-import { CodeBlockHighlight } from "tiptap-extensions";
-import bash from "highlight.js/lib/languages/bash";
-import css from "highlight.js/lib/languages/css";
-import dockerfile from "highlight.js/lib/languages/dockerfile";
-import java from "highlight.js/lib/languages/java";
-import javascript from "highlight.js/lib/languages/javascript";
-import python from "highlight.js/lib/languages/python";
-import sql from "highlight.js/lib/languages/sql";
-import xml from "highlight.js/lib/languages/xml";
+
+import { codemirror } from "vue-codemirror";
+import "codemirror/lib/codemirror.css";
+import "codemirror/theme/base16-dark.css";
+
+import "codemirror/mode/clike/clike.js";
+import "codemirror/mode/css/css.js";
+import "codemirror/mode/go/go.js";
+import "codemirror/mode/htmlmixed/htmlmixed.js";
+import "codemirror/mode/javascript/javascript.js";
+import "codemirror/mode/python/python.js";
+import "codemirror/mode/ruby/ruby.js";
+import "codemirror/mode/vue/vue.js";
 
 import LoadingDialog from "../components/LoadingDialog";
 import EditableResourceHeader from "../components/EditableResourceHeader";
 import ResourceHeader from "../components/ResourceHeader";
 import ConfirmDialog from "../components/ConfirmDialog";
-import NoContent from "@/components/NoContent";
 import ResponsiveButtonGroup from "@/components/ResponsiveButtonGroup";
 
 export default {
   components: {
-    EditorContent,
     ConfirmDialog,
     LoadingDialog,
     EditableResourceHeader,
     ResourceHeader,
-    NoContent,
     ResponsiveButtonGroup,
+    codemirror,
   },
   props: ["resource", "editMode"],
   data() {
     var vm = this;
-    console.log("content", vm.resource.content);
-    vm.resource.content = {
-      type: "doc",
-      content: [
-        {
-          type: "code_block",
-          content: vm.resource.content
-            ? [
-                {
-                  type: "text",
-                  text: vm.resource.content,
-                },
-              ]
-            : [],
-        },
-      ],
-    };
     return {
       mode: "read",
       fab: false,
       confirmDeleteDialog: false,
       deleting: false,
-      editor: new Editor({
-        editable: false,
-        extensions: [
-          new CodeBlockHighlight({
-            languages: {
-              bash,
-              css,
-              dockerfile,
-              java,
-              javascript,
-              python,
-              sql,
-              xml,
-            },
-          }),
-        ],
-        content: vm.resource.content,
-      }),
+      cmOptions: {
+        // codemirror options
+        tabSize: 4,
+        mode: null,
+        theme: "base16-dark",
+        lineNumbers: true,
+        line: true,
+        readOnly: true,
+      },
+      languages: [
+        {
+          text: "No Language Selected",
+          value: null,
+        },
+        {
+          text: "C",
+          value: "clike",
+        },
+        {
+          text: "C++",
+          value: "clike",
+        },
+        {
+          text: "CSS",
+          value: "css",
+        },
+        {
+          text: "Go",
+          value: "go",
+        },
+        {
+          text: "HTML",
+          value: "htmlmixed",
+        },
+        {
+          text: "Javascript",
+          value: "javascript",
+        },
+        {
+          text: "Python",
+          value: "python",
+        },
+        {
+          text: "Ruby",
+          value: "ruby",
+        },
+        {
+          text: "Vue",
+          value: "vue",
+        },
+      ],
+      selectedLanguage: null,
       actionItems: [
         {
           text: "Edit",
@@ -163,9 +185,11 @@ export default {
   watch: {
     mode() {
       var vm = this;
-      vm.editor.setOptions({
-        editable: vm.mode == "read" ? false : true,
-      });
+      vm.cmOptions.readOnly = vm.mode === "read" ? true : false;
+    },
+    selectedLanguage() {
+      var vm = this;
+      vm.cmOptions.mode = vm.selectedLanguage;
     },
   },
   mounted() {
@@ -190,8 +214,15 @@ export default {
   },
   created() {
     var vm = this;
-    if (vm.editMode) vm.mode = "write";
+    if (vm.editMode) {
+      vm.mode = "write";
+    }
+
+    if (vm.resource.language) {
+      vm.selectedLanguage = vm.resource.language
+    }
   },
+
   methods: {
     clearSelection: function () {
       if (window.getSelection) {
@@ -207,11 +238,8 @@ export default {
     },
     save: function () {
       var vm = this;
-      try {
-        vm.resource.content = vm.editor.getJSON().content[0].content[0].text;
-      } catch {
-        vm.resource.content = "";
-      }
+      console.log(vm.selectedLanguage);
+      vm.resource.language = vm.selectedLanguage
       Auth.currentAuthenticatedUser()
         .then((data) => {
           axios({
@@ -285,6 +313,10 @@ export default {
 <style lang="scss">
 @import "../styles/markdown-light.scss";
 @import "../styles/markdown-dark.scss";
+
+.CodeMirror-scroll {
+  overflow: auto !important;
+}
 
 :focus {
   outline: none;

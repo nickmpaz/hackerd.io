@@ -10,6 +10,7 @@
       class="no-transition"
       v-if="authenticated"
       :temporary="drawerIsTemporary"
+      touchless
     >
       <div class="d-flex fill-height">
         <side-nav
