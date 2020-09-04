@@ -6,7 +6,6 @@
         <v-card
           outlined
           class="px-1 py-1"
-          dark
           :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
         >
           <v-icon small class="ml-1">mdi-tag</v-icon>
@@ -17,7 +16,6 @@
         <v-card
           outlined
           class="px-1 py-1"
-          dark
           :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
         >
           <v-icon small class="ml-1">mdi-tag</v-icon>

@@ -77,7 +77,6 @@
               <v-card
                 class="px-1 py-1 ml-2"
                 outlined
-                dark
                 v-if="resource.tags.length == 0"
                 :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
               >
@@ -89,7 +88,6 @@
 
               <v-card
                 class="px-1 py-1 ml-2"
-                dark
                 outlined
                 v-for="(tag, index) in resource.tags"
                 :key="index"
