@@ -46,19 +46,19 @@
         autofocus
         single-line
         v-model="query"
-        class="short-text-field mb-4"
+        class="short-text-field mb-3"
       ></v-text-field>
       <no-content
         v-if="searchResults.length == 0"
         callToAction="Click here to create a resource."
         @engage="createResourcePromptDialog = true"
       />
-      <v-card v-else class="px-4 pt-4 pb-1">
+      <v-card v-else class="px-4 py-1">
         <v-card
           v-for="(resource, index) in searchResults"
           :key="index"
           :id="index == focusIndex ? 'focused-resource' : ''"
-          :class="'px-4 py-1 mb-4 ' + (index == focusIndex ? ('focused-resource-' + ($vuetify.theme.dark ? 'dark' : 'light')) : '')"
+          :class="'px-4 py-1 my-3 ' + (index == focusIndex ? ('focused-resource-' + ($vuetify.theme.dark ? 'dark' : 'light')) : '')"
           @click="viewResource(resource)"
           :ripple="false"
           role="button"
