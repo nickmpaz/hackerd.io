@@ -31,7 +31,11 @@
       class="no-transition"
       :style="drawerIsTemporary ? ('margin-left: ' + sideNavWidth + 'px;') : ''"
     >
-      <router-view />
+      <v-row justify="center">
+        <v-col :cols="contentCols">
+          <router-view />
+        </v-col>
+      </v-row>
     </v-main>
   </v-app>
 </template>
@@ -54,6 +58,21 @@ export default {
     largeNamespaceNavWidth: 350,
   }),
   computed: {
+    contentCols: function () {
+      var vm = this;
+      var contentCols = 12;
+      if (vm.$vuetify.breakpoint.xl) {
+        contentCols = 8;
+      } else if (vm.$vuetify.breakpoint.mdAndUp) {
+        contentCols = 10;
+      }
+      // if the namespace nav is visible, make the content a bigger portion of vmain
+      // since vmain is getting smaller
+      if (vm.namespaceNavIsVisible) {
+        contentCols += 2;
+      }
+      return contentCols;
+    },
     sideNavWidth: function () {
       var vm = this;
       var sideNavWidth = vm.$vuetify.breakpoint.lgAndUp
@@ -131,6 +150,14 @@ export default {
 </script>
 
 <style lang="scss">
+.no-wrap {
+  white-space: nowrap;
+}
+
+.truncate-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .source-code-pro {
   font-family: "Source Code Pro", monospace !important;
 }
