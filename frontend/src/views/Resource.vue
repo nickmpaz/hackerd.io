@@ -5,7 +5,7 @@
     <div v-if="!loading">
       <h1 class="source-code-pro">Resources</h1>
       <note-resource v-if="resource.type === 'note'" :resource="resource" :editMode="edit" />
-      <link-resource v-if="resource.type === 'link'" :resource="resource" />
+      <link-resource v-if="resource.type === 'link'" :resource="resource" :editMode="edit"/>
       <snippet-resource v-if="resource.type === 'snippet'" :resource="resource" :editMode="edit" />
     </div>
   </v-container>
