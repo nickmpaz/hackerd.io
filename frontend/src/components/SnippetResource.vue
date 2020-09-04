@@ -98,7 +98,7 @@ export default {
       deleting: false,
       cmOptions: {
         // codemirror options
-        tabSize: 4,
+        tabSize: 2,
         mode: null,
         theme: "base16-dark",
         lineNumbers: true,
@@ -304,7 +304,6 @@ export default {
     },
   },
   beforeDestroy() {
-    this.editor.destroy();
     document.removeEventListener("keydown", this._keyListener);
   },
 };
