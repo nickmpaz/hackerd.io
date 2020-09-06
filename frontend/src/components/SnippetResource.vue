@@ -14,7 +14,7 @@
 
     <!-- back button -->
     <div class="d-flex my-6">
-      <v-btn width="150" @click="$router.push({name: 'Index'})">
+      <v-btn width="125" @click="$router.push({name: 'Index'})">
         <v-icon left>mdi-arrow-left</v-icon>Back
       </v-btn>
       <v-spacer></v-spacer>
@@ -24,9 +24,10 @@
         :collapse="$vuetify.breakpoint.mdAndDown"
         menuText="Actions"
         menuIcon="mdi-chevron-down"
-        menuWidth="150"
+        menuWidth="125"
       />
-      <v-btn color="secondary" width="150" @click="save" v-else>
+      
+      <v-btn color="secondary" width="125" @click="save" v-else>
         <v-icon left color="green">mdi-check</v-icon>Save
       </v-btn>
     </div>
@@ -39,16 +40,18 @@
     <v-card :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')">
       <div class="pa-6">
         <div class="d-flex mb-6 align-center">
+          <span v-if="mode === 'read'" class="title title-case">{{ selectedLanguage }}</span>
           <v-select
             :items="languages"
             label="Language"
             class="flex-grow-1 mr-12 short-text-field"
             single-line
-            :readonly="mode === 'read'"
+            v-else
             v-model="selectedLanguage"
           ></v-select>
+          <v-spacer v-if="mode === 'read'"></v-spacer>
           <v-btn @click="$utils.copyTextToClipboard(resource.content)">
-            <v-icon left small >mdi-content-copy</v-icon>Copy
+            <v-icon left small>mdi-content-copy</v-icon>Copy
           </v-btn>
         </div>
         <codemirror v-model="resource.content" :options="cmOptions"></codemirror>
@@ -103,7 +106,7 @@ export default {
         theme: "base16-dark",
         lineNumbers: true,
         line: true,
-        readOnly: true,
+        readOnly: "nocursor",
       },
       languages: [
         {
@@ -153,7 +156,7 @@ export default {
           text: "Edit",
           icon: "mdi-pencil",
           buttonColor: "none",
-          buttonWidth: "150",
+          buttonWidth: "125",
           iconColor: "green",
           function: function () {
             vm.edit();
@@ -163,7 +166,7 @@ export default {
           text: "Export",
           icon: "mdi-export",
           buttonColor: "none",
-          buttonWidth: "150",
+          buttonWidth: "125",
           iconColor: "blue",
           function: function () {
             vm.exportResource();
@@ -173,7 +176,7 @@ export default {
           text: "Delete",
           icon: "mdi-delete",
           buttonColor: "none",
-          buttonWidth: "150",
+          buttonWidth: "125",
           iconColor: "red",
           function: function () {
             vm.confirmDeleteDialog = true;
@@ -185,7 +188,7 @@ export default {
   watch: {
     mode() {
       var vm = this;
-      vm.cmOptions.readOnly = vm.mode === "read" ? true : false;
+      vm.cmOptions.readOnly = vm.mode === "read" ? "nocursor" : false;
     },
     selectedLanguage() {
       var vm = this;
@@ -219,7 +222,7 @@ export default {
     }
 
     if (vm.resource.language) {
-      vm.selectedLanguage = vm.resource.language
+      vm.selectedLanguage = vm.resource.language;
     }
   },
 
@@ -239,7 +242,7 @@ export default {
     save: function () {
       var vm = this;
       console.log(vm.selectedLanguage);
-      vm.resource.language = vm.selectedLanguage
+      vm.resource.language = vm.selectedLanguage;
       Auth.currentAuthenticatedUser()
         .then((data) => {
           axios({

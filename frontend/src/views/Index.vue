@@ -37,7 +37,7 @@
           :collapse="$vuetify.breakpoint.mdAndDown"
           menuText="Actions"
           menuIcon="mdi-chevron-down"
-          menuWidth="150"
+          menuWidth="125"
         />
       </div>
       <v-text-field
@@ -82,7 +82,7 @@
               >
                 <div class="d-flex flex-nowrap">
                   <v-icon small class="ml-1">mdi-tag</v-icon>
-                  <span class="px-1">No tags</span>
+                  <span class="px-1 no-wrap">No tags</span>
                 </div>
               </v-card>
 
@@ -250,7 +250,7 @@ export default {
           text: "Create",
           icon: "mdi-plus",
           buttonColor: "none",
-          buttonWidth: "150",
+          buttonWidth: "125",
           iconColor: "green",
           function: function () {
             vm.createResourcePromptDialog = true;
@@ -260,7 +260,7 @@ export default {
           text: "Import",
           icon: "mdi-import",
           buttonColor: "none",
-          buttonWidth: "150",
+          buttonWidth: "125",
           iconColor: "blue",
           function: function () {
             vm.importResource();

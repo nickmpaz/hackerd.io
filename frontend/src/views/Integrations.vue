@@ -1,7 +1,6 @@
 <template>
   <v-container fluid>
     <loading-dialog :active="generating" message="Generating API Token" />
-
     <h1 class="source-code-pro mb-6">Integrations</h1>
     <v-card class="elevation-6 pa-6">
       <div>
@@ -142,7 +141,6 @@ export default {
           console.log(err);
         });
     },
-    
   },
 };
 </script>

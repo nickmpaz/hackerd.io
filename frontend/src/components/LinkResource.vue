@@ -14,7 +14,7 @@
 
     <!-- back button -->
     <div class="d-flex my-6">
-      <v-btn color="secondary" width="150" @click="$router.push({name: 'Index'})">
+      <v-btn color="secondary" width="125" @click="$router.push({name: 'Index'})">
         <v-icon left>mdi-arrow-left</v-icon>Back
       </v-btn>
       <v-spacer></v-spacer>
@@ -24,9 +24,9 @@
         :collapse="$vuetify.breakpoint.mdAndDown"
         menuText="Actions"
         menuIcon="mdi-chevron-down"
-        menuWidth="150"
+        menuWidth="125"
       />
-      <v-btn color="secondary" width="150" @click="save" v-else>
+      <v-btn color="secondary" width="125" @click="save" v-else>
         <v-icon left color="green">mdi-check</v-icon>Save
       </v-btn>
     </div>
@@ -62,7 +62,7 @@
                   <p class="card-text">{{props.description || previewUrl }}</p>
                   <v-spacer></v-spacer>
                   <v-btn
-                    width="150"
+                    width="125"
                     color="primary"
                     @click="$utils.openInNewTab(props.url)"
                   >See More</v-btn>
@@ -122,7 +122,7 @@ export default {
           text: "Edit",
           icon: "mdi-pencil",
           buttonColor: "none",
-          buttonWidth: "150",
+          buttonWidth: "125",
           iconColor: "green",
           function: function () {
             vm.edit();
@@ -132,7 +132,7 @@ export default {
           text: "Export",
           icon: "mdi-export",
           buttonColor: "none",
-          buttonWidth: "150",
+          buttonWidth: "125",
           iconColor: "blue",
           function: function () {
             vm.exportResource();
@@ -142,7 +142,7 @@ export default {
           text: "Delete",
           icon: "mdi-delete",
           buttonColor: "none",
-          buttonWidth: "150",
+          buttonWidth: "125",
           iconColor: "red",
           function: function () {
             vm.confirmDeleteDialog = true;
