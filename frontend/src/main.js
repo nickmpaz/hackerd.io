@@ -9,6 +9,7 @@ import {store} from './store.js'
 import utils from './utils.js'
 import api from './api.js'
 import hljs from "highlight.js"
+
 Vue.prototype.$variables = variables
 Vue.prototype.$utils = utils
 Vue.prototype.$api = api

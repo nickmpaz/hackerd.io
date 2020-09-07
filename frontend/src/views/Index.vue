@@ -190,30 +190,9 @@ export default {
       };
 
       const fuse = new Fuse(filteredResources, options);
-
-      var query = vm.query;
-      var tagsToSearch = [];
-      var uniqueTags = [];
-      var tag;
-
-      if (query.includes(" ")) {
-        query.split(" ");
-        query.forEach((element) => uniqueTags.push({ element }));
-
-        for (var i = 0; i < uniqueTags.length; i++) {
-          tag = { tags: uniqueTags[i] };
-          tagsToSearch.push(tag);
-        }
-      } else {
-        tag = { tags: query };
-        tagsToSearch.push(tag);
-      }
-
-      const result = fuse.search({
-        $and: tagsToSearch,
-      });
-
+      const result = fuse.search(vm.query)
       const finalResult = result.map((a) => a.item);
+
       vm.searchResultsLength = finalResult.length;
       if (vm.focusIndex > vm.searchResultsLength - 1) {
         vm.focusIndex = vm.searchResultsLength - 1;
