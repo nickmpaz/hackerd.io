@@ -72,32 +72,8 @@
                 <v-icon v-if="resource.type === 'snippet'" class="mr-2 pb-1">mdi-code-braces</v-icon>
                 {{ resource.title ? resource.title : "Untitled"}}
               </span>
-              <v-icon class="ml-3 mr-1">mdi-minus</v-icon>
-
-              <v-card
-                class="px-1 py-1 ml-2"
-                outlined
-                v-if="resource.tags.length == 0"
-                :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
-              >
-                <div class="d-flex flex-nowrap">
-                  <v-icon small class="ml-1">mdi-tag</v-icon>
-                  <span class="px-1 no-wrap">No tags</span>
-                </div>
-              </v-card>
-
-              <v-card
-                class="px-1 py-1 ml-2"
-                outlined
-                v-for="(tag, index) in resource.tags"
-                :key="index"
-                :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
-              >
-                <div class="d-flex flex-nowrap">
-                  <v-icon small class="ml-1">mdi-tag</v-icon>
-                  <span class="px-1 no-wrap">{{ tag }}</span>
-                </div>
-              </v-card>
+              <v-icon class="mx-3">mdi-minus</v-icon>
+              <tag-list :tags="resource.tags" />
             </div>
             <v-menu bottom offset-y>
               <template v-slot:activator="{ on, attrs }">
@@ -155,6 +131,7 @@ import CreateResourcePromptDialog from "../components/CreateResourcePromptDialog
 import NoContent from "@/components/NoContent";
 import ResponsiveButtonGroup from "@/components/ResponsiveButtonGroup";
 import BreadCrumbs from "@/components/BreadCrumbs";
+import TagList from "@/components/TagList";
 
 import axios from "axios";
 import { Auth } from "aws-amplify";
@@ -169,6 +146,7 @@ export default {
     NoContent,
     ResponsiveButtonGroup,
     BreadCrumbs,
+    TagList,
   },
   props: ["drawer"],
   computed: {
@@ -190,7 +168,7 @@ export default {
       };
 
       const fuse = new Fuse(filteredResources, options);
-      const result = fuse.search(vm.query)
+      const result = fuse.search(vm.query);
       const finalResult = result.map((a) => a.item);
 
       vm.searchResultsLength = finalResult.length;
