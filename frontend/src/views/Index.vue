@@ -23,7 +23,7 @@
     <create-resource-prompt-dialog
       :active="createResourcePromptDialog"
       confirmMessage="Create"
-      declineMessage="cancel"
+      declineMessage="cancel" 
       @confirm="createResource"
       @decline="createResourcePromptDialog = false"
     />
