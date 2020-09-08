@@ -17,8 +17,8 @@ case $branch in
 esac
 
 echo "Deploying to $environment";
-
 cd backend
+
 python3 --version
 npm ci
 ./node_modules/.bin/serverless deploy --stage $environment
