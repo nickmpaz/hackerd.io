@@ -1,4 +1,4 @@
-name: Deploy
+name: frontend
 
 on:
   push:
@@ -17,7 +17,6 @@ jobs:
       with:
         python-version: '3.8'
     - name: Deploy
-      shell: bash
       env:
         CICD: "*"
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -26,6 +25,5 @@ jobs:
         GOOGLE_POOL_SECRET_PROD: ${{ secrets.GOOGLE_POOL_SECRET_PROD }}
         GOOGLE_POOL_ID_DEV: ${{ secrets.GOOGLE_POOL_ID_DEV }}
         GOOGLE_POOL_SECRET_DEV: ${{ secrets.GOOGLE_POOL_SECRET_DEV }}
-      run: |
-        ./deploy.sh -e ${GITHUB_REF##*/}
+      run: ./deploy.sh -e ${GITHUB_REF##*/}
         
