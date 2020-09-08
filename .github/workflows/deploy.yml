@@ -3,8 +3,8 @@ name: Deploy
 on:
   push:
     branches: [ master, develop ]
-    paths-ignore:
-    - 'backend/**'
+    paths:
+    - 'frontend/**'
  
 jobs:
   deploy:

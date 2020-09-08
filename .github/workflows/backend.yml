@@ -9,9 +9,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -19,13 +16,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
-    - name: Install dependencies
-      run: npm ci
-    # - name: Deploy
-    #   env:
-    #     CICD: "*"
-    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #   run: |
-    #     cd backend
+    - name: Deploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        ./deploy-backend.sh -e ${GITHUB_REF##*/}
         
