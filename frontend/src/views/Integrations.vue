@@ -18,7 +18,7 @@
           v-model="apiToken"
         >
           <template v-slot:prepend-inner>
-            <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
+            <v-progress-circular v-if="loading" size="24" indeterminate></v-progress-circular>
             <v-tooltip bottom v-else>
               <template v-slot:activator="{ on }">
                 <v-icon v-on="on" class="mr-2" @click="regenerateApiToken">mdi-refresh</v-icon>
