@@ -319,3 +319,4 @@ def external_get_resources(event, context):
         KeyConditionExpression=Key('user_id').eq(user_id))
     resources = response['Items']
     return _make_response(body={'resources': resources})
+    
