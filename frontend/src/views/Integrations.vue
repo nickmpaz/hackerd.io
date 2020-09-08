@@ -1,6 +1,5 @@
 <template>
   <v-container fluid>
-    <loading-dialog :active="generating" message="Generating API Token" />
     <h1 class="source-code-pro mb-6">Integrations</h1>
     <v-card class="elevation-6 pa-6">
       <div>
@@ -10,14 +9,6 @@
         <span>Use this token to connect {{ $variables.brand }} integrations to your account.</span>
       </div>
       <div class="d-flex pt-6">
-        <v-btn
-          height="48"
-          width="150"
-          color="secondary"
-          class="mr-2"
-          @click="regenerateApiToken"
-          :loading="loading"
-        >regenerate</v-btn>
         <v-text-field
           class="short-text-field"
           background-color="secondary"
@@ -25,9 +16,25 @@
           single-line
           readonly
           v-model="apiToken"
-          append-icon="mdi-content-copy"
-          @click:append="$utils.copyTextToClipboard(apiToken)"
-        ></v-text-field>
+        >
+          <template v-slot:prepend-inner>
+            <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
+            <v-tooltip bottom v-else>
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on" class="mr-2" @click="regenerateApiToken">mdi-refresh</v-icon>
+              </template>
+              Refresh
+            </v-tooltip>
+          </template>
+          <template v-slot:append>
+            <v-tooltip bottom v-if="!loading">
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on" @click="$utils.copyTextToClipboard(apiToken)">mdi-content-copy</v-icon>
+              </template>
+              Copy
+            </v-tooltip>
+          </template>
+        </v-text-field>
       </div>
     </v-card>
     <v-card class="elevation-6 pa-6 mt-6">
@@ -36,8 +43,6 @@
         <span>Use the {{ $variables.brand }} browser extension to quickly save web content to your knowledge base.</span>
       </div>
       <v-btn
-        height="48"
-        width="150"
         color="secondary"
         class="mt-6"
         @click="$utils.openInNewTab($variables.chromeExtensionUrl)"
@@ -68,11 +73,9 @@
 <script>
 import axios from "axios";
 import { Auth } from "aws-amplify";
-import LoadingDialog from "../components/LoadingDialog";
 
 export default {
   components: {
-    LoadingDialog,
   },
   computed: {},
   data() {
@@ -81,7 +84,6 @@ export default {
     return {
       apiToken: null,
       loading: true,
-      generating: false,
       platforms: platforms,
       selectedPlatform: platforms[0],
       linuxInstructions:
@@ -118,7 +120,7 @@ export default {
   methods: {
     regenerateApiToken: function () {
       var vm = this;
-      vm.generating = true;
+      vm.loading = true;
       Auth.currentAuthenticatedUser()
         .then((data) => {
           axios({
@@ -131,7 +133,7 @@ export default {
             .then(async function (response) {
               console.log(response);
               vm.apiToken = response.data.api_token;
-              vm.generating = false;
+              vm.loading = false;
             })
             .catch((err) => {
               console.error(err);
