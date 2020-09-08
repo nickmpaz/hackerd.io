@@ -100,8 +100,8 @@ cd ..
 
 # deploy backend
 
-cd backend
-python3 --version
-npm ci
-./node_modules/.bin/serverless deploy --stage $environment
-cd ..
+# cd backend
+# python3 --version
+# npm ci
+# ./node_modules/.bin/serverless deploy --stage $environment
+# cd ..
