@@ -21,8 +21,7 @@
       <v-col cols="auto" v-if="resource.tags.length == 0">
         <v-card
           outlined
-          class="px-1 py-1"
-          dark
+          class="px-1"
           :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
         >
           <v-icon small class="ml-1">mdi-tag</v-icon>
@@ -32,8 +31,7 @@
       <v-col cols="auto" v-for="(tag, index) in resource.tags" :key="index">
         <v-card
           outlined
-          class="px-1 py-1"
-          dark
+          class="px-1"
           :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
         >
           <v-icon @click="removeTag(tag)">mdi-close</v-icon>

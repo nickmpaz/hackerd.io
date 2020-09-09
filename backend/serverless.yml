@@ -141,6 +141,13 @@ functions:
           path: external/create_resource
           method: post
           cors: true
+  external_get_resources:
+    handler: handler.external_get_resources
+    events:
+      - http:
+          path: external/resources
+          method: post
+          cors: true
 package:
   exclude:
     - ./**

@@ -37,7 +37,7 @@
           :collapse="$vuetify.breakpoint.mdAndDown"
           menuText="Actions"
           menuIcon="mdi-chevron-down"
-          menuWidth="150"
+          menuWidth="125"
         />
       </div>
       <v-text-field
@@ -46,102 +46,78 @@
         autofocus
         single-line
         v-model="query"
-        class="short-text-field mb-4"
+        class="short-text-field mb-3"
       ></v-text-field>
       <no-content
         v-if="searchResults.length == 0"
         callToAction="Click here to create a resource."
         @engage="createResourcePromptDialog = true"
       />
-      <v-card v-else class="px-4 pt-4 pb-1">
+      <v-card v-else class="px-4 py-1">
         <v-card
           v-for="(resource, index) in searchResults"
           :key="index"
           :id="index == focusIndex ? 'focused-resource' : ''"
-          :class="'px-4 py-1 mb-4 ' + (index == focusIndex ? ('focused-resource-' + ($vuetify.theme.dark ? 'dark' : 'light')) : '')"
+          :class="'px-4 pt-1 pb-2 my-3 ' + (index == focusIndex ? ('focused-resource-' + ($vuetify.theme.dark ? 'dark' : 'light')) : '')"
           @click="viewResource(resource)"
           :ripple="false"
           role="button"
           color="secondary"
         >
-          <div class="d-flex align-center">
-            <div class="d-flex align-center no-wrap truncate-overflow flex-grow-1">
-              <span class="title title-case">
+          <div class="d-flex flex-column">
+            <div class="d-flex">
+              <div class="d-flex no-wrap truncate-overflow flex-grow-1 align-center">
                 <v-icon v-if="resource.type === 'note'" class="mr-2 pb-1">mdi-note-text</v-icon>
-                <v-icon v-if="resource.type === 'link'" class="mr-2 pb-1">mdi-link-variant</v-icon>
-                <v-icon v-if="resource.type === 'snippet'" class="mr-2 pb-1">mdi-code-braces</v-icon>
-                {{ resource.title ? resource.title : "Untitled"}}
-              </span>
-              <v-icon class="ml-3 mr-1">mdi-minus</v-icon>
-
-              <v-card
-                class="px-1 py-1 ml-2"
-                outlined
-                dark
-                v-if="resource.tags.length == 0"
-                :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
-              >
-                <div class="d-flex flex-nowrap">
-                  <v-icon small class="ml-1">mdi-tag</v-icon>
-                  <span class="px-1">No tags</span>
-                </div>
-              </v-card>
-
-              <v-card
-                class="px-1 py-1 ml-2"
-                dark
-                outlined
-                v-for="(tag, index) in resource.tags"
-                :key="index"
-                :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
-              >
-                <div class="d-flex flex-nowrap">
-                  <v-icon small class="ml-1">mdi-tag</v-icon>
-                  <span class="px-1 no-wrap">{{ tag }}</span>
-                </div>
-              </v-card>
+                <v-icon v-else-if="resource.type === 'link'" class="mr-2 pb-1">mdi-link-variant</v-icon>
+                <v-icon v-else-if="resource.type === 'snippet'" class="mr-2 pb-1">mdi-code-braces</v-icon>
+                <span class="title title-case">{{ resource.title ? resource.title : "Untitled"}}</span>
+              </div>
+              <v-menu bottom offset-y>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" class="ml-4">
+                    <v-icon>mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+                <v-list dense>
+                  <v-list-item link @click="editResource(resource)">
+                    <v-list-item-action>
+                      <v-icon color="green">mdi-pencil</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Edit</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item link @click="exportResource(resource)">
+                    <v-list-item-action>
+                      <v-icon color="blue">mdi-export</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Export</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item link @click="selecting = true; resourceToMove = resource">
+                    <v-list-item-action>
+                      <v-icon color="orange">mdi-folder-move</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Move</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item
+                    link
+                    @click="confirmDeleteDialog = true; resourceToDelete = resource"
+                  >
+                    <v-list-item-action>
+                      <v-icon color="red">mdi-delete</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Delete</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </div>
-            <v-menu bottom offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on" class="ml-4">
-                  <v-icon>mdi-dots-horizontal</v-icon>
-                </v-btn>
-              </template>
-              <v-list dense>
-                <v-list-item link @click="editResource(resource)">
-                  <v-list-item-action>
-                    <v-icon color="green">mdi-pencil</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Edit</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click="exportResource(resource)">
-                  <v-list-item-action>
-                    <v-icon color="blue">mdi-export</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Export</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click="selecting = true; resourceToMove = resource">
-                  <v-list-item-action>
-                    <v-icon color="orange">mdi-folder-move</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Move</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click="confirmDeleteDialog = true; resourceToDelete = resource">
-                  <v-list-item-action>
-                    <v-icon color="red">mdi-delete</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Delete</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-menu>
+            <tag-list :tags="resource.tags" class="truncate-overflow py-1" />
           </div>
         </v-card>
       </v-card>
@@ -157,6 +133,7 @@ import CreateResourcePromptDialog from "../components/CreateResourcePromptDialog
 import NoContent from "@/components/NoContent";
 import ResponsiveButtonGroup from "@/components/ResponsiveButtonGroup";
 import BreadCrumbs from "@/components/BreadCrumbs";
+import TagList from "@/components/TagList";
 
 import axios from "axios";
 import { Auth } from "aws-amplify";
@@ -171,6 +148,7 @@ export default {
     NoContent,
     ResponsiveButtonGroup,
     BreadCrumbs,
+    TagList,
   },
   props: ["drawer"],
   computed: {
@@ -192,30 +170,9 @@ export default {
       };
 
       const fuse = new Fuse(filteredResources, options);
-
-      var query = vm.query;
-      var tagsToSearch = [];
-      var uniqueTags = [];
-      var tag;
-
-      if (query.includes(" ")) {
-        query.split(" ");
-        query.forEach((element) => uniqueTags.push({ element }));
-
-        for (var i = 0; i < uniqueTags.length; i++) {
-          tag = { tags: uniqueTags[i] };
-          tagsToSearch.push(tag);
-        }
-      } else {
-        tag = { tags: query };
-        tagsToSearch.push(tag);
-      }
-
-      const result = fuse.search({
-        $and: tagsToSearch,
-      });
-
+      const result = fuse.search(vm.query);
       const finalResult = result.map((a) => a.item);
+
       vm.searchResultsLength = finalResult.length;
       if (vm.focusIndex > vm.searchResultsLength - 1) {
         vm.focusIndex = vm.searchResultsLength - 1;
@@ -252,7 +209,7 @@ export default {
           text: "Create",
           icon: "mdi-plus",
           buttonColor: "none",
-          buttonWidth: "150",
+          buttonWidth: "125",
           iconColor: "green",
           function: function () {
             vm.createResourcePromptDialog = true;
@@ -262,7 +219,7 @@ export default {
           text: "Import",
           icon: "mdi-import",
           buttonColor: "none",
-          buttonWidth: "150",
+          buttonWidth: "125",
           iconColor: "blue",
           function: function () {
             vm.importResource();
@@ -359,7 +316,6 @@ export default {
       focused.scrollIntoView({
         behavior: "auto",
         block: "center",
-        inline: "center",
       });
     },
     incrementFocus: function () {

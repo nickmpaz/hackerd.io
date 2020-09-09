@@ -8,11 +8,10 @@ import variables from './variables.js'
 import {store} from './store.js'
 import utils from './utils.js'
 import api from './api.js'
-import hljs from "highlight.js"
+
 Vue.prototype.$variables = variables
 Vue.prototype.$utils = utils
 Vue.prototype.$api = api
-Vue.prototype.$hljs = hljs
 Vue.config.productionTip = false
 Amplify.configure(aws_exports)
 

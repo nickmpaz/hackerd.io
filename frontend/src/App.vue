@@ -10,6 +10,7 @@
       class="no-transition"
       v-if="authenticated"
       :temporary="drawerIsTemporary"
+      touchless
     >
       <div class="d-flex fill-height">
         <side-nav
@@ -32,7 +33,7 @@
       :style="drawerIsTemporary ? ('margin-left: ' + sideNavWidth + 'px;') : ''"
     >
       <v-row justify="center">
-        <v-col :cols="contentCols">
+        <v-col :cols="contentCols" class="px-6">
           <router-view />
         </v-col>
       </v-row>

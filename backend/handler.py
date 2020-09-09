@@ -303,3 +303,19 @@ def external_create_resource(event, context):
 
     resources_table.put_item(Item=resource)
     return _make_response(body={"resource": resource})
+
+
+def external_get_resources(event, context):
+    print(event)
+    api_token = json.loads(event['body']).get('apiToken')
+    response = api_tokens_table.scan(
+        FilterExpression=Attr('api_token').eq(api_token))
+    items = response['Items']
+    if len(items) == 0:
+        return _make_response(status_code=HTTPStatus.FORBIDDEN)
+
+    user_id = items[0].get('user_id')
+    response = resources_table.query(
+        KeyConditionExpression=Key('user_id').eq(user_id))
+    resources = response['Items']
+    return _make_response(body={'resources': resources})

@@ -22,13 +22,18 @@ esac
 
 echo "Deploying to $environment";
 
+# initialize terraform 
+
+cd terraform 
+terraform init
+cd ..
+
 # install and initialize amplify
 
-which python3
+cd frontend
 
 sudo npm install -g @aws-amplify/cli
 mkdir ~/.aws && touch ~/.aws/credentials && touch ~/.aws/config
-cd frontend
 
 export AMPLIFY_APP_ID=d1ud1g6a0miz27
 export AMPLIFY_APP_NAME=Dolphin
@@ -82,26 +87,7 @@ amplify pull \
 --categories $CATEGORIES \
 --yes
 
-cd ..
 
-# initialize terraform 
-
-cd terraform 
-terraform init
-cd ..
-
-# deploy frontend
-
-cd frontend
 npm ci
 npm run build:$environment
 aws s3 sync --delete ./dist s3://$(cd ../terraform && terraform output bucket_$environment)
-cd ..
-
-# deploy backend
-
-cd backend
-python3 --version
-npm ci
-./node_modules/.bin/serverless deploy --stage $environment
-cd ..
