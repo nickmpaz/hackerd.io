@@ -131,3 +131,4 @@ if __name__ == "__main__":
         configure()
     elif args.category == "snippet":
         create_snippet(args.stage)
+        
