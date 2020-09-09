@@ -1,0 +1,22 @@
+
+.stashable-container {
+    display: flex;
+    margin-left: 180px;
+    margin-top: 1rem;
+    overflow-x: auto;
+}
+/* div.stashable-container::-webkit-scrollbar { 
+    display: none;  
+} */
+.stashable-card {
+    border:1px solid lightgrey;
+    border-radius: 8px;
+    padding: 15px;
+    flex-shrink: 0;
+    margin-right: 1rem;
+}
+
+.stashable-title {
+    font-size: 20px;
+    line-height: 1.3;
+}
