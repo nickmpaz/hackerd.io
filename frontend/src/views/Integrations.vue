@@ -29,7 +29,7 @@
           <template v-slot:append>
             <v-tooltip bottom v-if="!loading">
               <template v-slot:activator="{ on }">
-                <v-icon v-on="on" @click="$utils.copyTextToClipboard(apiToken)">mdi-content-copy</v-icon>
+                <v-icon v-on="on" class="ml-2" @click="$utils.copyTextToClipboard(apiToken)">mdi-content-copy</v-icon>
               </template>
               Copy
             </v-tooltip>
@@ -39,8 +39,12 @@
     </v-card>
     <v-card class="elevation-6 pa-6 mt-6">
       <span class="title px-2">Google Chrome Extension</span>
-      <div class="d-flex pt-6 px-2">
-        <span>Use the {{ $variables.brand }} browser extension to quickly save web content to your knowledge base.</span>
+      <div class="pt-6 px-2">
+        <span>Bring {{ $variables.brand }} to your browser:</span>
+        <ul>
+          <li>See relevant resources when you use Google Search</li>
+          <li>Quickly save new web content to your Stash</li>
+        </ul>
       </div>
       <v-btn
         color="secondary"
@@ -50,8 +54,12 @@
     </v-card>
     <v-card class="elevation-6 pa-6 mt-6">
       <span class="title px-2">Command Line Interface</span>
-      <div class="d-flex pt-6 px-2">
-        <span>Use the {{ $variables.brand }} command line interface to create new resources using your IDE.</span>
+      <div class="pt-6 px-2">
+      <span>Interact with your resources from the command line:</span>
+        <ul>
+          <li>Search for resources and copy them to your clipboard</li>
+          <li>Create new resources with you text editor or IDE</li>
+        </ul>
       </div>
 
       <v-select
@@ -75,8 +83,7 @@ import axios from "axios";
 import { Auth } from "aws-amplify";
 
 export default {
-  components: {
-  },
+  components: {},
   computed: {},
   data() {
     // var vm = this
