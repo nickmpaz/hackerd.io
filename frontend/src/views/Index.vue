@@ -316,7 +316,6 @@ export default {
       focused.scrollIntoView({
         behavior: "auto",
         block: "center",
-        inline: "center",
       });
     },
     incrementFocus: function () {
