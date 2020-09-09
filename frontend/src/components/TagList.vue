@@ -4,7 +4,7 @@
       <v-col cols="auto" v-if="tags.length == 0">
         <v-card
           outlined
-          class="pa-1"
+          class="px-1"
           :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
         >
           <v-icon small class="ml-1">mdi-tag</v-icon>
@@ -14,7 +14,7 @@
       <v-col cols="auto" v-for="(tag, index) in tags" :key="index">
         <v-card
           outlined
-          class="px-1 py-1"
+          class="px-1 "
           :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
         >
           <v-icon small class="ml-1">mdi-tag</v-icon>
@@ -24,7 +24,7 @@
     </v-row>
     <div v-else class="d-flex">
       <v-card
-        class="pa-1"
+        class="px-1"
         outlined
         v-if="tags.length == 0"
         :style="'border-color: ' + ($vuetify.theme.isDark ? $vuetify.theme.themes.dark.primary : $vuetify.theme.themes.light.primary)"
@@ -35,7 +35,7 @@
         </div>
       </v-card>
       <v-card
-        :class="'pa-1 ' + (index == 0 || 'ml-2')"
+        :class="'px-1 ' + (index == 0 || 'ml-2')"
         outlined
         v-for="(tag, index) in tags"
         :key="index"

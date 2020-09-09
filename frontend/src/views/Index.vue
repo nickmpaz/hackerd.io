@@ -23,7 +23,7 @@
     <create-resource-prompt-dialog
       :active="createResourcePromptDialog"
       confirmMessage="Create"
-      declineMessage="cancel" 
+      declineMessage="cancel"
       @confirm="createResource"
       @decline="createResourcePromptDialog = false"
     />
@@ -58,64 +58,66 @@
           v-for="(resource, index) in searchResults"
           :key="index"
           :id="index == focusIndex ? 'focused-resource' : ''"
-          :class="'px-4 py-1 my-3 ' + (index == focusIndex ? ('focused-resource-' + ($vuetify.theme.dark ? 'dark' : 'light')) : '')"
+          :class="'px-4 pt-1 pb-2 my-3 ' + (index == focusIndex ? ('focused-resource-' + ($vuetify.theme.dark ? 'dark' : 'light')) : '')"
           @click="viewResource(resource)"
           :ripple="false"
           role="button"
           color="secondary"
         >
-          <div class="d-flex align-center">
-            <div class="d-flex align-center no-wrap truncate-overflow flex-grow-1">
-              <span class="title title-case">
+          <div class="d-flex flex-column">
+            <div class="d-flex">
+              <div class="d-flex no-wrap truncate-overflow flex-grow-1 align-center">
                 <v-icon v-if="resource.type === 'note'" class="mr-2 pb-1">mdi-note-text</v-icon>
-                <v-icon v-if="resource.type === 'link'" class="mr-2 pb-1">mdi-link-variant</v-icon>
-                <v-icon v-if="resource.type === 'snippet'" class="mr-2 pb-1">mdi-code-braces</v-icon>
-                {{ resource.title ? resource.title : "Untitled"}}
-              </span>
-              <v-icon class="mx-3">mdi-minus</v-icon>
-              <tag-list :tags="resource.tags" />
+                <v-icon v-else-if="resource.type === 'link'" class="mr-2 pb-1">mdi-link-variant</v-icon>
+                <v-icon v-else-if="resource.type === 'snippet'" class="mr-2 pb-1">mdi-code-braces</v-icon>
+                <span class="title title-case">{{ resource.title ? resource.title : "Untitled"}}</span>
+              </div>
+              <v-menu bottom offset-y>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" class="ml-4">
+                    <v-icon>mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+                <v-list dense>
+                  <v-list-item link @click="editResource(resource)">
+                    <v-list-item-action>
+                      <v-icon color="green">mdi-pencil</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Edit</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item link @click="exportResource(resource)">
+                    <v-list-item-action>
+                      <v-icon color="blue">mdi-export</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Export</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item link @click="selecting = true; resourceToMove = resource">
+                    <v-list-item-action>
+                      <v-icon color="orange">mdi-folder-move</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Move</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item
+                    link
+                    @click="confirmDeleteDialog = true; resourceToDelete = resource"
+                  >
+                    <v-list-item-action>
+                      <v-icon color="red">mdi-delete</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Delete</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </div>
-            <v-menu bottom offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on" class="ml-4">
-                  <v-icon>mdi-dots-horizontal</v-icon>
-                </v-btn>
-              </template>
-              <v-list dense>
-                <v-list-item link @click="editResource(resource)">
-                  <v-list-item-action>
-                    <v-icon color="green">mdi-pencil</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Edit</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click="exportResource(resource)">
-                  <v-list-item-action>
-                    <v-icon color="blue">mdi-export</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Export</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click="selecting = true; resourceToMove = resource">
-                  <v-list-item-action>
-                    <v-icon color="orange">mdi-folder-move</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Move</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click="confirmDeleteDialog = true; resourceToDelete = resource">
-                  <v-list-item-action>
-                    <v-icon color="red">mdi-delete</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Delete</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-menu>
+            <tag-list :tags="resource.tags" class="truncate-overflow py-1" />
           </div>
         </v-card>
       </v-card>
