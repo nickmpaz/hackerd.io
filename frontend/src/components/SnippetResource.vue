@@ -107,6 +107,8 @@ export default {
         lineNumbers: true,
         line: true,
         readOnly: "nocursor",
+        viewportMargin: 50,
+        lineWrapping: true,
       },
       languages: [
         {
@@ -316,9 +318,14 @@ export default {
 @import "../styles/markdown-light.scss";
 @import "../styles/markdown-dark.scss";
 
-.CodeMirror-scroll {
-  overflow: auto !important;
+.CodeMirror {
+  height: auto;
+  width: auto;
 }
+
+// .CodeMirror-scroll {
+//   overflow-x: visible !important;
+// }
 
 :focus {
   outline: none;
