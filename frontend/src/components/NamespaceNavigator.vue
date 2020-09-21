@@ -146,13 +146,16 @@ export default {
     createNamespace: async function (name) {
       var vm = this;
       vm.createNamespacePromptDialog = false;
-      await vm.$api.createNamespace(
+      vm.creatingDialog = true;
+      var namespace = await vm.$api.createNamespace(
         vm.stashId,
         name,
         vm.$store.getters.namespace.sk
       );
       var namespaces = await vm.$api.indexNamespaces(vm.stashId);
+      vm.creatingDialog = false;
       vm.$store.commit("namespaces", namespaces);
+      vm.$store.commit("namespace", namespace.sk);
     },
     deleteNamespace: async function () {
       var vm = this;
