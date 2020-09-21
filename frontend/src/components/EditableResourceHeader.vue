@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-text-field
-      v-model="resource.title"
+      v-model="resource.name"
       class="short-text-field"
       label="Title"
       single-line

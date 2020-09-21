@@ -1,6 +1,6 @@
 <template>
-  <v-card>
-    <div class="d-flex justify-center px-6 py-12">
+  <v-card class="fill-height">
+    <div class="d-flex justify-center align-center fill-height px-6 py-12">
       <span class="title">
         There's nothing here.
         <span @click="engage" class="cursor-pointer primary--text">{{ callToAction }}</span>

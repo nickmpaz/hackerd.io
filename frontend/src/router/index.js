@@ -1,22 +1,22 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Index from '../views/Index.vue'
+// import Index from '../views/Index.vue'
 import SignIn from '../views/SignIn.vue'
 import { Auth } from 'aws-amplify'
 
 Vue.use(VueRouter)
 
 const routes = [
+  // {
+  //   path: '/',
+  //   name: 'Index',
+  //   component: Index,
+  //   meta: { requiresAuth: true }
+  // },
   {
     path: '/',
     name: 'Index',
-    component: Index,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/',
-    name: 'Daily',
-    component: () => import('../views/Daily.vue'),
+    component: () => import('../views/Index.vue'),
     meta: { requiresAuth: true }
   },
   {
@@ -38,12 +38,18 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/:resource_id',
+    path: '/:stashId',
+    name: 'Stash',
+    component: () => import('../views/Stash.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/:stashId/:resourceId',
     name: 'Resource',
     component: () => import('../views/Resource.vue'),
     meta: { requiresAuth: true }
   },
-  
+
 ]
 
 const router = new VueRouter({
@@ -52,15 +58,12 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log('entering router guard')
   var authenticated = false
   Auth.currentAuthenticatedUser()
     .then(() => {
-      console.log('authed')
       authenticated = true
     })
     .catch(() => {
-      console.log('not authed')
       authenticated = false
     })
     .finally(() => {
@@ -68,18 +71,13 @@ router.beforeEach((to, from, next) => {
         to.matched.some(record => record.meta.requiresAuth) &&
         !authenticated
       ) {
-        console.log(
-          'not authenticated, trying to access restricted page. redirect to auth'
-        )
         next('/auth')
       } else if (
         !to.matched.some(record => record.meta.requiresAuth) &&
         authenticated
       ) {
-        console.log('authenticated trying to access auth. redirect to index')
         next('/')
       } else {
-        console.log('good permissions. continuing')
         next()
       }
     })

@@ -111,6 +111,47 @@ resource "aws_dynamodb_table" "dolphin_users_table" {
   }
 }
 
+resource "aws_dynamodb_table" "dolphin_stashes_table" {
+  name             = "dolphin_stashes_table"
+  hash_key         = "user_id"
+  range_key        = "id"
+  billing_mode     = "PAY_PER_REQUEST"
+
+  attribute {
+    name = "user_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "id"
+    type = "S"
+  }
+}
+
+resource "aws_dynamodb_table" "stashable_table" {
+  name             = "StashableTable"
+  billing_mode     = "PAY_PER_REQUEST"
+  hash_key         = "pk"
+  range_key        = "sk"
+
+  attribute {
+    name = "pk"
+    type = "S"
+  }
+
+  attribute {
+    name = "sk"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "StashableIndex"
+    hash_key           = "sk"
+    range_key          = "pk"
+    projection_type    = "ALL"
+  }
+}
+
 # WEBSITE - S3
 
 resource "aws_s3_bucket" "prod" {

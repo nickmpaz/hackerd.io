@@ -1,24 +1,26 @@
 <template>
-  <v-container fluid>
+  <div>
     <h1 class="source-code-pro mb-6">Settings</h1>
-    <v-card class="elevation-6">
+    <v-card class="elevation-6 pa-6">
       <v-row>
-        <v-col cols="6">
-          <div class="mx-5 mt-5 mb-8">
-            <span class="title">Appearances</span>
-          </div>
+        <v-col cols="12" md="6">
+          <span class="title">Appearances</span>
+          <hr class="mt-1" />
           <v-switch
             v-model="$vuetify.theme.dark"
             @change="setDarkModePreference()"
             primary
             label="Dark Mode"
-            class="mx-5"
-          />
+          >
+            <template v-slot:label>
+              <span class="ml-2">Dark Mode</span>
+            </template>
+          </v-switch>
         </v-col>
-        <v-col cols="6"></v-col>
+        <v-col cols="12" md="6"></v-col>
       </v-row>
     </v-card>
-  </v-container>
+  </div>
 </template>
 
 <script>

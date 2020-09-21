@@ -115,7 +115,6 @@ export default {
     },
     getImgUrl: function (img) {
       var images = require.context("../assets/");
-      console.log(this.$route);
       return images("./" + img);
     },
     scrollToAbout: function () {

@@ -1,10 +1,11 @@
 <template>
-  <v-container fluid>
+  <div>
     <h1 class="source-code-pro mb-6">Integrations</h1>
     <v-card class="elevation-6 pa-6">
       <div>
         <span class="title px-2">API Token</span>
       </div>
+      <hr class="mt-1">
       <div class="d-flex pt-6 px-2">
         <span>Use this token to connect {{ $variables.brand }} integrations to your account.</span>
       </div>
@@ -39,6 +40,7 @@
     </v-card>
     <v-card class="elevation-6 pa-6 mt-6">
       <span class="title px-2">Google Chrome Extension</span>
+      <hr class="mt-1">
       <div class="pt-6 px-2">
         <span>Bring {{ $variables.brand }} to your browser:</span>
         <ul>
@@ -54,6 +56,7 @@
     </v-card>
     <v-card class="elevation-6 pa-6 mt-6">
       <span class="title px-2">Command Line Interface</span>
+      <hr class="mt-1">
       <div class="pt-6 px-2">
       <span>Interact with your resources from the command line:</span>
         <ul>
@@ -75,7 +78,7 @@
         <pre><code>{{ linuxInstructions }}</code></pre>
       </div>
     </v-card>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -95,8 +98,8 @@ export default {
       selectedPlatform: platforms[0],
       linuxInstructions:
         "$ wget --no-check-certificate https://cli.stashable.io.s3.amazonaws.com/linux/stashable\n" +
-        "$ mv stashable /usr/local/bin/\n" +
-        "$ chmod +x /usr/local/bin/stashable\n" +
+        "$ sudo mv stashable /usr/local/bin/\n" +
+        "$ sudo chmod +x /usr/local/bin/stashable\n" +
         "$ stashable --help",
     };
   },

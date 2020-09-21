@@ -1,20 +1,33 @@
 <template>
-  <v-container fluid>
+  <div class="fill-height">
     <loading-dialog :active="loading" message="Loading" />
-
-    <div v-if="!loading">
-      <h1 class="source-code-pro">Resources</h1>
-      <note-resource v-if="resource.type === 'note'" :resource="resource" :editMode="edit" />
-      <link-resource v-if="resource.type === 'link'" :resource="resource" :editMode="edit"/>
-      <snippet-resource v-if="resource.type === 'snippet'" :resource="resource" :editMode="edit" />
+    <div v-if="!loading" class="d-flex flex-column fill-height">
+      <h1 v-if="resource.type === 'note'" class="source-code-pro">Note</h1>
+      <h1 v-else-if="resource.type === 'link'" class="source-code-pro">Link</h1>
+      <h1 v-else-if="resource.type === 'snippet'" class="source-code-pro">Snippet</h1>
+      <note-resource
+        v-if="resource.type === 'note'"
+        :resource="resource"
+        :editMode="edit"
+        class="flex-grow-1"
+      />
+      <link-resource
+        v-else-if="resource.type === 'link'"
+        :resource="resource"
+        :editMode="edit"
+        class="flex-grow-1"
+      />
+      <snippet-resource
+        v-else-if="resource.type === 'snippet'"
+        :resource="resource"
+        :editMode="edit"
+        class="flex-grow-1"
+      />
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script>
-import axios from "axios";
-import { Auth } from "aws-amplify";
-
 import LoadingDialog from "../components/LoadingDialog";
 import LinkResource from "../components/LinkResource";
 import NoteResource from "../components/NoteResource";
@@ -35,33 +48,12 @@ export default {
   async created() {
     var vm = this;
     vm.edit = vm.$route.params.edit;
-    if (vm.$route.params.resource) {
-      vm.resource = vm.$route.params.resource;
-      vm.loading = false;
-      console.log(vm.resource);
-    } else {
-      Auth.currentAuthenticatedUser()
-        .then((data) => {
-          axios({
-            method: vm.$variables.api.getResource.method,
-            url:
-              vm.$variables.api.getResource.url + vm.$route.params.resource_id,
-            headers: {
-              Authorization: data.signInUserSession.idToken.jwtToken,
-            },
-          })
-            .then(async function (response) {
-              vm.resource = response.data.resource;
-              vm.loading = false;
-            })
-            .catch((err) => {
-              console.error(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    vm.resource = await vm.$api.getResource(
+      vm.$route.params.stashId,
+      vm.$route.params.resourceId
+    );
+    console.log(vm.resource);
+    vm.loading = false;
   },
 };
 </script>

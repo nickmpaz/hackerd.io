@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex flex-column fill-height">
     <!-- dialogs -->
     <loading-dialog :active="deleting" message="Deleting" />
     <confirm-dialog
@@ -14,7 +14,7 @@
 
     <!-- back button -->
     <div class="d-flex my-6">
-      <v-btn width="125" @click="$router.push({name: 'Index'})">
+      <v-btn color="secondary" width="125" @click="$utils.goBack">
         <v-icon left>mdi-arrow-left</v-icon>Back
       </v-btn>
       <v-spacer></v-spacer>
@@ -26,7 +26,7 @@
         menuIcon="mdi-chevron-down"
         menuWidth="125"
       />
-      
+
       <v-btn color="secondary" width="125" @click="save" v-else>
         <v-icon left color="green">mdi-check</v-icon>Save
       </v-btn>
@@ -37,32 +37,41 @@
       <editable-resource-header v-if="mode === 'write'" :resource="resource" />
     </v-card>
     <!-- editor card -->
-    <v-card :class="(this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')">
-      <div class="pa-6">
-        <div class="d-flex mb-6 align-center">
-          <span v-if="mode === 'read'" class="title title-case">{{ selectedLanguage }}</span>
-          <v-select
-            :items="languages"
-            label="Language"
-            class="flex-grow-1 mr-12 short-text-field"
-            single-line
-            v-else
-            v-model="selectedLanguage"
-          ></v-select>
-          <v-spacer v-if="mode === 'read'"></v-spacer>
-          <v-btn @click="$utils.copyTextToClipboard(resource.content)">
-            <v-icon left small>mdi-content-copy</v-icon>Copy
-          </v-btn>
-        </div>
-        <codemirror v-model="resource.content" :options="cmOptions"></codemirror>
+    <no-content
+      v-if="resource.content == '' && mode === 'read'"
+      callToAction="Click here to start editing."
+      @engage="mode = 'write'"
+      class="flex-grow-1"
+    />
+    <v-card
+      v-else
+      :class="'flex-grow-1 pa-6 d-flex flex-column ' + (this.$vuetify.theme.dark ? 'markdown-body-dark' : 'markdown-body-light')"
+    >
+      <div class="d-flex mb-6 align-center">
+        <span v-if="mode === 'read'" class="title title-case">{{ selectedLanguage }}</span>
+        <v-select
+          :items="languages"
+          label="Language"
+          class="flex-grow-1 mr-12 short-text-field"
+          single-line
+          v-else
+          v-model="selectedLanguage"
+        ></v-select>
+        <v-spacer v-if="mode === 'read'"></v-spacer>
+        <v-btn @click="$utils.copyTextToClipboard(resource.content)">
+          <v-icon left small>mdi-content-copy</v-icon>Copy
+        </v-btn>
       </div>
+      <codemirror
+        v-model="resource.content"
+        ref="cmEditor"
+        :options="cmOptions"
+        class="flex-grow-1 code-mirror-filler"
+      ></codemirror>
     </v-card>
   </div>
 </template>
 <script>
-import axios from "axios";
-import { Auth } from "aws-amplify";
-
 import { codemirror } from "vue-codemirror";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/base16-dark.css";
@@ -81,6 +90,7 @@ import EditableResourceHeader from "../components/EditableResourceHeader";
 import ResourceHeader from "../components/ResourceHeader";
 import ConfirmDialog from "../components/ConfirmDialog";
 import ResponsiveButtonGroup from "@/components/ResponsiveButtonGroup";
+import NoContent from "@/components/NoContent";
 
 export default {
   components: {
@@ -90,6 +100,7 @@ export default {
     ResourceHeader,
     ResponsiveButtonGroup,
     codemirror,
+    NoContent,
   },
   props: ["resource", "editMode"],
   data() {
@@ -100,57 +111,25 @@ export default {
       confirmDeleteDialog: false,
       deleting: false,
       cmOptions: {
-        // codemirror options
         tabSize: 2,
         mode: null,
         theme: "base16-dark",
         lineNumbers: true,
         line: true,
         readOnly: "nocursor",
-        viewportMargin: 50,
         lineWrapping: true,
       },
       languages: [
-        {
-          text: "No Language Selected",
-          value: null,
-        },
-        {
-          text: "C",
-          value: "clike",
-        },
-        {
-          text: "C++",
-          value: "clike",
-        },
-        {
-          text: "CSS",
-          value: "css",
-        },
-        {
-          text: "Go",
-          value: "go",
-        },
-        {
-          text: "HTML",
-          value: "htmlmixed",
-        },
-        {
-          text: "Javascript",
-          value: "javascript",
-        },
-        {
-          text: "Python",
-          value: "python",
-        },
-        {
-          text: "Ruby",
-          value: "ruby",
-        },
-        {
-          text: "Vue",
-          value: "vue",
-        },
+        { text: "No Language Selected", value: null },
+        { text: "C", value: "clike" },
+        { text: "C++", value: "clike" },
+        { text: "CSS", value: "css" },
+        { text: "Go", value: "go" },
+        { text: "HTML", value: "htmlmixed" },
+        { text: "Javascript", value: "javascript" },
+        { text: "Python", value: "python" },
+        { text: "Ruby", value: "ruby" },
+        { text: "Vue", value: "vue" },
       ],
       selectedLanguage: null,
       actionItems: [
@@ -197,26 +176,6 @@ export default {
       vm.cmOptions.mode = vm.selectedLanguage;
     },
   },
-  mounted() {
-    var vm = this;
-    this._keyListener = function (e) {
-      if (e.key === "i" && (e.ctrlKey || e.metaKey) && vm.mode === "read") {
-        e.preventDefault();
-        vm.edit();
-      } else if (
-        e.key === "s" &&
-        (e.ctrlKey || e.metaKey) &&
-        vm.mode === "write"
-      ) {
-        e.preventDefault();
-        vm.save();
-      } else if (e.key === "h" && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        vm.$router.push({ name: "Index" });
-      }
-    };
-    document.addEventListener("keydown", this._keyListener);
-  },
   created() {
     var vm = this;
     if (vm.editMode) {
@@ -227,89 +186,38 @@ export default {
       vm.selectedLanguage = vm.resource.language;
     }
   },
-
   methods: {
-    clearSelection: function () {
-      if (window.getSelection) {
-        window.getSelection().removeAllRanges();
-      } else if (document.selection) {
-        document.selection.empty();
-      }
-    },
     edit: function () {
       var vm = this;
       vm.mode = "write";
-      vm.fab = false;
     },
-    save: function () {
+    save: async function () {
       var vm = this;
-      console.log(vm.selectedLanguage);
-      vm.resource.language = vm.selectedLanguage;
-      Auth.currentAuthenticatedUser()
-        .then((data) => {
-          axios({
-            method: vm.$variables.api.updateResource.method,
-            url:
-              vm.$variables.api.updateResource.url +
-              vm.$route.params.resource_id,
-            headers: {
-              Authorization: data.signInUserSession.idToken.jwtToken,
-            },
-            data: {
-              resource: vm.resource,
-            },
-          })
-            .then((response) => {
-              console.log(response);
-              // correct the updated_at time with new time from server
-              vm.resource.updated_at = response.data.resource.updated_at;
-            })
-            .catch((err) => {
-              console.error(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
       vm.mode = "read";
-      vm.clearSelection();
-      console.log(vm.resource.content);
+      await vm.$api.updateResource(
+        vm.$route.params.stashId,
+        vm.$route.params.resourceId,
+        vm.resource.name,
+        vm.resource.tags,
+        vm.resource.content,
+        vm.selectedLanguage
+      );
     },
-    deleteResource: function () {
+    deleteResource: async function () {
       var vm = this;
       vm.confirmDeleteDialog = false;
       vm.deleting = true;
-      Auth.currentAuthenticatedUser()
-        .then((data) => {
-          axios({
-            method: vm.$variables.api.deleteResource.method,
-            url:
-              vm.$variables.api.deleteResource.url +
-              vm.$route.params.resource_id,
-            headers: {
-              Authorization: data.signInUserSession.idToken.jwtToken,
-            },
-          })
-            .then((response) => {
-              console.log(response);
-              vm.$router.push({ name: "Index" });
-            })
-            .catch((err) => {
-              console.error(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await vm.$api.deleteResource(
+        vm.$route.params.stashId,
+        vm.$route.params.resourceId
+      );
+      vm.deleting = false;
+      vm.$utils.goBack();
     },
     exportResource: function () {
       var vm = this;
-      vm.$utils.downloadObj(vm.resource, vm.resource.title);
+      vm.$utils.downloadObj(vm.resource, vm.resource.name);
     },
-  },
-  beforeDestroy() {
-    document.removeEventListener("keydown", this._keyListener);
   },
 };
 </script>
@@ -319,13 +227,15 @@ export default {
 @import "../styles/markdown-dark.scss";
 
 .CodeMirror {
-  height: auto;
-  width: auto;
+  height: auto !important;
 }
 
-// .CodeMirror-scroll {
-//   overflow-x: visible !important;
-// }
+// FIXME kinda hacky - solution is to download code mirror themes locally,
+// add this class to the css file, with background color matching that
+// of the theme
+.code-mirror-filler {
+  background-color: #151515;
+}
 
 :focus {
   outline: none;
