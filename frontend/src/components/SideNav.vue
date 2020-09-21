@@ -8,21 +8,17 @@
       @confirm="signOut"
       @decline="signOutDialog = false"
     />
-    <v-navigation-drawer
-      permanent
-      mini-variant
-      :mini-variant-width="width"
-    >
+    <v-navigation-drawer permanent mini-variant :mini-variant-width="width">
       <v-list :dense="$vuetify.breakpoint.lgAndDown" nav>
         <v-list-item
-          v-if="$route.name !== 'Index' && $route.name !== 'Resource'"
+          v-if="$route.name !== 'Stash' && $route.name !== 'Resource'"
           link
-          @click="$router.push({name: 'Index'})"
+          @click="$route.name === 'Index' || $router.push({name: 'Index'})"
         >
           <v-list-item-action>
             <v-icon
               :large="$vuetify.breakpoint.lgAndUp"
-              :color="( $route.name === 'Index' || $route.name === 'Resource' ) ? 'primary' : ''"
+              :color="( $route.name === 'Index' || $route.name === 'Stash' || $route.name === 'Resource' ) ? 'primary' : ''"
             >mdi-view-dashboard</v-icon>
           </v-list-item-action>
           <v-list-item-content>
@@ -33,7 +29,7 @@
           <v-list-item-action>
             <v-icon
               :large="$vuetify.breakpoint.lgAndUp"
-              :color="( $route.name === 'Index' || $route.name === 'Resource' ) ? 'primary' : ''"
+              :color="( $route.name === 'Index' || $route.name === 'Stash' || $route.name === 'Resource' ) ? 'primary' : ''"
             >mdi-chevron-double-left</v-icon>
           </v-list-item-action>
           <v-list-item-content>
@@ -44,7 +40,7 @@
           <v-list-item-action>
             <v-icon
               :large="$vuetify.breakpoint.lgAndUp"
-              :color="( $route.name === 'Index' || $route.name === 'Resource' ) ? 'primary' : ''"
+              :color="( $route.name === 'Index' || $route.name === 'Stash' || $route.name === 'Resource' ) ? 'primary' : ''"
             >mdi-chevron-double-right</v-icon>
           </v-list-item-action>
           <v-list-item-content>
@@ -61,7 +57,7 @@
           <v-list-item-content>
             <v-list-item-title>Settings</v-list-item-title>
           </v-list-item-content>
-        </v-list-item> -->
+        </v-list-item>-->
         <v-list-item link @click="$router.push({name: 'Integrations'})">
           <v-list-item-action>
             <v-icon

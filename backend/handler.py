@@ -14,6 +14,7 @@ resources_table = dynamodb.Table('dolphin_resources_table')
 namespaces_table = dynamodb.Table('dolphin_namespaces_table')
 api_tokens_table = dynamodb.Table('dolphin_api_tokens_table')
 users_table = dynamodb.Table('dolphin_users_table')
+stashes_table = dynamodb.Table('dolphin_stashes_table')
 
 
 def _make_response(body={}, status_code=HTTPStatus.OK):
@@ -237,6 +238,32 @@ def delete_namespace(event, context):
 
 #     namespaces_table.put_item(Item=namespace)
 #     return _make_response(body={'namespace': namespace})
+
+def create_stash(event, context):
+    user_id = event['requestContext']['authorizer']['claims']['sub']
+    stash_id = _generate_unique_id(stashes_table, 'id')
+    name = json.loads(event['body']).get('name')
+    now = str(int(time.time()))
+
+    stash = {
+        'user_id': user_id,
+        'id': stash_id,
+        'name': name,
+        'created_at': now,
+        'updated_at': now,
+        'viewed_at': now,
+    }
+
+    stashes_table.put_item(Item=stash)
+    return _make_response(body={"stash": stash})
+
+def get_stashes(event, context):
+    user_id = event['requestContext']['authorizer']['claims']['sub']
+
+    response = stashes_table.query(
+        KeyConditionExpression=Key('user_id').eq(user_id))
+    stashes = response['Items']
+    return _make_response(body={'stashes': stashes})
 
 ### API TOKENS
 

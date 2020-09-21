@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="title-case">{{ resource.title ? resource.title : "Untitled"}}</h1>
+    <h1 class="title-case">{{ resource.name ? resource.name : "Untitled"}}</h1>
     <tag-list :tags="resource.tags" :grid="true" />
   </div>
 </template>

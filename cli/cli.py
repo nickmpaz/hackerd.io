@@ -60,30 +60,17 @@ def create_snippet(stage):
         config = get_config()
     api_token = config['api_token']
 
-    snippet_template = b"""#####################
-# Enter title below #
-#####################
-
-##############################################
-# Enter tags below as a comma separated list #
-##############################################
-
-############################
-# Enter code snippet below #
-############################
-"""
+    title = input("Title: ")
+    tags = input("Tags: ")
+    tags = [word.strip() for word in tags.split(',')]
+    if tags[0] == '':
+            tags = []
+            
     with tempfile.NamedTemporaryFile() as f:
-        f.write(snippet_template)
-        f.seek(0)
         process = subprocess.Popen(editors[config['editor']]['command'] + [f.name])
         process.wait()
-        f.seek(0)
         lines = f.readlines()
-        title = lines[3].decode().strip()
-        tags = [word.strip() for word in lines[7].decode().split(',')]
-        if tags[0] == '':
-            tags = []
-        snippet = ''.join([line.decode() for line in lines[11:]])
+        snippet = ''.join([line.decode() for line in lines])
 
         if title == '' and snippet == '' and tags == []:
             print('No changes made, aborting.')

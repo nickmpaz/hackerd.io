@@ -24,7 +24,7 @@
       </div>
     </v-navigation-drawer>
 
-    <v-app-bar app clipped-left v-if="authenticated">
+    <v-app-bar app clipped-left v-if="authenticated" class="on-top">
       <v-toolbar-title class="source-code-pro">{{ $variables.navBarTitle }}</v-toolbar-title>
     </v-app-bar>
 
@@ -32,11 +32,13 @@
       class="no-transition"
       :style="drawerIsTemporary ? ('margin-left: ' + sideNavWidth + 'px;') : ''"
     >
-      <v-row justify="center">
-        <v-col :cols="contentCols" class="px-6">
-          <router-view />
-        </v-col>
-      </v-row>
+      <v-container fluid fill-height>
+        <v-row justify="center" class="fill-height" align="start">
+          <v-col :cols="contentCols" class="px-12 fill-height">
+            <router-view />
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
   </v-app>
 </template>
@@ -91,14 +93,13 @@ export default {
     drawerWidth: function () {
       var vm = this;
       var drawerWidth = vm.sideNavWidth + vm.namespaceNavWidth;
-      console.log("drawer width", drawerWidth);
       return drawerWidth;
     },
     namespaceNavIsVisible: function () {
       var vm = this;
       var namespaceNavIsVisible =
         vm.drawer &&
-        (vm.$route.name === "Index" || vm.$route.name === "Resource");
+        (vm.$route.name === "Stash" || vm.$route.name === "Resource");
       return namespaceNavIsVisible;
     },
     drawerIsTemporary: function () {
@@ -112,7 +113,6 @@ export default {
     document.title = this.$variables.brand;
     // change authenticated variable when auth state changes
     Hub.listen("auth", (data) => {
-      console.log("A new auth event has happened: " + data.payload.event);
       if (data.payload.event === "signIn") {
         this.authenticated = true;
       }
@@ -151,6 +151,9 @@ export default {
 </script>
 
 <style lang="scss">
+.on-top {
+  z-index: 999;
+}
 .no-wrap {
   white-space: nowrap;
 }

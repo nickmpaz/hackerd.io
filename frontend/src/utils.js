@@ -1,4 +1,29 @@
-module.exports = {
+import Fuse from "fuse.js";
+
+
+export default {
+    debug: function (msg) {
+        console.log(msg)
+    },
+    fuzzySearch: function (resources, query) {
+        if (query === '') {
+            return resources
+        }
+        const options = {
+            threshold: 0.25,
+            keys: ["title", "tags"],
+        };
+        const fuse = new Fuse(resources, options);
+        const result = fuse.search(query);
+        const finalResult = result.map((a) => a.item);
+        return finalResult
+    },
+    goBack: function () {
+        window.history.back();
+    },
+    deepCopy: function (obj) {
+        return JSON.parse(JSON.stringify(obj))
+    },
     getLocalFileContents: function () {
         return new Promise((resolve) => {
             var input = document.createElement("input");
@@ -70,4 +95,5 @@ module.exports = {
             }
         );
     },
+    assets: require.context('./assets'),
 }
