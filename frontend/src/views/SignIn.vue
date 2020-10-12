@@ -1,100 +1,69 @@
 <template>
-  <v-container>
-    <div class="d-flex align-center" style="min-height: 100vh;">
-      <v-row justify="center" align="center">
-        <v-col cols="12" lg="8">
-          <div class="d-flex justify-center">
-            <span>
-              <div class="d-flex">
-                <span class="source-code-pro" :style="brandCss">{{ $variables.brand }}</span>
-                <v-img :src="getImgUrl('icon.png')" contain :height="logoSize" :width="logoSize"></v-img>
-              </div>
-
-              <div v-if="$vuetify.breakpoint.smAndUp">
-                <span class="display-1">{{ $variables.tagLine }}</span>
-              </div>
-              <div class="mt-6" v-if="$vuetify.breakpoint.smAndUp">
-                <v-btn outlined @click="scrollToAbout">Learn more</v-btn>
-              </div>
-            </span>
-          </div>
+  <v-row class="fill-height" :justify="$vuetify.breakpoint.xl ? 'end' : 'center'">
+    <v-col
+      cols="12"
+      md="12"
+      lg="8"
+      xl="5"
+      class="fill-height d-flex flex-column justify-center"
+    >
+      <h1 class="main-text mb-6">
+        Super charge your knowledge-based workflows.
+      </h1>
+      <p class="sub-text mb-12">
+        Take your productivity to the next level with Stashable.io. Consolidate
+        your knowledge base and integrate it into the tools you use every day.
+      </p>
+      <div class="d-flex flex-wrap">
+        <v-btn
+          @click="federatedSignIn"
+          :loading="loading"
+          height="75"
+          width="300"
+          color="white"
+          light
+          class="mr-12"
+        >
+          <v-img
+            :src="getImgUrl('btn_google_light_normal_ios.svg')"
+            contain
+            height="60"
+            width="60"
+            flat
+          ></v-img>
+          <span class="mr-6 ml-4">Sign in with Google</span>
+        </v-btn>
+        <v-btn color="primary" width="300" height="75">Learn More</v-btn>
+      </div>
+    </v-col>
+    <v-col v-if="$vuetify.breakpoint.xl" cols="6">
+      <v-row class="fill-height" no-gutters>
+        <v-col cols="4" class="d-flex flex-column justify-center">
+          <img
+              :src="$utils.assets('./phone1.png')"
+              alt=""
+              class="visual"
+              style="height: 65%"
+            />
         </v-col>
-        <v-col cols="12" lg="4">
-          <div class="d-flex justify-center">
-            <v-btn
-              @click="federatedSignIn"
-              :loading="loading"
-              height="75"
-              width="300"
-              color="white"
-              light
-            >
-              <v-img
-                :src="getImgUrl('btn_google_light_normal_ios.svg')"
-                contain
-                height="60"
-                width="60"
-                flat
-              ></v-img>
-              <span class="mr-6 ml-4">Sign in with Google</span>
-            </v-btn>
-          </div>
-        </v-col>
-      </v-row>
-    </div>
-    <div class="pa-6" id="about">
-      <v-row align="center" justify="center">
-        <v-col cols="12" md="10" xl="10">
-          <v-row class="my-6">
-            <v-col cols="12" lg="6">
-              <v-card class="pa-6 fill-height">
-                <h1>Store your entire knowledge base in one place.</h1>
-                <hr class="my-6" />
-                <span class="title">
-                  Unify your bookmarks, notes, and code snippets.
-                  Use {{ $variables.brand }} to consolidate the knowledge base resources you use in your development workflow.
-                </span>
-              </v-card>
-            </v-col>
-            <v-col cols="12" lg="6">
-              <v-img :src="getImgUrl('index-page.png')" flat contain class="fill-height"></v-img>
-            </v-col>
-          </v-row>
-          <v-row class="my-6">
-            <v-col cols="12" lg="6">
-              <v-img :src="getImgUrl('notes-page.png')" flat contain class="fill-height"></v-img>
-            </v-col>
-            <v-col cols="12" lg="6">
-              <v-card class="pa-6 fill-height">
-                <h1>Add to your knowledge base quickly and easily.</h1>
-                <hr class="my-6" />
-                <span class="title">
-                  {{ $variables.brand }}'s data model makes it easy to add to your knowledge base.
-                  Don't worry about hierarchy or structure -
-                  just create resources and use {{ $variables.brand }}'s powerful search features to find them when you need to.
-                </span>
-              </v-card>
-            </v-col>
-          </v-row>
-          <v-row class="my-6">
-            <v-col cols="12" lg="6">
-              <v-card class="pa-6 fill-height">
-                <h1>Integrate your knowledge base with the tools you use every day.</h1>
-                <hr class="my-6" />
-                <span
-                  class="title"
-                >Get the most out of your knowledge base by connecting it to tools like your web browser and IDE.</span>
-              </v-card>
-            </v-col>
-            <v-col cols="12" lg="6">
-              <v-img :src="getImgUrl('chrome-logo.jpg')" height="175" flat class="mb-6"></v-img>
-              <v-img :src="getImgUrl('vscode-logo.png')" height="175" flat></v-img>
-            </v-col>
-          </v-row>
+        <v-col cols="8" class="d-flex flex-column justify-center">
+          <img
+              :src="$utils.assets('./carbon.svg')"
+              alt=""
+              class="visual"
+              style="height: 25%"
+            />
+            <img
+              :src="$utils.assets('./editor.png')"
+              alt=""
+              class="visual"
+              style="height: 40%"
+            />
+            
         </v-col>
       </v-row>
-    </div>
-  </v-container>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -119,7 +88,7 @@ export default {
     },
     scrollToAbout: function () {
       const elem = document.getElementById("about");
-      elem.scrollIntoView({behavior: 'smooth'});
+      elem.scrollIntoView({ behavior: "smooth" });
     },
   },
   computed: {
@@ -145,13 +114,27 @@ export default {
       return logoSize;
     },
   },
-
-  // created() {
-  //   console.log(this.)
-  // }
 };
 </script>
 
 <style lang="scss">
+.main-text {
+  font-size: 60px;
+}
 
+.sub-text {
+  font-size: 25px;
+}
+
+.placeholder {
+  background-color: grey;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.visual {
+  width: 100%;
+  padding: 15px;
+  border-radius: 12px;
+}
 </style>

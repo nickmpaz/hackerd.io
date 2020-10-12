@@ -24,8 +24,14 @@
       </div>
     </v-navigation-drawer>
 
-    <v-app-bar app clipped-left v-if="authenticated" class="on-top">
-      <v-toolbar-title class="source-code-pro">{{ $variables.navBarTitle }}</v-toolbar-title>
+    <v-app-bar app clipped-left  class="on-top">
+      <!-- <v-toolbar-title class="source-code-pro">{{ $variables.navBarTitle }}</v-toolbar-title> -->
+
+      <v-img
+            :src="$utils.assets('./StashableLogoLong.svg')"
+            contain
+            max-width="200px"
+          ></v-img>
     </v-app-bar>
 
     <v-main
@@ -63,7 +69,10 @@ export default {
   computed: {
     contentCols: function () {
       var vm = this;
-      var contentCols = 12;
+      if (!vm.authenticated) {
+        return 12
+      }  
+        var contentCols = 12;
       if (vm.$vuetify.breakpoint.xl) {
         contentCols = 8;
       } else if (vm.$vuetify.breakpoint.mdAndUp) {
