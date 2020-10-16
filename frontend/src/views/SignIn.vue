@@ -1,10 +1,12 @@
 <template>
-  <v-row class="fill-height" :justify="$vuetify.breakpoint.xl ? 'end' : 'center'">
+  <v-row
+    class="fill-height"
+    :justify="$vuetify.breakpoint.xl ? 'end' : 'center'"
+  >
     <v-col
       cols="12"
-      md="12"
-      lg="8"
-      xl="5"
+      md="8"
+      lg="5"
       class="fill-height d-flex flex-column justify-center"
     >
       <h1 class="main-text mb-6">
@@ -14,52 +16,68 @@
         Take your productivity to the next level with Stashable.io. Consolidate
         your knowledge base and integrate it into the tools you use every day.
       </p>
-      <div class="d-flex flex-wrap">
-        <v-btn
-          @click="federatedSignIn"
-          :loading="loading"
-          height="75"
-          width="300"
-          color="white"
-          light
-          class="mr-12"
-        >
-          <v-img
-            :src="getImgUrl('btn_google_light_normal_ios.svg')"
-            contain
-            height="60"
-            width="60"
-            flat
-          ></v-img>
-          <span class="mr-6 ml-4">Sign in with Google</span>
-        </v-btn>
-        <v-btn color="primary" width="300" height="75">Learn More</v-btn>
-      </div>
+      <v-container fluid>
+        <v-row>
+          <v-col
+            cols="12"
+            xl="6"
+            :class="
+              $vuetify.breakpoint.lgAndDown ? 'd-flex justify-center' : ''
+            "
+          >
+            <v-btn
+              @click="federatedSignIn"
+              :loading="loading"
+              height="75"
+              width="300"
+              color="white"
+              light
+            >
+              <v-img
+                :src="getImgUrl('btn_google_light_normal_ios.svg')"
+                contain
+                height="60"
+                width="60"
+                flat
+              ></v-img>
+              <span class="mr-6 ml-4">Sign in with Google</span>
+            </v-btn>
+          </v-col>
+          <v-col
+            cols="12"
+            xl="6"
+            :class="
+              $vuetify.breakpoint.lgAndDown ? 'd-flex justify-center' : ''
+            "
+          >
+            <v-btn color="primary" width="300" height="75">Learn More</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-col>
-    <v-col v-if="$vuetify.breakpoint.xl" cols="6">
+    <v-col v-if="$vuetify.breakpoint.lgAndUp" cols="6">
       <v-row class="fill-height" no-gutters>
         <v-col cols="4" class="d-flex flex-column justify-center">
           <img
-              :src="$utils.assets('./phone1.png')"
-              alt=""
-              class="visual"
-              style="height: 65%"
-            />
+            :src="$utils.assets('./phone1.png')"
+            alt=""
+            class="visual"
+            style="height: 65%"
+          />
         </v-col>
         <v-col cols="8" class="d-flex flex-column justify-center">
           <img
-              :src="$utils.assets('./carbon.svg')"
-              alt=""
-              class="visual"
-              style="height: 25%"
-            />
-            <img
-              :src="$utils.assets('./editor.png')"
-              alt=""
-              class="visual"
-              style="height: 40%"
-            />
-            
+            :src="$utils.assets('./carbon.svg')"
+            alt=""
+            class="visual"
+            style="height: 25%"
+          />
+          <img
+            :src="$utils.assets('./editor.png')"
+            alt=""
+            class="visual"
+            style="height: 40%"
+          />
         </v-col>
       </v-row>
     </v-col>
