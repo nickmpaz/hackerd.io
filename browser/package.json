@@ -9,7 +9,7 @@
     "zip": "rm package.zip && cd dist && zip -r ../package.zip *"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "fuse.js": "^6.4.1",
     "vue": "^2.6.11",
